@@ -107,11 +107,12 @@
 %% appear in the TOC (table of contents). Increase to 2 or 3 to
 %% make subsections or subsubsections appear, respectively. It seems
 %% to be usual to use the "1" setting, however.
-\setcounter{tocdepth}{2}
+\setcounter{tocdepth}{1}
 
 %% Sectional units up to subsubsections are numbered. To number
 %% subsections, but not subsubsections, decrease this counter to 2.
 \setcounter{secnumdepth}{3}
+
 
 %% Use the following commands, if desired, during production.
 %% Comment them out for final version.
@@ -158,7 +159,9 @@
 
 %% This inputs your auxiliary file with \usepackage's and \newcommand's:
 %% It is assumed that that file is called "defs.tex".
+%% not using template; in sections. should pull out into defs files probs
 \input{defs}
+
 
 
 % ----------------------------------------
@@ -297,26 +300,41 @@
 % ----------------------------------------
 
 \chapter{Introduction}
+% this makes abstracts section 0 (need before each chapter)
+\setcounter{section}{-1}
 \label{chp-introduction}
 \input{chapters/introduction.tex}
+% It encodes information about the physics of the early Universe and the subsequent expansion history \cite{SunyaevZeldovich1970, HuSugiyama1996, Riess1998}.
 
 \chapter{Two-point statistics without bins: A continuous-function generalization of the correlation function estimator for large-scale structure}
+\setcounter{section}{-1}
 \label{chp-cfe}
-%\input{chapters/cfe.tex}
+\input{chapters/cfe.tex}
+%\input{chapters/cfetest.tex}
 
 \chapter{Emulation of beyond-standard galaxy clustering statistics to improve cosmological constraints}
+\setcounter{section}{-1}
 \label{chp-aemulus}
 %\input{chapters/aemulus.tex}
 
 \chapter{Characterizing Dark Matter Halos using Exact Physical Symmetries}
+\setcounter{section}{-1}
 \label{chp-eqcosmo}
 %\input{chapters/eqcosmo.tex}
 
 \chapter{QUaia, the \emph{Gaia}–unWISE Quasar Catalog: An All-Sky Spectroscopic Quasar Sample}
+\setcounter{section}{-1}
 \label{chp-quaia}
 %\input{chapters/quaia.tex}
+I'd like to cite \cite{secrest_test_2021}! 
+also \cite{wright_wide-field_2010}
+how about \cite{tinker_void_2007}
+cool what if add \cite{storey-fisher_aemulus_2022}
+hello to \cite{storey-fisher_anomaly_2021}
+also \citep{SunyaevZeldovich1970}!
 
 \chapter{Conclusion}
+\setcounter{section}{-1}
 \label{chp-conclusion}
 % \input{conclusion}
 
@@ -354,10 +372,13 @@
 
 \cleardoublepage
 \phantomsection
-\bibliographystyle{apalike}
+% Supposed to be APA/Chicago/MLA technically, but chang's looks more like AAS, and makes much shorter w/o titles; trying it!
+%\bibliographystyle{apalike}
+\bibliographystyle{aasjournal}
 \addcontentsline{toc}{chapter}{Bibliography}
 
-% \bibliography{dblp,references}
+\bibliography{references}
+%\bibliography{refstest}
 
 % The following is just for the sample template,
 % I'd recommend deleting this and using the \bibliography command above
