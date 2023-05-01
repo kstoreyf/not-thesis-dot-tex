@@ -85,6 +85,22 @@ We use 70\% as a training set, 15\% as a validation set, and 15\% as a test set.
 \subsection{Halo mass assembly history}
 \label{sec:mah}
 
+We aim to predict the mass assembly history of the \dark halos based only on their present-day ($z=0$) properties.
+This is informative as it captures the dynamical history of the halo, which affects the formation of the galaxies it hosts.
+We use the merger histories computed by \citep{gabrielpillai_galaxy_2021} as part of a comparative analysis between TNG and the Santa Cruz semi-analytic model (SC-SAM, \citealt{somerville_semi-analytic_1999,somerville_semi-analytic_2008, somerville_star_2015}); the SAM is based on these merger trees.\footnote{The merger history and other SC-SAM data is publicly accessible at \url{https://github.com/aust427/illustris_sam}.}
+The merger trees are run on halos found with the \textsc{rockstar} \citep{behroozi_rockstar_2013} code and built with \textsc{consistent trees} \citep{behroozi_gravitationally_2012}, and a bijective matching is performed between the \textsc{rockstar} and TNG Subfind halos.
+
+We consider the most massive progenitor branch of the assembly history of each \dark halo in our sample.
+We compile the mass of the halo's most massive progenitor for each of the TNG snapshots. 
+A natural quantity to try to predict would be the fraction of the $z=0$ halo mass accreted as a function of redshift.
+However, different halos can be traced back to different redshifts, and this inconsistency causes difficulties at the prediction stage.
+We thus choose to learn the scale factor $a$ (related to the redshift $z$ by $a=1/(1+z)$) at which the halo has accreted a given fraction of its mass, $M_\mathrm{vir}(a)$/$M_\mathrm{vir}(a=1)$, where $M_\mathrm{vir}$ is given by the \texttt{HalopropMvir} field of the SC-SAM data and $a=1$ is the present day.
+This swapped quantity gets at the same information as the natural quantity but is more stable in predictions.
+We compute this at XXX linearly spaced mass fractions between 0 and 1 (exclusive). 
+As we only have the history at a finite number of snapshots, we perform a linear interpolation between the mass fractions and scale factors to estimate the scale factor at a given mass fraction.
+If the target mass fraction is outside the bounds of the data (for example, if the initial mass of the halo was a larger mass fraction than our tabulated values), we assign the scale factor to be that at which the mass fraction is closest.  
+
+
 
 \subsection{Galaxy properties and uncertainties}
 \label{sec:galprops}
