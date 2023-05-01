@@ -16,7 +16,8 @@
 
 % Good AMS stuff:
 \usepackage{amsthm} % facilities for theorem-like environments
-\usepackage[tbtags]{amsmath} % a lot of good stuff!
+%\usepackage[tbtags]{amsmath} % a lot of good stuff!
+\usepackage{amsmath} % a lot of good stuff!
 \usepackage{mathtools}
 
 
@@ -60,3 +61,100 @@
 %     aysep={},yysep={,},%
 %     notesep={, }}
 % \let\cite\citep
+
+
+%%%% MACROS %%%%%
+
+%%%% general %%%%%
+
+\usepackage{subcaption}
+\usepackage{bm}		% Bold maths symbols, including upright Greek
+
+% misc
+\newcommand{\documentname}{\textsl{Article}\xspace}
+%\newcommand{\refeq}[1]{Equation (\ref{#1})}
+
+% units
+\newcommand{\hmpc}{$h^{-1}\,$Mpc}
+\newcommand{\hMpc}{h\inv\,\mathrm{Mpc}\xspace}
+\newcommand{\hGpc}{h\inv\,\mathrm{Gpc}\xspace}
+\newcommand{\Mpch}{h\,\mathrm{Mpc}\inv\xspace}
+\newcommand{\Msun}{M_\mathrm{\odot}\xspace}
+\newcommand{\hMsun}{h\inv M_\mathrm{\odot}\xspace}
+
+% math
+\newcommand{\inv}{^{-1}}
+\newcommand{\invp}{^{'-1}}
+\newcommand{\T}{^{\mathsf{T}}}
+\newcommand{\Tp}{^{'\mathsf{T}}}
+
+% edits
+%\newcommand{\new}[1]{\textbf{#1}} % Bolded revisions
+\newcommand{\new}[1]{#1} % Un-bold revisions after final acceptance
+
+
+% comments
+\newcommand{\KSF}[1]{\textcolor{teal}{KSF says: #1}}
+\newcommand{\ksf}[1]{{\color{teal}KSF says: #1}}
+\newcommand{\hogg}[1]{\textcolor{red}{Hogg says: #1}}
+%\newcommand{\new}[1]{\textbf{#1}}
+%\newcommand{\new}[1]{#1}
+
+% style
+\newcommand{\bld}[1]{\bm{#1}}
+\urlstyle{tt}
+
+%%%%% Chapter: CFE %%%%%
+
+% language
+\newcommand{\cf}{2pcf\xspace}
+\newcommand{\Est}{The Continuous-Function Estimator\xspace}
+\newcommand{\est}{the Continuous-Function Estimator\xspace}
+\newcommand{\LS}{LS\xspace}
+\newcommand{\foreign}[1]{\textsl{#1}}
+\newcommand{\etc}{\foreign{etc}}
+\newcommand{\eqt}[1]{equation~(\ref{#1})}
+
+% math
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\vv}[1]{\bld{v}_\mathrm{#1}}
+\newcommand{\TT}[1]{\bld{T}_\mathrm{#1}}
+\newcommand{\ff}{\bld{f}}
+\newcommand{\NN}[1]{N_\mathrm{#1}}
+\newcommand{\GG}[1]{\mathsf{G}_{#1}}
+
+%%%%% Chapter: Eqcosmo %%%%%
+
+% symbols
+\newcommand{\like}{\mathcal{L}}
+\newcommand{\cov}[1]{C_\text{#1}}
+\newcommand{\covtot}{C_\like}
+\newcommand{\simo}{\mathord{\sim}}
+
+% properties
+\newcommand{\N}[1]{N_\mathrm{#1}}
+\newcommand{\x}{\bm{x}\xspace}
+\newcommand{\vel}{\bm{v}\xspace}
+\newcommand{\Mgal}{M_*\xspace}
+\newcommand{\Mtot}{M_\mathrm{tot}\xspace}
+\newcommand{\xrms}{x_\mathrm{rms}\xspace}
+\newcommand{\vrms}{v_\mathrm{rms}\xspace}
+\newcommand{\Mtwoh}{M_\mathrm{200m}\xspace}
+\newcommand{\Mfof}{M_\mathrm{200m,FoF}\xspace}
+\newcommand{\Rtwoh}{R_\mathrm{200m}\xspace}
+\newcommand{\Vtwoh}{V_\mathrm{200m}\xspace}
+\newcommand{\Vfof}{V_\mathrm{200m,FoF}\xspace}
+
+% words
+\newcommand{\dark}{\emph{Dark}\xspace}
+\newcommand{\hydro}{\emph{Hydro}\xspace}
+
+
+
+%%%%% Chapter: Anomalies %%%%%
+
+% math and notation
+\DeclareMathOperator*{\maxi}{max}
+\DeclareMathOperator*{\mini}{min}
+\newcommand{\s}[1]{s_\mathrm{#1}}
+
