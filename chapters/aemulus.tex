@@ -1,0 +1,885 @@
+\graphicspath{{figures/figures_aemulus/}}
+
+% % Alter some LaTeX defaults for better treatment of figures:
+%     % See p.105 of "TeX Unbound" for suggested values.
+%     % See pp. 199-200 of Lamport's "LaTeX" book for details.
+%     %   General parameters, for ALL pages:
+     \renewcommand{\topfraction}{0.9}	% max fraction of floats at top
+     \renewcommand{\bottomfraction}{0.7}	% max fraction of floats at bottom
+%     %   Parameters for TEXT pages (not float pages):
+     \setcounter{topnumber}{2}
+     \setcounter{bottomnumber}{2}
+     \setcounter{totalnumber}{2}     % 2 may work better
+     \setcounter{dbltopnumber}{2}    % for 2-column pages
+     \renewcommand{\dbltopfraction}{0.9}	% fit big float above 2-col. text
+    \renewcommand{\textfraction}{0.1}	% allow minimal text w. figs
+     %   Parameters for FLOAT pages (not text pages):
+     \renewcommand{\floatpagefraction}{0.9}	% require fuller float pages
+ 	% N.B.: floatpagefraction MUST be less than topfraction !!
+     \renewcommand{\dblfloatpagefraction}{0.9}	% require fuller float pages
+% 	% remember to use [htp] or [htpb] for placement
+
+
+\section{Chapter Abstract}
+There is untapped cosmological information in galaxy redshift surveys in the non-linear regime.
+In this work, we use the \aemulus suite of cosmological $N$-body simulations to construct Gaussian process emulators of galaxy clustering statistics at small scales ($0.1-50 \: \hMpc$) in order to constrain cosmological and galaxy bias parameters.
+In addition to standard statistics---the projected correlation function $\wprp$, the redshift-space monopole of the correlation function $\cfm$, and the quadrupole $\cfq$---we emulate statistics that include information about the local environment, namely the underdensity probability function $\upf$ and the density-marked correlation function $\mcf$.
+This extends the model of \aemulus III for redshift-space distortions by including new statistics sensitive to galaxy assembly bias.
+In recovery tests, we find that the beyond-standard statistics significantly increase the constraining power on cosmological parameters of interest: including $\upf$ and $\mcf$ improves the precision of our constraints on $\sig$ by 33\%, $\om$ by 28\%, and the growth of structure parameter, $\fsig$, by 18\% compared to standard statistics.
+We additionally find that scales below $4 \: \hMpc$ contain as much information as larger scales.
+The density-sensitive statistics also contribute to constraining halo occupation distribution parameters and a flexible environment-dependent assembly bias model, which is important for extracting the small-scale cosmological information as well as understanding the galaxy--halo connection.
+This analysis demonstrates the potential of emulating beyond-standard clustering statistics at small scales to constrain the growth of structure as a test of cosmic acceleration.
+Our emulator is publicly available at \url{https://github.com/kstoreyf/aemulator}.
+
+
+
+\section{Introduction}
+
+Galaxy redshift surveys contain a wealth of information about the cosmological model.
+Galaxies trace the underlying matter distribution, and their clustering gives us detailed insight into the growth history of the universe.
+Recent spectroscopic surveys, including SDSS \citep{York2000} and its extensions BOSS \citep{Dawson2013} and eBOSS \citep{Dawson2016}, have provided impressive constraints on cosmology using galaxy clustering.
+Upcoming surveys such as DESI \citep{Aghamousa2016}, the Subaru Prime Focus Spectrograph \citep{takada_extragalactic_2014}, and eventually Euclid \citep{Laureijs2011} and the Nancy Grace Roman Space Telescope \citep{Green2012}, will measure tens of millions of spectroscopic redshifts, allowing for unprecedented cosmological measurements.
+
+Most of the current state-of-the-art constraints from these data sets are based on galaxy clustering at large scales.
+One of the main probes used to measure the growth of structure in spectroscopic analyses is redshift-space distortions (RSDs), anisotropies in clustering induced by galaxy peculiar velocities.
+For the scales over which the RSD effect is typically analyzed, around $\simo40-150 \, \hMpc$, the evolution of matter is close to linear and can be modeled with linear perturbation theory (e.g. \citealt{Alam2017}).
+While this approach has been very successful, current and future surveys will be most precise at much smaller scales, given their requirements on galaxy number density.
+It is not currently known how much additional information exists at these small scales, but recent work suggests that it is significant and may even exceed the information content at large scales \citep{Zhai2019}.
+Extracting this information requires accurately modeling the nonlinear dynamics of dark matter down to these scales.
+Cosmological $N$-body simulation have been remarkably successful at this (e.g. \citealt{Klypin2011}); however, they are very expensive to run, and including hydrodynamics is intractable for complete cosmological inference purposes.
+
+In order to use $N$-body simulations for cosmological analysis, we require a galaxy bias model to populate the dark matter distribution with galaxies.
+\citealt{Seljak2000, BerlindWeinberg2002, CooraySheth2002, Zheng2005}), which probabilistically describes the occupation number of galaxies in dark matter halos as a function halo mass.
+The simple HOD model reconstructs galaxy clustering to a reasonable degree of accuracy; however, it has been shown that occupation has a small but non-negligible dependence on secondary halo properties, known as galaxy assembly bias (see e.g. \citealt{Wechsler2006, Croton2007, Zentner2014, WechslerTinker2018}).
+Modeling assembly bias is critical for obtaining the most accurate cosmological constraints, as well as understanding the galaxy--halo connection.
+
+Late-time galaxy clustering analyses have put increasingly strong constraints on the growth of structure parameter $f \sigma_8$.
+While some of these agree with results from the cosmic microwave background as measured by Planck \citep{eboss_collaboration_completed_2021,zhang_boss_2022}, others are in $1-4 \sigma$ tension (e.g. \citealt{Macaulay2013, Sanchez2014, deMattia2021}).
+A series of recent studies focusing on small-scales have also found a few sigma tension \citep{Chapman2021, Lange2022, Zhai2022, Yuan2022}, and these agree with the resulst of weak lensing studies (e.g. \citealt{MacCrann2015, Leauthaud2017, joudaki_kidsviking-450_2020}).
+Improving the constraining power from clustering analyses is important for determining if the tension still holds; one avenue for doing this is expanding beyond RSD to include other clustering statistics.
+
+Current cosmological analyses focus on a small set of two-point statistics of galaxy clustering which are well-understood theoretically.
+While these statistics are highly informative, it has been shown that there is significant additional information in other non-standard observables.
+For instance, \cite{Tinker2006, Tinker2008} demonstrated that the void probability function and underdensity probability function contribute complementary information to two-point statistics due to their sensitivity to the environmental dependence of halo occupation.
+Other work has demonstrated the constraining power in these and other related counts-in-cells statistics \citep{WalshTinker2019, Wang2019, Beltz-Mohrmann2020}.
+
+The marked correlation function \citep{Sheth2004} has also been shown to contain information complementary to that in standard statistics.
+\cite{WhitePadmanabhan2009} demonstrated that when using a local density-based mark, the statistic is useful in constraining the cosmological parameter $\sig$ by breaking degeneracies in HOD modeling; \cite{White2016} found that it is sensitive to modifications to general relativity.
+Recently, \cite{Szewciw2022} aimed to optimally constrain the galaxy--halo connection, and confirmed that including the marked correlation function, as well as counts-in-cells statistics and others including the group multiplicity function and group velocity dispersion, significantly improve constraints on halo model parameters at fixed cosmology.
+
+In this work, we combine the use of beyond-standard clustering statistics with the emulation approach.
+Emulation has recently been explored as a method for making highly accurate predictions for cosmology at nonlinear scales while minimizing requirements on cosmological simulations \citep{Heitmann2009, Heitmann2010, Lawrence2010}.
+The idea is to first construct a sparse training set of high-resolution $N$-body simulations that span the allowable parameter space.
+Then a model can be trained to make fast predictions of the output of the simulations, or summary statistics of the output, given the input parameters.
+This can finally be used in inference to fully explore the parameter space, essentially interpolating in high dimensions over the regions between input simulations.
+Machine learning models are often used for this purpose due to the need to model such a high-dimensional space and produce quick predictions.
+
+Cosmological emulators typically aim to predict summary statistics of the matter and galaxy distributions.
+Two-point statistics, namely the power spectrum and its real-space counterpart the correlation function, are the key observables used to constrain cosmological models.
+There has been significant work emulating the matter power spectrum \citep{Heitmann2009, Lawrence2017, Giblin2019, Ho2022}.
+Recent work has extended and improved upon this approach, such as the incorporation of dynamical dark energy and massive neutrinos into emulators \citep{Angulo2021}, and the development of fully differentiable power spectrum emulators \citep{SpurioMancini2022, derose_neural_2022}.
+Other emulators predict the galaxy power spectrum \citep{Kwan2015, Pellejero-Ibanez2020, kokron_cosmology_2021}, and \cite{Wibking2019} recently emulated the galaxy correlation function along with galaxy--galaxy lensing.
+
+Simulation-based emulators have been used to improve precision on cosmological parameter constraints from recent surveys:
+\cite{Miyatake2021} constrain $S_8$ from the HSC-Y1 and SDSS data using the \textsc{DarkEmulator} \citep{Nishimichi2019}.
+\cite{Neveux2022} apply a Gaussian process emulator to the BOSS galaxy and eBOSS quasar samples, obtaining similar constraints as SDSS using half the amount of data.
+\cite{EuclidPrepII} constructed the \textsc{EuclidEmulator} to predict the nonlinear correction of the matter power spectrum in preparation for the upcoming Euclid survey; the improved version, \cite{EuclidPrepIX}, achieves 1\% accuracy or better for $0.01 \: \Mpch \leq k \leq 10 \: \Mpch$.
+
+This work is part of the \aemulus Project, which uses a suite of high-resolution $N$-body simulations expressly designed for emulation at small scales to improve cosmological constraints.
+The previous papers in the project introduce the simulation suite \citep{DeRose2018} and construct emulators of the halo mass function \citep{McClintock2018}, the galaxy correlation function \citep{Zhai2019}, and halo bias \citep{McClintock2019}.
+The \aemulus emulator has been used to constrain the growth rate of structure in the BOSS-LOWZ sample \citep{Lange2022} and the eBOSS LRG sample \citep{Chapman2021}, both obtaining nearly a factor of two increase in precision compared to standard measurements at linear scales.
+Most recently, the \aemulus project constructed two-point function emulators that include models of assembly bias and deviations from general relativity (GR) to provide improved precision on the growth rate of structure parameter from the BOSS survey \citep{Zhai2022}.
+
+In this paper, we extend the work of \aemulus III \citep{Zhai2019} to include emulation of two beyond-standard observables:
+The underdensity probability function $\upf$, defined as the probability that a randomly placed sphere has a galaxy density less than some threshold (e.g. \citealt{HoyleVogeley2004}), and the marked correlation function $\mcf$, the two-point correlation function with galaxy pairs weighted by their properties \citep{Sheth2004}.
+We extend the HOD model of \aemulus III to include a model of assembly bias, based on the local density.
+We also incorporate several more HOD parameters for increased flexibility, as well as a parameter that scales that velocity field to model deviations from GR, following \aemulus V.
+
+This paper is organized as follows:
+In \S\ref{sec:sims_gals}, we describe the $N$-body simulations and halo occupation distribution model used, and in \S\ref{sec:observables}, we outline the five clustering statistics we use for inference.
+We detail our emulation and inference methods in \S\ref{sec:methods}, and show the results of recovery tests on both \aemulus mocks and an external mock catalog in \S\ref{sec:results}.
+In \S\ref{sec:discussion}, we discuss the implications of these results and our conclusions.
+
+
+\section{Simulations and Galaxy Bias Model}
+\label{sec:sims_gals}
+
+In this section we detail the \aemulus $N$-body simulations that are used as the basis for our emulation (\S\ref{sec:aemulus}), and the halo occupation distribution model used to model the galaxy--halo connection and populate the simulations to construct mock galaxy catalogs (\S\ref{sec:hod}). 
+
+\subsection{The Aemulus simulations}
+\label{sec:aemulus}
+
+We use the \aemulus simulations, a suite of 75 high-resolution $N$-body simulations \citep{DeRose2018}.
+They have a box size $L = 1.05$ $\hGpc$ with $1400^3$ dark matter particles, and a mass resolution of $\simo3.5\times10^{10}h\inv\text{M}_{\odot}$ (depending on the cosmology).
+The training set consists of 40 different $w$CDM cosmologies, selected using a Latin hypercube to optimally span the parameter space.
+The test set is comprised of 7 different cosmologies, with 5 realizations with different initial conditions for each cosmology, totaling 35 test boxes.
+We use the redshift $z=0.55$ snapshot for this work.
+We use the training set to train our emulator, and the test set to verify its performance as well as to estimate the sample variance.
+
+Our cosmological model consists of seven parameters: the matter energy density $\om$, the baryon energy density $\Omega_{b}$, the amplitude of matter fluctuations $\sig$, the dimensionless Hubble constant $h$, the spectral index of the primordial power spectrum $n_{s}$, the dark energy equation of state parameter $w$, and the number of relativistic species $N_{\text{eff}}$.
+These simulations are based on GR, so we include a scaling parameter $\gamma_f$ to capture non-GR effects; it is defined as the amplitude of the halo velocity field relative to the $w$CDM+GR prediction.
+The parameters of interest for this work are $\om$, $\sig$, and $\gamma_f$; we do not expect our approach to be particularly sensitive to the other parameters \citep{Zhai2019}, and these are marginalized over.
+Most importantly, we are interested in the growth of structure parameter $f \sigma_8$, and we parameterize it to be independent of GR by including the velocity field scaling parameter $\gf$ \citep{Reid2014}.
+We henceforth compute and refer to the growth of structure parameter as $\gfs$.
+
+
+\subsection{Halo occupation distribution model}
+\label{sec:hod}
+
+To create mock galaxy catalogs from these simulations, we use the halo occupation distribution to model the galaxy--halo connection.
+The HOD framework starts from the assumption that the number of galaxies $N$ in a given dark matter halo depends only on the mass of the host halo $M$, and gives a probability distribution for N given M: $P(N|M)$.  
+We base our HOD model on those of \cite{Zheng2005} and \cite{reddick_connection_2013}, which separate the contribution of central and satellite galaxies, $\langle N(M) \rangle$ = $\langle N_\mathrm{cen}(M) \rangle$ + $\langle N_\mathrm{sat}(M) \rangle$.
+The central galaxy occupation function is modeled as a Bernoulli distribution with a mean of
+\begin{equation}
+	\langle N_\mathrm{cen}(M) \rangle = \frac{1}{2} \left[ 1 + \mathrm{erf}
+	\left(\frac{\mathrm{log}_{10} M - \mathrm{log}_{10} M_\mathrm{min} }{\sigma_{\mathrm{log}M}}\right) \right] ~,
+\end{equation}
+where \texttt{erf()} is the error function. 
+The number of satellite galaxies is drawn from a Poisson distribution with a mean of 
+\begin{equation}
+	\langle N_\mathrm{sat}(M) \rangle = \left( \frac{M}{\msat} \right)^\alpha
+	\mathrm{exp} \left( - \frac{M_\mathrm{cut}}{M} \right) N_\mathrm{cen}(M) ~.
+\end{equation}
+The parameters are defined as follows: $M_\mathrm{min}$ is the mass at which half of the halos host a central galaxy, $\sigma_{\mathrm{log}M}$ controls the scatter of halo mass at fixed galaxy luminosity, $\alpha$ is the power-law index for the mass dependence of the number of satellites, $\msat$ is a typical mass for halos to host one satellite, and $M_\mathrm{cut}$ varies the cutoff mass in the satellite occupation function.
+We fix the number density to $\bar{n} = 2 \times 10^{-4} (\hMpc)^{-3}$.
+We note that this is somewhat lower than the peak BOSS number density, but similar to a Luminous Red Galaxy (LRG) sample, and is designed to produce a sample closer to volume limited; it is the number density used in the \aemulus V analysis of BOSS LOWZ+CMASS \citep{Zhai2022}.
+We then compute the value of $M_\mathrm{min}$ to satisfy this number density after varying the other HOD parameters.
+
+We include three additional parameters related to halo occupation, following \cite{Zhai2019}.
+In addition to the parameter $\gf$ described in \S\ref{sec:aemulus} which rescales all halo velocities, we include velocity bias parameters for galaxies relative to the virial velocity of their DM halo $\sigma_\mathrm{halo}$.
+We define $v_\mathrm{bc}$ as the velocity bias of central galaxies, which rescales the velocity of centrals $\sigma_\mathrm{cen}$ relative to that of host halos as $\sigma_\mathrm{cen} = v_\mathrm{bc} \,\sigma_\mathrm{halo}$.
+The velocity bias of satellite galaxies $v_\mathrm{bs}$ is defined in the same way as $v_\mathrm{bc}$.
+We also include a concentration parameter relating satellite and halo concentrations, where the concentration $c$ is defined as the ratio between the halo outer radius and the scale radius (which depends on the halo density profile).
+We define the concentration ratio $c_\mathrm{vir}$ as the ratio between the concentration of satellites and DM halos, $c_\mathrm{vir} = c_\mathrm{sat}/c_\mathrm{halo}$.
+
+We extend this standard HOD model to take into account the dependence on properties other than just the host halo mass; this secondary dependence is known as assembly bias.
+Here we use the 3-parameter assembly bias model of \cite{WalshTinker2019}, which includes a dependence on the local dark matter density around a halo, as we might expect the external environment of halos to play a role in galaxy formation.
+Specifically, we define $\delta$ as the relative density in a sphere of radius 10 $\hMpc$ around a halo center.
+The assembly bias model adjusts the minimum halo mass needed to host a central galaxy, $M_\mathrm{min}$, to a threshold $M_\mathrm{min}'$ based on the local density.
+It is defined as
+\begin{equation}
+	M_\mathrm{min}' = M_\mathrm{min} \left[ 1 + \fenv \, \mathrm{erf}
+	\left(\frac{ \delta - \delta_\mathrm{env} }{\sigma_\mathrm{env}}\right) \right] ~,
+\end{equation}
+where $\fenv$ controls the strength of the environmental dependence, $\delta_\mathrm{env}$ is the density threshold at which to move around satellites, and $\sigma_\mathrm{env}$ controls the sharpness of the transition between overdense and underdense regions.
+A value of $\fenv > 0$ means that a halo in a higher-density environment requires a higher mass to host a central galaxy, and a halo in a lower-density environment needs a lower mass, effectively moving galaxies from high- to low density regions.
+Conversely, $\fenv < 0$ moves galaxies from low- to high-density regions.
+Setting $\fenv = 0$ turns off assembly bias.
+
+We populate each simulation box with multiple different HOD models to obtain mock galaxy catalogs.
+We then input redshift-space distortions by projecting the real-space positions along one of the axes $x_\mathrm{r}$ into redshift-space positions $x_\mathrm{s}$:
+\begin{equation}
+    x_\mathrm{s} = x_\mathrm{r} + (1+z)\frac{v}{H(z)} ~,
+\end{equation}
+where $z$ is the redshift of the simulation, $v$ is the velocity of the galaxy, and $H(z)$ is the Hubble parameter at that redshift for the given cosmology.
+
+We populate each of the 40 training boxes with 100 unique HOD models, and the test boxes with another independent set of 100 HOD models (for the test set we use the same 100 models to populate each of the 35 boxes, while for the training set every model is different).
+This results in a training set of 4000 catalogs and a test set of 3500 catalogs for the emulator. 
+For the recovery tests, we use a subset of this test set consisting of 70 catalogs, with 10 unique HOD models per cosmology.
+Our complete model has 7 cosmology parameters plus $\gf$, 7 HOD parameters, and 3 assembly bias parameters, for a total of 18 free parameters.
+These are the parameters that will be the inputs to our emulators and that we will later infer through Markov Chain Monte Carlo, based on the measured observables.
+
+
+
+\section{Observables}
+\label{sec:observables}
+
+The goal of this work is to investigate the information in small-scale clustering using both standard statistics and other, beyond-standard observables that may contain important information.
+(Note that we use the words ``observables'' and ``statistics'' interchangeably in this work.)
+The standard observables we use are:
+\begin{itemize}
+    \item The projected correlation function, $\wprp$ (\S\ref{sec:wprp})
+    \item The monopole of the two-point correlation function, $\cfm$ (\S\ref{sec:cfs})
+    \item The quadrupole of the two-point correlation function, $\cfq$ (\S\ref{sec:cfs})
+\end{itemize}
+The beyond-standard observables we include are:
+\begin{itemize}
+    \item The underdensity probability function, $\upf$ (\S\ref{sec:upf})
+    \item The marked correlation function, $\mcf$ (\S\ref{sec:mcf})
+\end{itemize}
+We discuss the covariances between these statistics in \S\ref{sec:cov}.
+The statistics measured in the given bins are shown in Figure~\ref{fig:emu_accuracy} (circles in top panel), for the 3500 test set models.
+
+\subsection{The projected correlation function, \texorpdfstring{$\wprp$}{wp(rp)}}
+\label{sec:wprp}
+
+The two-point correlation function is defined as the excess probability above a Poisson random distribution that two galaxies separated by a given distance $r$.
+In practice, we work in redshift-space with vector distance $\bm{\mathrm{s}}$, defining  $\bm{\mathrm{s}} = \bm{\mathrm{s}}_2 -  \bm{\mathrm{s}}_1$ and  $\bm{\mathrm{l}} = ( \bm{\mathrm{s}}_1 + \bm{\mathrm{s}}_2)/2$.
+We measure the two-dimensional correlation function $\xi_\mathrm{Z}(r_\mathrm{p}, \pi)$ on a grid, where the subscript Z denotes redshift-space, $\pi$ is the transverse separation, and $r_\mathrm{p}$ is the line-of-sight separation, defined as
+\begin{equation}
+	\pi = \frac{\mathbf{s}\cdot\mathbf{l}}{|\mathbf{l}|}, 
+	\quad r_{p}=\mathbf{s}\cdot\mathbf{s}-\pi^2 ~.
+\end{equation}
+Then, the projected correlation function is
+\begin{equation}
+	\wprp = 2 \int_{0}^{\infty} d\pi \, \xi_\mathrm{Z}(r_\mathrm{p}, \pi) ~.
+\end{equation}
+In practice, we cut off the integral at a scale of $\pi_\mathrm{max} = 40 \, \hMpc$.
+This choice of a somewhat low $\pi_\mathrm{max}$ does not eliminate RSDs in the two-halo term, but this preserves some cosmological information, and in any case is consistent in the constructed emulator so will not lead to a bias in parameter recovery.
+
+We must use an estimator to measure the correlation function in data.
+As we are working with periodic simulation boxes in this analysis, there is no complex window function to introduce biases, so we can use the natural estimator \citep{PeeblesHauser1974},
+\begin{equation}
+	\xi(r_\mathrm{p}, \pi) = \frac{DD}{RR} - 1,
+\end{equation}
+where DD is the number of data--data pairs in an $(r_\mathrm{p}, \pi)$ bin, and RR is the number of random--random pairs in a uniform random catalog of the same size as the data, each normalized by the total number of galaxy pairs in the respective catalog pair.
+Given our periodic boxes, we can analytically compute the RR term, so we only have to numerically compute the DD term.
+
+We measure $\wprp$ in 9 logarithmically spaced bins between $r_p = 0.1-50 \, \hMpc$.
+We use the software package \texttt{corrfunc} \citep{SinhaGarrison2019, Sinha2020} to compute this observable.
+
+\subsection{The two-point correlation function multipoles, \texorpdfstring{$\cfm$ and $\cfq$}{xi0(s) and xi2(s)}} 
+\label{sec:cfs}
+
+We also measure the multipoles of the redshift-space correlation, now defining the coordinates $s = |\bm{\mathrm{s}}|$ and $\mu = r_\mathrm{p}/s$:
+\begin{equation}
+\xi_{\ell}(s) = \frac{2\ell+1}{2}\int_{-1}^{1} L_{\ell}(\mu) \, \xi_\mathrm{Z}(s, \mu) \, d\mu ~,
+\end{equation}
+where $L_{\ell}$ is the Legendre polynomial of order $\ell$ (and $\ell$ indexes the multipole).
+Most of the information is contained in the few lowest-order multipoles, so for this analysis we use only the monopole $\cfm$ and the quadrupole $\cfq$.
+We use the \cite{LandySzalay1993} estimator as in the previous section to measure the correlation functions in practice.
+
+For $\cfm$ and $\cfq$, we use the same 9 bins as we did for $\wprp$, between $s = 0.1-50 \, \hMpc$, and we use 15 $\mu$ bins.
+We use \texttt{corrfunc} \citep{SinhaGarrison2019, Sinha2020} and \texttt{halotools} \citep{Hearin2017} to compute these statistics.
+
+
+\subsection{The underdensity probability function, \texorpdfstring{$\upf$}{P(s)}}
+\label{sec:upf}
+
+The first beyond-standard statistic we use in our analysis is the underdensity probability function, $\upf$ (e.g. \citealt{HoyleVogeley2004}).
+$\upf$ is defined as the fraction of randomly placed spheres that are underdense compared to some threshold density.
+This is a more robust metric to measure than the void probability function, which uses a threshold of zero and is more sensitive to issues such as the angular selection function, shot noise, and fiber collisions.
+We can write $\upf$ as
+\begin{equation}
+	\upf = \frac{1}{N} \sum_i^N \mathbb{1}(n_i(s) < n_\mathrm{thresh}) ~,
+\end{equation}
+where $i$ indexes the $N$ spheres, $n_i(s)$ is the number density of galaxies in sphere $i$ with radius $s$, $\mathbb{1}()$ is an indicator function that is 1 if its argument is true and 0 otherwise, and $n_\mathrm{thresh}$ is the threshold number density. 
+We choose $N=10^6$ and $n_\mathrm{thresh} = 0.2 \bar{n}$, where $\bar{n}$ is the mean number density of the mock; this is the same value chosen by \cite{HoyleVogeley2004}, which is slightly denser than the mean underdensity of large voids in the 2dF Galaxy Redshift Survey \citep{Colless2003}.
+
+The $\upf$ does not vary significantly at small scales across different cosmology and HOD models (see the sample variance at small scales in Figure~\ref{fig:emu_accuracy}), so these scales are not as useful for parameter inference.
+Thus we use nine linearly spaced radii between $s = 5-45 \, \hMpc$.
+To compute the statistic, we modify a standard $k$-d tree code\footnote{\url{https://github.com/jtsiomb/kdtree}} to work on a periodic box.\footnote{\url{https://github.com/kstoreyf/clust}} 
+
+\subsection{The marked correlation function, \texorpdfstring{$\mcf$}{M(s}}
+\label{sec:mcf}
+
+The other beyond-standard statistic we investigate is the marked correlation function, $\mcf$ \citep{Sheth2004}.
+$\mcf$ is a generalization of the two-point correlation function with each galaxy weighted by some mark $m$.
+It is defined as 
+\begin{equation}
+	\mcf = \frac{1}{N_\mathrm{p}(s) \bar{m}^2} \sum_{ij} m_i m_j ~,  
+\end{equation}
+where the sum is over all pairs with separation $s = s_{ij}$, $N_\mathrm{p}$ is the number of galaxy pairs at $s$, and $\bar{m}$ is the mean of the marks.
+Following \cite{WhitePadmanabhan2009}, we choose the marks to be a function of the galaxy number density $\rho_i$ around  galaxy $i$, computed within a sphere of radius $10 \, \hMpc$.
+Specifically, we use a mark of $m_i = [\rho_* + \bar{\rho}/(\rho_* + \rho_i)]^n$, where $\bar{\rho}$ is the mean density, following \cite{White2016} and \cite{Satpathy2019}. 
+This mark tends to unity for $\rho \sim \bar{\rho}$, is less than unity for $\rho > \bar{\rho}$ and greater than unity for $\rho < \bar{\rho}$, serving to upweight underdense regions and downweight overdense regions.
+The parameters $\rho_*$ and $n$ control the sharpness of the transition.
+We test a grid of  $\rho_*$ and $n$ values and choose the values that balance two criteria.
+We first select three unique cosmology+HOD models that have a a minimal distance between their measured $\wprp$ values.
+We then measure $\mcf$ for these catalogs on a grid of varying $\rho_*$ and $n$ values, and see which values maximize the distance between their $\mcf$ values, compared to the variance of the entire test set.
+The idea is that we want $\mcf$ to discriminate between models that are indistinguishable with just $\wprp$.
+We also want to maximize the variance of the $\mcf$ values overall, so that the predictions can be better distinguished.
+These criteria prefer different directions along the $\rho_*$ and $n$ axes, and we choose the values that optimally balance both of them: $n=1$ and $\rho_*=8 \: \bar{\rho}$.
+
+We measure $\mcf$ with the same binning we did $\wprp$, $\cfm$, and $\cfq$, from $s = 0.1-50 \, \hMpc$.
+We compute the marks using our modified kd-tree code, and use \texttt{corrfunc} \citep{SinhaGarrison2019, Sinha2020} to compute the $\mcf$.
+
+
+\section{Methods}
+\label{sec:methods}
+
+To perform our analysis, we first construct a Gaussian process emulator for each observable, as explained in \S\ref{sec:gp}.
+Our inference will require the covariances between the observables and bins; we describe this computation in \S\ref{sec:cov}.
+We finally perform the inference using our emulator in combination with Markov Chain Monte Carlo, discussed in \S\ref{sec:inference}.
+
+\subsection{Gaussian process emulation}
+\label{sec:gp}
+
+We use a Gaussian process to emulate the function relating the input cosmological, HOD, and assembly bias parameters to the observables.
+A Gaussian process is a collection of random variables for which any finite sample is Gaussian distributed.
+It can be described as a multivariate normal distribution generalized to infinite dimensions.
+Here we follow the notation of \cite{RasmussenWilliams2006}; a full discussion of GPs can be found in that text.
+
+Given a training set with $N_\mathrm{train}$ inputs, each with $N_\mathrm{param}$ features $\bm{x}$ and a scalar output $y$, we can construct a design matrix $X$ of shape ($N_\mathrm{param}$, $N_\mathrm{train}$) and a target vector $y$ of length $N_\mathrm{train}$.
+We also have a test set with $N_\mathrm{test}$ inputs $\bm{x}_*$ from which we can similarly construct a design matrix $X_*$, and a target vector $y_*$.
+We assume that these observations can be described by a function $f$, such that $y = f(\bm{x}) + \epsilon$, where $\epsilon$ is a noise model given by $\epsilon \sim \mathcal{N}(0, \sigma_n^2)$.
+
+The Gaussian process is a function $f(\bm{x})$ relating the input parameters to the output targets.
+We take it to have zero mean without loss of generality, and a covariance of $k(\bm{x}, \bm{x'})$, described by a kernel function $k$. 
+Extending this to our full design matrices for the training set and including the noise model, the covariance on the targets becomes $\mathrm{cov}(\bm{y}) = K(X,X) + \sigma_n^2\,I$.
+We can define the joint distribution of the training target values $\bm{y}$ and the function evaluated at the test inputs $\bm{f}_*$ as
+\begin{equation}
+    \begin{bmatrix}
+    \bm{y}\\
+    \bm{f}_*
+    \end{bmatrix}
+    \sim \mathcal{N}\left( \bm{0}, 
+    \begin{bmatrix}
+    K(X,X) + \sigma_n^2\,I & K(X,X_*)\\
+    K(X_*,X) & K(X_*,X_*)
+    \end{bmatrix}
+    \right) ~,
+\end{equation}
+where $K(X,X_*)$ is the covariance matrix of the training and test set inputs, and the other covariances are defined similarly.
+
+Then we can define the predictive function $\bm{f}_*$  as
+\begin{equation}
+\label{eq:gp_pred}
+    \bm{f}_* | X, \bm{y}, X_* \sim \mathcal{N}\left( \bar{\bm{f}}_*, \mathrm{cov}(\bm{f}) \right)
+\end{equation}
+where the mean $\bar{\bm{f}}_*$ is defined as
+\begin{equation}
+    \bar{\bm{f}}_* = K(X_*, X) [K(X,X) + \sigma_n^2\,I]\inv \, \bm{y} 
+\end{equation}
+and the covariance  $\mathrm{cov}(\bm{f}_*)$ as
+\begin{multline}
+    \mathrm{cov}(\bm{f}) = K(X_*, X_*) \\ 
+    - K(X_*, X)[K(X,X) + \sigma_n^2\,I]\inv K(X,X_*) ~.
+\end{multline}
+
+Next, we must choose our kernel function, which describes the expected properties of the function we are trying to learn.
+We assume the kernel to have only a dependence on the distance between the inputs in parameter space, $r = |\bm{x} - \bm{x'}|$. 
+We test common kernels and combinations, and choose the one that performs the best on our test set:
+\begin{equation}
+    k(r) = k_\mathrm{exp}(r)\,k_\mathrm{const}(r) + k_\mathrm{M3/2}(r)
+\end{equation}
+where $k_\mathrm{exp}(r)$ is the exponential squared kernel,
+\begin{equation}
+    k_\mathrm{exp}(r) = \mathrm{exp}\left( -\frac{r^2}{2l^2} \right) ~,
+\end{equation}
+$k_\mathrm{const}$ is a constant kernel,
+\begin{equation}
+    k_\mathrm{const}(r) = c ~,
+\end{equation}
+and $k_\mathrm{M3/2}$ is a special case of the general Mat\'ern kernel with $\nu=\frac{3}{2}$,
+\begin{equation}
+    k_\mathrm{M3/2}(r) = \left( 1 + \frac{\sqrt{3}r}{l} \right) \mathrm{exp}  \left( -\frac{\sqrt{3}r}{l} \right) ~,
+\end{equation}
+where $l$ is a characteristic length scale, and $c$ is a constant.
+
+We train the GP on our set of training catalogs to find the kernel hyperparameters that maximize the log marginal likelihood,
+\begin{multline}
+    \mathrm{log}\,p(\bm{y}|X) = -\frac{1}{2} \bm{y}\T (K + \sigma_n^2\,I)\inv\bm{y} \\
+    - \frac{1}{2} \, \mathrm{log}|K + \sigma_n^2\,I| - \frac{n}{2} \, \mathrm{log}2\pi ~.
+\end{multline} 
+We can then use these hyperparameters to evaluate the kernels in Equation~\eqref{eq:gp_pred}, and use it to predict the target value for our test set inputs.
+
+We train a separate GP model for each bin of each observable.
+To perform the Gaussian process computations, we use the \texttt{george} code \citep{Ambikasaran2016}, which is optimized for large data sets.
+
+
+\subsection{Covariance matrix construction}
+\label{sec:cov}
+
+\begin{figure*}%[htp!]
+\centering
+\subfloat[\label{fig:cov_aemulus}]{\includegraphics[width=0.33\textwidth]{corr_aemulus}}
+\subfloat[\label{fig:cov_emuperf}] {\includegraphics[width=0.33\textwidth]{corr_emuperf}}
+\subfloat[\label{fig:cov_smooth_emuperf}]{\includegraphics[width=0.33\textwidth]{corr_smoothgauss_emuperf}}
+\caption{Correlation matrices for visualizing the covariance matrices used in the analysis, for all five observables. The panels show correlation matrices constructed from (a) the \aemulus sample covariance $\cov{aemulus}$, (b) the emulator performance covariance $\cov{perf}$, and (c) the performance covariance with a Gaussian smoothing $\cov{perf,smooth}$. The color bar shows the correlation quantity $C_{ij}/\sqrt{C_{ii}C_{jj}}$, where $C_{ij}$ are elements of the correlation matrix.}
+\label{fig:covs}
+\end{figure*}
+
+To perform inference using our emulator, we require a covariance matrix describing the correlations between the observables, as well as between the bins of a single observable.
+This covariance includes both the uncertainties introduced by the emulator, contained in $\cov{emu}$, and the sample variance of the data on which we are performing parameter recovery, $\cov{data}$.
+We combine these into the total covariance $\covtot$ that we will use in our likelihood function (see \S\ref{sec:inference}),
+\begin{equation}
+    \covtot = \cov{emu} + \cov{data}.
+\end{equation}
+
+We define the overall emulator performance covariance $\cov{perf}$ as the combination of both the intrinsic emulator prediction error ($\cov{emu}$) and the covariance of the data on which the emulator is tested, $\cov{test}$, so to obtain $\cov{emu}$ we must subtract off $\cov{test}$:
+\begin{equation}
+     \cov{emu} = \cov{perf} - \cov{test}.
+\end{equation}
+We obtain $\cov{perf}$ by computing the covariance of the fractional error between the emulator predictions and the measurements on the data (and then smoothing this matrix to handle noise from our limited number of simulations, as described below).
+The performance covariance on our test set with $N_\mathrm{test}=3500$ observations indexed by $n$ is then:
+\begin{eqnarray}
+    \label{eq:frac_pred}
+    \cov{perf} &=& \frac{1}{N_\mathrm{test}-1} \sum_n^{N_\mathrm{test}} \bm{f}_n \cdot \bm{f}_n\T ~, \\
+    \bm{f}_n &=& \frac{ \bm{y}_{n,\mathrm{pred}} - \bm{y}_{n,\mathrm{test}} }{ \bm{y}_{n,\mathrm{test}} },
+\end{eqnarray}
+where $\bm{y}$ is a vector of the measured observables (which can be a concatenation of multiple observable vectors).
+Note that we know the expectation value of these fractional errors should be zero, so we assume $\bar{\bm{f}}_{n}=0$ when computing the covariance.
+The computed $\cov{perf}$ is visualized in Figure~\ref{fig:cov_emuperf}, for all 5 observables.
+
+We compute $\cov{test}$ using the \aemulus test set, which has $N_\mathrm{cosmos}=7$ different cosmologies $c$, and $N_\mathrm{box}=5$ boxes (realizations) $b$ for each cosmology. 
+These are each populated with $H=100$ HOD models $h$. 
+We utilize the fact that we have multiple boxes per cosmology to estimate the sample variance.
+We choose a single HOD model in the middle of the parameter space, and for each cosmology populated with this HOD, we compute the mean value of the observable $\bar{\bm{y}}_{c}$ of the $N_\mathrm{box}$ boxes,
+\begin{equation}
+    \bar{\bm{y}}_{c} = \frac{1}{N_\mathrm{box}} \sum_b^{N_\mathrm{box}} {\bm{y}_{b,c}} .
+\end{equation}
+We compute the fractional deviation from this mean $\bm{d}_{b,c}$ for each of box of a given cosmology,
+\begin{equation}
+    \bm{d}_{b,c} = \frac{ {\bm{y}_{b,c} - \bar{\bm{y}}_{c}} } {\bar{\bm{y}}_{c}} .
+\end{equation}
+We finally compute the covariance of these deviations from the mean,
+\begin{equation}
+    \cov{aemulus} = \frac{1}{N_\mathrm{box}N_\mathrm{cosmos}-1} \sum_{b}^{N_\mathrm{box}} \sum_{c}^C \bm{d}_{b,c} \cdot \bm{d}_{b,c}\T ~.
+\end{equation}
+The computed $\cov{aemulus}$ is shown in Figure~\ref{fig:cov_aemulus}.
+
+When we compute Equation~\eqref{eq:frac_pred} used in $\cov{perf}$, the observable values $\bm{y}_{n,\mathrm{test}}$ we use are the mean observable over the $N_\mathrm{box}$ test boxes for each cosmology.
+This essentially increases the volume of the test set by a factor of $N_\mathrm{box}$, and uncertainty scales inverse proportionally to volume \citep{KlypinPrada2018}.
+Thus in order to combine $\cov{perf}$ and $\cov{test}$, we need to scale the latter to match the effective volume of the former,
+\begin{equation}
+    \cov{test} = \frac{1}{N_\mathrm{box}} \, \cov{aemulus} .
+\end{equation}
+
+We can now use $\cov{test}$ to construct $\cov{emu}$, and combine it with $\cov{data}$ to obtain the total covariance.
+For our tests, we are performing parameter recovery on the \aemulus\ test simulations themselves, so we have $\cov{data} = \cov{test}$, and we get simply $\covtot = \cov{perf}$.
+In future applications to real data, we will need to include both $\cov{data}$ and $\cov{test}$ in the covariance matrix construction.
+
+We do use the \aemulus covariance $\cov{test}$ as input to the Gaussian process emulator.
+The GP requires an estimation of the uncertainty on the training set.
+As the training and test sets are from the same simulation suite, but the test set contains multiple realizations of the same cosmology, we use the test set to estimate the training set uncertainty.
+We use the diagonal elements of $\cov{test}$ as the variances $\sigma_n^2$ in Equation~\eqref{eq:gp_pred}.
+
+We perform a smoothing on the total covariance matrix, here $\cov{perf}$, to avoid inference issues due to the initially noisy matrix.
+Our procedure follows that of \cite{Lange2022}, and has been shown by \cite{Mandelbaum2013} to give essentially the same results as applying the Hartlap correction to unbias the inverse covariance matrix \citep{Hartlap2007}.
+We first compute the correlation matrices, with elements given by $C_{ij}/\sqrt{C_{ii}C_{jj}}$, where $C_{ij}$ are the elements of the covariance matrix.
+The diagonal elements of the correlation matrix must be equal to 1, as each element is perfectly correlated with itself, and the surrounding elements are typically much smaller, so we start by replacing the diagonal elements with the mean of its four neighbors.
+We then apply a basic Gaussian kernel with width one, to smooth the matrix.
+Finally we replace back the diagonal elements.
+The smoothed total covariance matrix, $\cov{perf,smooth}$, is shown in Figure~\ref{fig:cov_smooth_emuperf}.
+A comparison between using the smoothed and original covariance matrices for parameter inference is shown in Appendix~\ref{appendix:cov}.
+
+
+\subsection{Inference with Emulator+MCMC}
+\label{sec:inference}
+
+We use Markov Chain Monte Carlo (MCMC) to infer the parameters of the mock catalog given the measured statistics, using the trained Gaussian process emulator to predict the statistic at each set of parameters.
+For the MCMC process, we use the package \texttt{dynesty} \citep{Speagle2020}, which implements dynamic nested sampling.
+Nested sampling is a method for both obtaining posterior values from a likelihood function and estimating the Bayesian evidence \citep{Skilling2006}; dynamic nested sampling improves upon this by varying the number of live points used in the computation \citep{Higson2019}.
+While we don't directly make use of the evidence in this work, dynamic nested sampling is faster and more robust than other standard MCMC approaches.
+
+For the HOD and assembly bias parameters, as well as $\gf$, we use a uniform prior with a range given in Table 3 of \cite{Zhai2022}, with an additional constraint on $\msat$ to be above $10^{11.5} \: M_\odot$.
+For the cosmological parameters, we use a multi-dimensional Gaussian prior defined by the mean and covariance of the cosmology training set parameter space (see Figure 3 in \cite{DeRose2018}).
+We also try a flat prior and a high-dimensional ellipsoid, and find no change in the results; we choose to use the multi-dimensional Gaussian to improve stability and speed of the MCMC runs.
+
+We use a likelihood $\like$ of
+\begin{equation}
+    \mathrm{ln} \, \like = -\frac{1}{2} \bigg( \frac{\bm{y}_\mathrm{pred} - \bm{y}_\mathrm{test}}{\bm{y}_\mathrm{test}} \bigg)\T \covtot\inv \bigg( \frac{\bm{y}_\mathrm{pred} - \bm{y}_\mathrm{test}}{\bm{y}_\mathrm{test}} \bigg)
+\end{equation}
+where $\covtot$ is the covariance matrix described in \S\ref{sec:cov}, and $\bm{y}$ is a vector containing the concatenated observables.
+Here $\bm{y}_\mathrm{test}$ is the statistics measured directly on the test set mock catalog on which we are performing parameter recovery, averaged over the $N_\mathrm{box} = 5$ boxes per cosmology and HOD model, and $\bm{y}_\mathrm{pred}$ is the emulator prediction for the observables at the given point in parameter space. 
+
+
+\section{Results}
+\label{sec:results}
+
+We present the results of our emulation and inference on the \aemulus test suite.
+We show the emulator performance (\S\ref{sec:emuperf}), the results of recovery tests on a single test model (\S\ref{sec:recovery_single}) and a larger test sample (\S\ref{sec:recovery_statistical}), and an analysis of the scale dependence of our results (\S\ref{sec:scaledep}).
+
+\subsection{Emulator performance}
+\label{sec:emuperf}
+
+\begin{figure*}[htp!]
+\centering
+\includegraphics[width=0.9\textwidth]{emu_accuracy}
+\caption{The accuracy of our Gaussian process emulator predictions for the projected correlation function $w_{\rm p}(r_{\rm p})$, monopole and quadrupole of the two-point correlation function $\xi_o(s)$ and $\xi_2(s)$, underdensity probability function $P_U(s)$, and marked correlation function $M(s)$. Top panels show the  measured statistics (circles), averaged over $N_\mathrm{box}$ test boxes for each model, and the corresponding emulator predictions (lines) for each cosmology+HOD model. The colors denote different cosmologies. The middle panels show the fractional error of each of the predictions. The bottom panels show the inner 68\% region of the fractional errors (black line), compared to the sample variance of the simulations (light blue). The sample variance scaled by $\sqrt{N_\mathrm{box}}$ adjusts for the effective increase in volume of comparing emulator predictions to the mean of $N_\mathrm{box}$ measurements.}
+\label{fig:emu_accuracy}
+\end{figure*}
+
+The performance of the emulators is shown in Figure~\ref{fig:emu_accuracy}, for each of the observables for all 700 test models.
+For each test cosmology, we compute the statistic for each of the $N_\mathrm{box}=5$ realizations, and take the measured statistic to be the mean of these.
+We compute the fractional error between the predicted and measured statistic, and define the error as the symmetrized inner 68\% error.
+We compare this error to the sample variance, the square root of the diagonal of $\cov{aemulus}$ for the given observable, as well as this uncertainty scaled by $\sqrt{N_\mathrm{box}}$.
+This scaled uncertainty takes into account the increased precision provided by comparing to the mean over multiple boxes; the covariance matrix scales as the inverse volume, as explained in \S\ref{sec:cov}, and averaging over multiple boxes effectively increases the volume, so we obtain this factor of $\sqrt{N_\mathrm{box}}$ (the result is equivalent to taking the square root of the diagonal of $\cov{test}$).
+
+Our emulators achieve very good accuracy across most observables and scales.
+For $\wprp$, we obtain $\simo2\%$ error on scales up to 10 $\hMpc$, and $2$--$5\%$ error up to 50 $\hMpc$.
+For $\cfm$, we achieve $\simo2\%$ error on scales between $1$--$10 \, \hMpc$, and up to $5\%$ outside that range.
+$\cfq$ has the lowest performance due to high noise levels, with $\simo5\%$ error from $1$--$5 \, \hMpc$ and $10$--$20\%$ error at other scales.
+For $\upf$, we see extremely small errors of $<0.5\%$ below $20 \, \hMpc$ scales, due to the low variation of the statistic there; up to $35 \, \hMpc$, we still achieve $\simo5\%$ error.
+Finally for $\mcf$, we achieve $1$--$2.5\%$ error on scales up to 10 $\hMpc$, and $<1\%$ error at larger scales.
+
+At most scales, we see that our emulator error is comparable to the raw sample variance of the \aemulus simulations.
+Comparing to the sample variance adjusted for the effective volume, we see that the emulator prediction error is somewhat greater than this quantity; this is expected, as the emulation performance error includes both the sample variance and the emulator prediction error.
+
+
+\subsection{Parameter inference recovery tests on single mock}
+\label{sec:recovery_single}
+
+We apply our approach with our GP emulator and MCMC to obtain the posterior distributions of the 18 parameters for a given cosmology+HOD model.
+As we have 5 realizations of each test cosmology, we populate all of these with the same HOD and measure the desired statistics on each of them, and then take the mean of these to obtain the measured statistic. 
+These are the values that we compare to the emulator prediction at each step of the MCMC chain.
+The \aemulus test volume summed over the 5 boxes is $N_\mathrm{box} \times \, (1.05 \hGpc)^3 = 5.79 \, (\hGpc)^3$.
+This is significantly larger than the volume of the highest-redshift shell used in \aemulus V: $1.63 \, (\hGpc)^3$, based on the redshift range $0.48 < z < 0.62$ and the CMASS+LOWZ area of 8447 deg$^2$.
+For that analysis, the CMASS data was subsampled to a number density of $2 \times 10^{-4} (\hMpc)^{-3}$, the same as used here, and thus we can make a direct comparison of the volumes. 
+The larger volume of the \aemulus test boxes by a factor of a few suggests that these are a meaningful test of the precision we will achieve when we apply the approach to data.
+
+\begin{figure*}%[htp!]
+\centering
+\subfloat[\label{fig:contour_single_cosmo}]{\includegraphics[width=0.4\textwidth]{contour_single_cosmo}}
+\hspace{0.07\textwidth}
+\subfloat[\label{fig:contour_single_hodab}] {\includegraphics[width=0.4\textwidth]{contour_single_hodab}}
+\caption{Recovery tests for a single cosmology+HOD model, using a single observable for each MCMC chain. Contours are shown for (a) key cosmological parameters and (b) key HOD and assembly bias parameters.}
+\label{fig:contours_single}
+\end{figure*}
+
+We start by performing the inference based on each of the five observables alone. 
+In Figure~\ref{fig:contours_single}, we show the results on a single cosmology+HOD model; Figure~\ref{fig:contour_single_cosmo} shows key cosmological parameters, and Figure~\ref{fig:contour_single_hodab} shows key HOD and assembly bias parameters.
+We have chosen the latter set of parameters as they are particularly degenerate with cosmological parameters.
+We see that the different observables have varying effectiveness at constraining the parameters. 
+For instance, $\wprp$ and $\mcf$ provide strong constraints on their own on the cosmological parameters, while $\cfq$ and $\upf$ constrain them more weakly, in particular in the case of $\gamma_f$. 
+For the HOD and assembly bias parameters, $\wprp$ provides a slightly tighter constraint on $\msat$ than the other observables, $\cfm$ constrains $\vbs$ well on own, and $\cfq$ provides little constraining power on $\fenv$; otherwise, all the observables constrain these parameters to a similar precision.
+Note that this is just a single test model, but is somewhat representative of overall trends.
+
+\begin{figure*}
+\centering
+\subfloat[\label{fig:contour_addin_cosmo}]{\includegraphics[width=0.4\textwidth]{contour_addin_cosmo}}
+\hspace{0.07\textwidth}
+\subfloat[\label{fig:contour_addin_hodab}] {\includegraphics[width=0.4\textwidth]{contour_addin_hodab}}
+\caption{Recovery tests for a single cosmology+HOD model, successively adding in the observables. Contours are shown for (a) key cosmological parameters and (b) key HOD and assembly bias parameters.}
+\label{fig:contours_addin}
+\end{figure*}
+
+Next, we explore the constraining power of combining the observables when running the MCMC chains.
+We start with just $\wprp$, and then one at a time add in $\cfm$, $\cfq$, $\upf$, and $\mcf$.
+The results are shown in in Figure~\ref{fig:contours_addin} for the same model and parameters as Figure~\ref{fig:contours_single}.
+As additional observables are added, we obtain tighter and tighter constraints on the parameters.
+In particular, we can compare the constraints with the three standard observables to those when including the two beyond-standard statistics.
+For the parameters $\sigma_8$, $M_\mathrm{sat}$, $\fenv$, and $\delta_\mathrm{env}$, we see a sharp increase in precision and accuracy when including these new statistics. 
+The other parameters show a smaller but still significant increase.
+This is promising for the power of the beyond-standard statistics to add additional cosmological information beyond that provided by typical statistics.
+
+\begin{figure*}%[htp!]
+\centering
+\subfloat[\label{fig:recovery_single}]{\includegraphics[width=0.465\textwidth]{recovery_single}}
+\hspace{0.04\textwidth}
+\subfloat[\label{fig:recovery_addin}] {\includegraphics[width=0.48\textwidth]{recovery_addin}}
+\caption{The precision of recovery tests for key parameters, averaged over the 70 test models. The quantity 1/$\sigma$ is the inverse uncertainty on the posterior marginalized over the other parameters, with $\sigma$ defined as the symmetrized inner 68\% region. The precision using only the prior is shown by the grey dashed line. Black bars shown the uncertainty on  1/$\sigma$ using bootstrap estimation. Panel (a) shows the precision for tests with single observables, and panel (b) for successively adding in each observable.}
+\label{fig:recovery}
+\end{figure*}
+
+\subsection{Statistical results of recovery tests}
+\label{sec:recovery_statistical}
+
+We perform this MCMC inference for all 70 of our recovery test models (7 cosmologies populated with 10 unique HODs each, averaged over the 5 realizations).
+For each parameter, we compute the uncertainty $\sigma$ on the posterior, defined as the symmetrized inner 68\% confidence region, marginalized over the other parameters.
+In Figure~\ref{fig:recovery_single}, we show the inverse uncertainty $1/\sigma$ for each of the key cosmological parameters, including the combined quantity $\gfs$, averaged over all 70 test models, when using each of the statistics alone for the inference.
+Note that larger bars indicate tighter constraints.
+We compare this to the uncertainty obtained when just using the prior.
+We see that all of the statistics on their own provide additional constraining power over the prior, for all parameters: $\wprp$ provides the most information for $\om$, $\sig$, and $\gf$, and $\cfm$ constrains $\gfs$ the most strongly.
+The amount of information from $\wprp$ is significantly higher than found by other analyses (e.g. \citealt{Lange2022}); we find that this is largely due to our choice to integrate out to only $40\,\hMpc$ along the line of sight, which preserves information in RSDs.
+We test integrating out to $80\,\hMpc$ and find much less information content in $\wprp$ alone, though it still contains some.
+For the beyond-standard statistics, it is noteworthy that $\upf$ and $\mcf$ do provide information on their own, particularly $\upf$ for $\om$ and $\mcf$ for $\gf$. 
+
+We next perform recovery tests adding in each observable one at a time for the full test suite.
+We show the results in Figure~\ref{fig:recovery_addin}, again for the mean of 70 test models.
+We see that the inverse uncertainty monotonically increases as we add in additional observables.
+Our main result is that the constraining power increases significantly between using only the combined standard observables, $\wprp$+$\cfm$+$\cfq$ (purple), and when adding in the beyond-standard statistics as well, $\wprp$+$\cfm$+$\cfq$+$\upf$+$\mcf$ (dark red).
+The change in precision for these two cases tells us the amount of additional information contained in these new statistics: 
+The precision increases (defined as the fractional decrease in the uncertainty $\sigma$) by 28\% for $\om$, 33\% for $\sig$, 20\% for $\gf$, and 18\% for the combined growth of structure parameter $\gfs$.
+These are significant increases given the current precision of cosmological measurements.
+
+\begin{figure*}%[htp!]
+\centering
+\subfloat[\label{fig:cdf_single}]{\includegraphics[width=0.46\textwidth]{cdf_single}}
+\hspace{0.06\textwidth}
+\subfloat[\label{fig:cdf_addin_wpmaxscale6}] {\includegraphics[width=0.46\textwidth]{cdf_addin_wpmaxscale6}}
+\caption{Cumulative distribution functions (CDFs) of the differences between the true parameter value and the median of MCMC chain samples, divided by the uncertainty $\sigma$. Panel (a) shows CDFs for each of the observables on their own, and panel (b) adding in the observables successively; panel (b) excludes the two largest-scale $\wprp$ bins from all combinations, due to a bias discussed in the text. The dashed line shows the CDF of a unit normal distribution for comparison.}
+\label{fig:cdf}
+\end{figure*}
+
+We assess the accuracy of the recovered parameters by computing the cumulative distribution function (CDF) of the error on the inferred parameter (difference between the median and truth), normalized by the uncertainty, for the 70 recovery test models.
+Figure~\ref{fig:cdf_single} shows this CDF for each of the observables used for inference on their own.
+We find that for most of the parameters of interest, the CDF follows a unit normal distribution, which is an indication that the recovery is unbiased.
+(We note that the CDF is not an ideal statistic to measure bias, as the function values are dependent on all previous values, but a histogram with only 70 samples is too noisy to make statements about accuracy.)
+The exception is $\om$ when using $\wprp$; we find that the distribution is biased by $\simo0.5\sigma$ to lower values of $\om$.
+This is small but surprising, as it is such a standard statistic.
+
+We investigate this issue by excluding successively larger scales of $\wprp$ from our analysis, as large-scale clustering should be the most affected by $\om$.
+We find removing the two largest-scale bins, above 12.5 $\hMpc$ (with logarithmic averages of 17.7 and 35.4 $\hMpc$) results in an unbiased CDF of recovered $\om$ values.
+To see if the issue could be due to small-number statistics, we run a larger set of recovery tests with $\wprp$ as the sole observable (including all bins), using the full 700-model test suite (each of the 7 cosmologies populated with the same 100 HOD models).
+We compute the CDF of these 700 results and see that the same bias towards low $\om$ values persists.
+With this larger sample, the histogram is less noisy, and the bias is small but clearly visible in the histogram as well.
+One possibility is that there are degeneracies with other cosmological or HOD parameters that contribute to $\wprp$ favoring lower $\om$ values, but this is difficult to disentangle.
+
+We check the effect of this bias on the precision of the recovered parameters by rerunning our recovery tests excluding the two largest-scale bins from $\wprp$ (but including these bins for the other observables that use them).
+We find that when excluding these scales, the precision we obtain on $\om$ using only $\wprp$ decreases by less than 5\% (averaged over 70 test models); this is similar when using the three standard statistics, as well as when including all five statistics.
+For the quantity $\gfs$, removing these two bins does significantly decrease the precision by $\simo40$\% when using only $\wprp$, but when including the other statistics in the inference, the change is only at the 3\% level.
+This corresponds to a change in our main result, the increased precision when including the beyond-standard statistics to $\gfs$, of only 3.3\%.
+These changes are quite small, and while it is curious that these two bins have significant power to affect the accuracy of the recovered $\om$ parameter yet not the precision, this small bias does not change our main result. 
+Finally, we note that there is also a very small bias towards high $\sig$ when using just $\wprp$, which does not change when removing the two largest-scale bins; however, it does mostly disappear using the larger 700-model test sample, so we are not greatly concerned with this result.
+
+We show the CDF when using combinations of successively more observables in Figure~\ref{fig:cdf_addin_wpmaxscale6}.
+Here we have excluded the two largest bins of $\wprp$ for all recovery tests.
+We note that when we do include all $\wprp$ bins, the recovery of $\om$ for all the combinations (which all contain $\wprp$) remains biased to the same level as seen with just $\wprp$.
+As this bias is small and contained, as explained above, we still include these large scales in the rest of our analysis.
+We find that these distributions are now generally unbiased for all of the cosmological parameters.
+A slight bias to high $\sig$ is visible, most significantly for $\wprp$ and less so the other combinations.
+Based on our analysis of the bias in $\om$ with $\wprp$, we expect that this even smaller bias will not change our final results, though future work should investigate this further.
+The CDFs for these combined-observable results generally follow the unit normal distribution.
+Both $\om$ and $\gfs$ show distributions slightly tighter than the normal distribution, indicating that we have overestimated our errors.
+This means that our errors may be conservative, but the difference is small and we do not expect this to have significant effects on our results.
+
+
+
+\subsection{Scale dependence}
+\label{sec:scaledep}
+
+\begin{figure*}
+\centering
+\includegraphics[width=0.9\textwidth]{scale_dependence}
+\caption{The precision of recovery tests as a function of the minimum scale used in the analysis, averaged over the 70 test models. The maximum scale remains fixed at the maximum bin value. The precision is shown for chains using a single observable, as well as for several multi-observable combinations. The vertical bars indicate the scale at which half of the constraining power for that observable is in larger scales and half in smaller scales. Note that $\upf$ is measured on different scales than the other observables, from $5-45 \, \hMpc$, so at a minimum scale below $5 \, \hMpc$ it results in an overall shift in precision.}
+\label{fig:scale_dependence}
+\end{figure*}
+
+We investigate the dependence of our parameter constraints on the scales used in the inference.
+To analyze the contribution of small scales, we vary the minimum scale bin used and re-run the MCMC chains, for each parameter individually as well as the five-observable combined constraint.
+The results are shown in Figure~\ref{fig:scale_dependence}, averaged over the 70 test models.
+We note that the $\upf$ uses a different binning scheme than the other observables, so it is only shown on the scales on which it is computed, $5-45 \, \hMpc$, and when it is included in combination with the other observables, it results in an overall shift in precision below $5 \, \hMpc$.
+For this reason, we add the $\upf$ and $\mcf$ in the opposite order as the rest of this paper.
+We also include using just the combination $\cfm + \cfq$, as many analyses do.
+Similarly, we run recovery tests varying the maximum scale.
+The $1/\sigma$ lines for the minimum and maximum scale variation will cross each other at a particular scale; this scale is marked by a vertical bar, and indicates the scale at which equal information is provided by scales smaller than and larger than this scale.
+Thus, a vertical bar far in the small scale regime means that most of the information comes from small scales (as only the smallest scales are needed on their own to equal the information content in all the larger scales), and conversely, a vertical bar at large scales means that most information comes from large scales. 
+
+As we include smaller scales, the precision increases monotonically.
+Using the vertical bars described above, we find that for $\gfs$ for the 4-observable constraint, scales from $0.1-4 \, \hMpc$ provide as much information as the scales $4-50 \, \hMpc$.
+We also find that significant amounts of information are added all the way down to the smallest bin with minimum scale $0.1 \, \hMpc$.
+This is a remarkable finding given that previous analyses either have not pushed to scales this small, or did not find as significant a contribution from small scales; we discuss this further in \S\ref{sec:discussion}.
+
+To understand this result, we look at the constraints from individual observables for $\gfs$.
+For $\cfq$, half of the information comes from scales below 2 $\hMpc$; for $\cfm$, below 3 $\hMpc$; for $\mcf$, below 6 $\hMpc$; and for $\wprp$, below $\simo10 \hMpc$ (for $\upf$, this is $\simo20 \hMpc$).
+Given that $\cfm$ contains much more information than $\cfq$, it seems that $\cfm$ is driving the large amount of information on $\gfs$ at small scales, perhaps with contributions from combinations of the other observables.
+We also look at the constraints on the individual key cosmological parameters $\om$, $\sig$, and $\gf$; for the five-observable constraint for each of these, half of the information comes from scales below $\simo 2-4 \, \hMpc$, indicating that small scales contribute to improved constraints on all of these parameters individually which in turn aids in constraining $\gfs$.
+We also see that the contribution from small scales is less significant for observable combinations containing only standard statistics. 
+For $\cfm + \cfq$, the precision nearly flattens out for scales below $\simo 1 \, \hMpc$ for all parameters.
+Including $\wprp$ does add some constraining power at small scales, particularly for $\gf$ and $\gfs$.
+Finally, adding in $\upf$ and $\mcf$ accesses a significant amount of additional information at smaller scales, particularly for $\om$ and $\sig$.
+
+Notably, the significant additional constraining power adding in $\wprp$ to $\cfm + \cfq$ is different than the findings of \cite{Lange2022}, who found that it only marginally improved constraints.
+Given that the effect of $\wprp$ is strongest for $\gf$ and $\gfs$ in our analysis, and \cite{Lange2022} do not include this velocity field rescaling parameter, it seems that the increase in constraining power we find is due to the sensitivity of $\wprp$ to velocity information.
+Indeed, we only integrate out to $\pi_\mathrm{max}=40\,\hMpc$, while \cite{Lange2022} uses a value of $\pi_\mathrm{max}=80\,\hMpc$.
+We perform a test using this larger value, and find as expected that in this case $\wprp$ does not add much more constraining power to either $\gf$ or $\gfs$.
+Thus we conclude that our choice of $\pi_\mathrm{max}$ preserves significant velocity information that allows $\wprp$ to constrain the growth of structure parameter through its dependence on the halo velocity field.
+
+
+\subsection{Recovery tests on Uchuu mocks}
+
+One important difference of our analysis compared to perturbation theory approaches is that the latter require a large number of nuisance parameters to model higher-order statistics such as the bispectrum (e.g. \citealt{philcox_cosmology_2022}).
+Instead, we use the HOD, which is a more compact parameterization that incorporates more physically and empirically motivated assumptions about galaxy formation than perturbation theory does.
+However, these assumptions have the potential to make our approach less flexible.
+We thus test our approach on a catalog constructed with a different galaxy formation prescription that breaks some of these assumptions, namely Subhalo Abundance Matching (SHAM, e.g. \citealt{vale_linking_2004, kravtsov_dark_2004, conroy_modeling_2006}).
+This is an important validation step before applying our emulators to real data.
+When we adapt our emulators for the full data analysis, we will perform additional tests in this vein to ensure that our framework encompasses the range of expected galaxy formation scenarios.
+
+For this test, we use mock catalogs generated from the Uchuu simulations \citep{ishiyama_uchuu_2021}, to additionally check that our framework generalizes beyond the \aemulus N-body simulations.
+The Uchuu simulation we use has a mass resolution of $3.27 \times 10^7 \, h^{-1} M_\odot$ and a volume of $(2 \, \hGpc)^3$, nearly a factor of 8 larger than the \aemulus boxes, so the clustering statistic measurements are very precise.
+To test that our approach is robust to our use of an HOD model with environment-dependent galaxy assembly bias, we instead populate the Uchuu simulations using the SHAM approach.
+SHAM assigns galaxies to subhalos based on a rank-ordered relation between galaxy mass and subhalo mass, with some additional parameters to regulate the scatter, and is able to reproduce galaxy assembly bias to some extent.
+We specifically use the SHAM method of \cite{lehmann_concentration_2016} to generate our Uchuu mocks.
+
+For this test, we require a data covariance matrix for the Uchuu mock data.
+As there is only one realization of the Uchuu simulation, we use the GLAM Particle-Mesh simulations \citep{KlypinPrada2018} for this purpose, which have many independent realizations; we use 986 boxes for our covariance estimate.
+These are all at the same cosmology; we consider the covariance of the fractional differences from the mean for each statistic.
+The GLAM boxes have a volume of $(1 \, \hGpc)^3$, so we rescale the covariance matrix for the Uchuu mock volume.
+We use the emulator covariance matrix $ \cov{emu}$ described in \S\ref{sec:cov}, and add this to the data covariance to obtain to the final covariance matrix we use in the likelihood function.
+
+We make a few tweaks to our emulation procedure for application to Uchuu.
+First, we found that the range of the HOD parameter $\msat$ used for the \aemulus mocks is not large enough to fit the Uchuu data.
+Thus, we extended the range of this parameter to $14.0 \leq \mathrm{log}(\msat) < 15.5$, generated a new set of mock catalogs from the \aemulus simulations, and reconstructed the emulators.
+(Two of these mocks resulted in unphysical values of clustering statistics; we discarded these from our training set.)
+We found that this did not change our emulator accuracy or recovery tests on \aemulus test simulations significantly. 
+Second, some of the clustering statistics of the Uchuu mock data do not lie in the center of the statistics of our training set, leading to difficulty in ensuring the emulators explore the relevant region of parameter space.
+To alleviate this, we chose the 2000 (out of 4000) training mock catalogs with clustering statistics closest to those of the Uchuu data, using a $\chi^2$ metric with the variance given by the diagonal of the GLAM covariance matrix used for the data covariance discussed above.
+We then reconstructed the emulators with just these mocks, and used these in MCMC chains to recover the Uchuu parameters.
+Finally, we faced the issue that the $\upf$ of the Uchuu data is on the edge of our training data set, as the training parameter space was chosen based only on standard summary statistics.
+Because of this, the MCMC is unable to find a reasonable fit when including the $\upf$.
+To address this, we inflate the error on the $\upf$ (the diagonals of that block of the covariance matrix) by a factor of two.
+When we apply the framework to real data, we will have to ensure that our training set appropriately spans the space of all of the observables used, but this is sufficient for this proof-of-concept check.
+
+\begin{figure*}
+\centering
+\includegraphics[width=0.6\textwidth]{uchuu_recovery}
+\caption{Recovery test on the Uchuu mock catalog. Constraints are shown for all the cosmological parameters and $\gf$ when using just the standard statistics (purple), and when including the $\upf$ and $\mcf$; the true parameter values are shown in the dashed grey lines. The parameters are recovered accurately, with the beyond-standard statistics adding increased precision on most of the parameters.}
+\label{fig:uchuu_recovery}
+\end{figure*}
+
+The results of our Uchuu recovery test are shown in Figure~\ref{fig:uchuu_recovery}, using just standard statistics and including the beyond-standard statistics.
+We find that in both cases, we can accurately recover the Uchuu cosmological parameters, with the additional statistics adding constraining power for most parameters.
+The final set of best-fit statistics using all five observables has a reduced $\chi^2$ of 1.16, and the cosmological parameters are recovered to within $0.5\sigma$, besides $N_\mathrm{eff}$ which is recovered to within $1\sigma$.
+We also recover $\gf$ accurately (significantly more accurately than when using just the standard statistics).
+The inclusion of the beyond-standard statistics results in an increase in precision of 34\% on $\sig$, similar to our findings with \aemulus recovery tests.
+The precision on $\gf$ increased by 25\%, and on $h$ by 18\%. 
+We note that the constraints on $\om$ and $\gfs$ get slightly worse when including $\upf$ and $\mcf$; this is likely related to the aforementioned issues with $\upf$, as tests with only the standard statistics and $\mcf$ show an improvement on $\om$ constraints (though the precision on $\gfs$ remains constant).
+These results are promising for the application of this framework to real data sets.
+
+When we apply the emulation approach to real data, we will ensure that the measured statistics fall well within the space of the statistics of the training models.
+This will address both of the issues we found when performing this test, and ensure that we are able to find a good fit to the data.
+
+
+\section{Discussion \& Conclusions}
+\label{sec:discussion}
+
+We have constructed Gaussian process emulators for galaxy clustering statistics using the \aemulus simulation suite, including the non-standard statistics the underdensity probability function $\upf$ and the marked correlation function $\mcf$, which we expect to contain additional information relevant to constraining cosmological parameters of interest.
+We achieve typical prediction errors of $\simo2\%$ with our emulator, depending on the scale and statistic, with a range of $<1\%-\simo10\%$.
+Using held-out test simulations, we perform recovery tests to determine how well we can constrain the input parameters.
+We find that including the beyond-standard statistics significantly increases the precision on the recovered parameters, by 33\% on 
+$\sig$, 28\% on $\om$, and 18\% on $\gfs$.
+We confirm that our framework is robust to different simulations and galaxy bias models by testing it on mock catalogs constructed from the Uchuu simulations and the SHAM method, on which we achieve unbiased constraints. 
+
+To follow this proof-of-concept work, we will apply these emulators to measure the growth of structure in a current galaxy sample (BOSS or DESI). 
+We expect that our combination of beyond-standard statistics with small-scale emulation will improve constraints; for instance, \cite{Satpathy2019a} used the marked correlation function to analyze the BOSS data and found that their results were limited by modeling RSD effects on small scales.
+This analysis will require a careful treatment of many issues and subtleties in real data. 
+We will have to handle redshift evolution, by working in redshift slices with emulators trained at the proper redshift.
+We will require a sample constant in number density, both to match our emulators and because void- density-based statistics are particularly sensitive to variations in number density.
+One of the main issues when applying to BOSS data will be fiber collisions, which lead to galaxies without measured redshifts, producing a nontrivial impact on clustering measurements especially at small scales (e.g. \citealt{Zehavi2002}).
+Additionally, we will have to handle survey geometry effects including edges and bad fields.
+The underdensity probability function and the local density-based marks used for the marked correlation will both be especially sensitive to these issues; we will apply fiber collision weights to the statistics and volume corrections to the spheres used for the density computations, and perform robust tests to ensure that we can recover unbiased parameters.
+
+The application of this work to the BOSS sample will extend the project of \aemulus V \citep{Zhai2022}.
+The \aemulus V analysis used $\wprp$, $\cfm$, and $\cfq$, the standard statistics discussed in this paper, and obtained tight constraints on the growth of structure parameter $\fsig$ in three redshift bins.
+The analysis obtained a low value of $\fsig$ compared to Planck constraints based on a $\Lambda$CDM+GR model, adding to a recent wave of similarly low results based on small-scale clustering \citep{Chapman2021, Lange2022, Yuan2022}.
+These studies are also based on standard clustering statistics; bringing in additional statistics and thus additional constraining power will allow for clearer tests of internal consistency between these analyses, as well as testing the demonstrated tension with Planck results.
+
+There are multiple effects that could be contributing to this $\fsig$ tension.
+One is additional baryonic effects that influence galaxy formation and are unmodeled in the HOD, introducing errors; while these are unlikely to be relevant at current precision, in future surveys they may become important.
+Future work will incorporate additional flexibility in the galaxy bias and assembly bias models to test this hypothesis, and this will in turn require increased constraining power from the data.
+The complementary information provided by non-standard statistics, as shown in this work, will be important in offsetting this flexibility to obtain high-precision constraints on $\fsig$ and help confirm or rule out this explanation for the $\fsig$ tension.
+Another potentially relevant effect is that of massive neutrinos, which suppress the growth of structure in a scale-dependent way.
+The next generation of the \aemulus simulations will incorporate massive neutrinos (The \aemulus Collaboration, in preparation), and the emulation of non-standard statistics will also be important in obtaining precise small-scale constraints from this updated model.
+
+The effects of galaxy assembly bias are not yet a concern given the current precision of our surveys, as shown in the \cite{Zhai2022} BOSS RSD analysis, but as both our data and constraining power of methods improve, this will become a key source of uncertainty.
+Previous works have found a small but significant dependence on halo environment (e.g. \citealt{Zehavi2018, Yuan2021}).
+The density-sensitive statistics we investigate here, namely the $\mcf$ with marks as the galaxy number density on $10 \, \hMpc$ scales and the $\upf$ which measures underdense regions across a large range of scales, target this environmental bias.
+The fact that incorporating these statistics improves our precision on recovering cosmological parameters suggests that galaxy occupation at fixed halo mass, and in turn galaxy clustering, does depend on the halo environment.
+This is particularly clear when comparing the information in the $\mcf$ to the monopole $\cfm$, as these are similar statistics but with the former including local density information. 
+We have shown that the density-sensitive statistics analyzed in this work are well-positioned to constrain environmental assembly bias and make precise cosmological parameter measurements.
+Other sources of assembly bias, such as halo formation time, concentration, and spin, could be analyzed with marked correlation functions based on these properties, or other similarly targeted statistics; these can be readily incorporated into our emulation framework.
+
+More broadly, this work confirms that additional clustering statistics can increase the constraining power in existing data with little added cost.
+This approach could be extended to include other statistics that depend on the goals of the analysis.
+These could include the three-point function (e.g. \citealt{TakadaJain2003, McBride2011}), the $k$NN-CDF \citep{Banerjee2021a}, and galaxy group statistics such as the group multiplicity function (e.g. \citealt{BerlindWeinberg2002}) and the group velocity dispersion.
+We will explore some of these in future work.
+
+One of the primary goals of the \aemulus project is to extract information from small-scale clustering, which is difficult to model theoretically and expensive to simulate fully.
+Here, we have shown that there is significant information at small scales for nearly all of the statistics we analyze.
+For the constraint on $\gfs$, we find that scales from $0.1 - 4 \, \hMpc$ contribute half of the information content, and that there is additional information all the way down to $0.1 \, \hMpc$
+This confirms a similar result by \cite{Zhai2019}, which uses $\wprp$, $\cfm$, and $\cfq$, and includes the halo velocity field scaling parameter $\gf$. 
+Some recent analyses have not found as much additional information at these small scales.
+\cite{Lange2022} concludes that for their low-redshift sample, which is closer in number density to the one analyzed here, scales between $1-2 \hMpc$ increase the constraining power on $\fsig$ by a small amount, and scales below $\simo1 \hMpc$ not at all.
+As discussed in \S\ref{sec:scaledep}, they do not incorporate a $\gf$ parameter to scale the velocity field, and they do not use $\wprp$ as we do.
+This model flexibility, which \cite{Zhai2019} also includes, combined with that statistic sensitive to velocity information, may allow us to extract additional information from small scales.
+The analysis by \cite{Lange2022} does include an assembly bias model using the decorated HOD framework \cite{Hearin2016}, but this is not as flexible as our three-parameter environmental assembly bias model.
+Our increased flexibility on this front may also contribute to the discrepancy, though future work should revisit these hypotheses.
+
+Finally, in this work we built emulators at fixed redshift and scale.
+To apply to different data sets, we will require predictions at various redshifts, for which suites of emulators can be constructed and trained at the needed redshifts; an extension of this work could construct emulators that are able to make predictions as a continuous function of redshift.
+In a similar vein, here we emulated the clustering statistics at fixed scale, with a different model trained for each bin. 
+In future work, we could train the model on all bins simultaneously to include the full covariance properties; even better, we could include scale as an input parameter and make predictions at any scale.
+
+
+\section*{}
+ 
+\textit{Software:} numpy \citep{VanDerWalt2011}, IPython \citep{Perez2007}, scipy \citep{Virtanen2020}, matplotlib \citep{Hunter2007}, corrfunc \citep{SinhaGarrison2019, Sinha2020}, halotools \citep{Hearin2017}, dynesty \citep{Speagle2020}, george \citep{Ambikasaran2016}, getdist \citep{Lewis2019}.
+Our emulator and related data products are publicly accessible at \url{https://github.com/kstoreyf/aemulator}.
+
+\section*{}
+
+K.S.F. thanks Sean McLaughlin, Johannes Lange, Sihan Yuan, David W. Hogg, and the Astronomical Data group at the Center for Computational Astrophysics for helpful discussions.
+This work received support from the U.S. Department of Energy under contract number DE-AC02-76SF00515 and from the Kavli Institute for Particle Astrophysics and Cosmology.
+K.S.F. is supported by the NASA FINESST program under award number 80NSSC20K1545.
+J.L.T. acknowledges support of NSF grant AST-2009291.
+J.D.~is supported by the Lawrence Berkeley National Laboratory Chamberlain Fellowship.
+This research made use of computational resources at SLAC National Accelerator Laboratory and the NYU Department of Physics; authors thank the SLAC computational team and Mulin Ding at NYU for computational support.
+This research used resources of the National Energy Research scientific Computing Center, a DOE Office of Science User Facility supported by the Office of Science of the U.S. Department of Energy under Contract No. DE-AC0205CH11231.
+
+
+
+\appendix
+
+\section{Full posterior plots}
+
+\begin{figure*}[p!]%[htpb]
+\centering
+\subfloat[\label{fig:contour_addin_allcosmo}]{\includegraphics[width=0.6\textwidth]{contour_addin_allcosmo}}
+\vspace{1em}
+\subfloat[\label{fig:contour_addin_keymix}]{\includegraphics[width=0.5\textwidth]{contour_addin_keymix}}
+\caption{Posteriors for all free parameters in our recovery test of a single cosmology+HOD model, when adding in observables successively. Contours are shown for (a) all cosmological parameters, (b) a mix of the key cosmological, HOD, and assembly bias parameters, and (c) all HOD and assembly bias parameters.}
+\end{figure*}
+
+\begin{figure*}[p!]\ContinuedFloat
+\centering
+\subfloat[\label{fig:contour_addin_allhodab}]{\includegraphics[width=0.8\textwidth]{contour_addin_allhodab}}
+\label{fig:contours_full}
+\caption{Continued from previous page.}
+\end{figure*}
+
+We show contour plots of all the recovered parameters for a single cosmology+HOD test model in Figure~\ref{fig:contours_full}, when successively adding in our observables.
+In Figure~\ref{fig:contour_addin_allcosmo}, we show the cosmological parameters; in Figure~\ref{fig:contour_addin_keymix}, a combination of the key cosmological, HOD, and assembly bias parameters; and in Figure~\ref{fig:contour_addin_allhodab}, all the HOD and assembly bias parameters.
+We can clearly see the degeneracies between many of the parameters here, and for many of these, including the beyond-standard statistics breaks the degeneracy. 
+This is true for degeneracies between cosmological parameters and HOD parameters, as with $\sig$ and $\msat$; between HOD parameters, as with $\vbs$ and $\sigma_{\mathrm{log}M}$; and between assembly bias parameters, as with $\fenv$ and $\sigma_\mathrm{env}$.
+This helps explain how the combination of our flexible assembly bias model and the emulation of beyond-standard statistics improves our precision on cosmological parameter constraints.
+
+
+\section{Covariance matrix comparison}
+\label{appendix:cov}
+
+\begin{figure*}[t]
+\centering
+\subfloat[\label{fig:contour_cov_c1h12}]{\includegraphics[width=0.47\textwidth]{contour_cov_c1h12}}
+\hspace{1em}
+\subfloat[\label{fig:contour_cov_c6h62}]{\includegraphics[width=0.47\textwidth]{contour_cov_c6h62}}
+\caption{A comparison of the effect of the covariance matrix on recovered parameters. Panels (a) and (b) show recovery tests of key parameters for two different cosmology+HOD models, using all five observables, with the original covariance matrix compared to the covariance matrix with a Gaussian smoothing.}
+\label{fig:contour_cov}
+\end{figure*}
+
+We compare the posteriors of recovery tests when using the original noisy covariance matrix compared with the Gaussian-smoothed covariance matrix, as described in \S\ref{sec:cov}.
+The results are shown in Figure~\ref{fig:contour_cov} for two different cosmology+HOD models for a mix of key cosmological and HOD parameters.
+We find that for the generally well-behaved model, Figure~\ref{fig:contour_cov_c1h12}, the posteriors are similar between the two covariance matrices, with the smoothed matrix resulting in slightly more accurate parameter estimates.
+For the less well-behaved model, shown in  Figure~\ref{fig:contour_cov_c6h62}, the posteriors are quite noisy with the original covariance matrix.
+Using the smoothed version cleans up some of the spurious modes in the posteriors, suggesting that the smoothing does help in avoiding issues related to noise in the covariance matrix. 
+However, some of the modes persist even when using the smoothed matrix, indicating that perhaps we are still not properly sampling our parameter space, or that some of these regions of parameter space may be actual good fits to the observables and indicate true degeneracies in the parameters.
+
+
+\section{Recovery test results for HOD \& assembly bias parameters}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.6\textwidth]{recovery_hodab}
+\caption{The precision of recovery tests when successively adding in observables, averaged over the 70 test models, for the HOD parameter $\msat$ and the three assembly bias parameters. Definitions are the same as in Figure~\ref{fig:recovery_single}.}
+\label{fig:recovery_hodab}
+\end{figure*}
+
+We show the precision of our recovery tests for the HOD parameter $\msat$ and the three assembly bias parameters, $\fenv$, $\delta_\mathrm{env}$, and $\sigma_\mathrm{env}$, in Figure~\ref{fig:recovery_hodab}.
+Results are shown averaged over the 70 test models, when successively adding in each of our five observables.
+We see that for all of the parameters, each of the observables provides additional information on the parameter, with the exception of $\cfq$.
+The two beyond-standard statistics $\upf$ and $\mcf$ provide significantly increased precision compared to the standard statistics alone.
+This indicates that the additional constraining power from these statistics for the cosmological parameters may be related to their heightened sensitivity to assembly bias, and the ability of the combination of many observables to constrain the flexible HOD model.
+
+It is somewhat surprising that $\wprp$ on its own provides significant constraining power over the prior on $\fenv$, the amplitude of environmental assembly bias.
+Investigating the relationship between these, we find that with the rest of the parameters fixed, at large scales $\wprp$ decreases as $\fenv$ is increased. 
+This makes sense as positive $\fenv$ values effectively transfer halos from high- to low- density regions, reducing overall clustering which translates to a lower two-halo term.
+It is notable that this effect is significant enough to be able to constrain this parameter, and highlights the importance of including a flexible model of environmental assembly bias. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
