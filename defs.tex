@@ -67,8 +67,12 @@
 
 %%%% general %%%%%
 
-\usepackage{subcaption}
+% anomalies uses subcaption and aemulus uses subfig.
+% they don't play together. gonna have to update anomalies to subfig, best option i think
+%\usepackage{subcaption}
+\usepackage[caption=false]{subfig}
 \usepackage{bm}		% Bold maths symbols, including upright Greek
+\usepackage{verbatim}
 
 % misc
 \newcommand{\documentname}{\textsl{Article}\xspace}
@@ -123,19 +127,49 @@
 \newcommand{\NN}[1]{N_\mathrm{#1}}
 \newcommand{\GG}[1]{\mathsf{G}_{#1}}
 
-%%%%% Chapter: Eqcosmo %%%%%
+
+%%%% Chapter: Aemulus %%%%
+
+%%% COMMANDS
+\newcommand{\aemulus}{{\sc Aemulus}\xspace}
 
 % symbols
+%\newcommand{\inv}{^{-1}}
+%\newcommand{\T}{^\top}
 \newcommand{\like}{\mathcal{L}}
 \newcommand{\cov}[1]{C_\text{#1}}
 \newcommand{\covtot}{C_\like}
 \newcommand{\simo}{\mathord{\sim}}
 
-% properties
-\newcommand{\N}[1]{N_\mathrm{#1}}
-\newcommand{\x}{\bm{x}\xspace}
-\newcommand{\vel}{\bm{v}\xspace}
-\newcommand{\Mgal}{M_*\xspace}
+% units
+% \newcommand{\hMpc}{h\inv\,\mathrm{Mpc}\xspace}
+% \newcommand{\hGpc}{h\inv\,\mathrm{Gpc}\xspace}
+% \newcommand{\Mpch}{h\,\mathrm{Mpc}\inv\xspace}
+
+% observables
+\newcommand{\wprp}{w_\mathrm{p}(r_\mathrm{p})\xspace}
+\newcommand{\cfm}{\xi_0(s)\xspace}
+\newcommand{\cfq}{\xi_2(s)\xspace}
+\newcommand{\upf}{P_\mathrm{U}(s)\xspace}
+\newcommand{\mcf}{M(s)\xspace}
+
+% parameters
+\newcommand{\om}{\Omega_\mathrm{m}\xspace}
+\newcommand{\sig}{\sigma_\mathrm{8}\xspace}
+\newcommand{\gf}{\gamma_f\xspace}
+\newcommand{\gfs}{\gamma_f f\sigma_8\xspace}
+\newcommand{\fsig}{f\sigma_8 \xspace}
+\newcommand{\msat}{M_\mathrm{sat}\xspace}
+\newcommand{\vbs}{v_\mathrm{bs}\xspace}
+\newcommand{\fenv}{f_\mathrm{env}\xspace}
+
+
+
+
+
+%%%%% Chapter: Eqcosmo %%%%%
+
+% dark properties
 \newcommand{\Mtot}{M_\mathrm{tot}\xspace}
 \newcommand{\xrms}{x_\mathrm{rms}\xspace}
 \newcommand{\vrms}{v_\mathrm{rms}\xspace}
@@ -144,11 +178,33 @@
 \newcommand{\Rtwoh}{R_\mathrm{200m}\xspace}
 \newcommand{\Vtwoh}{V_\mathrm{200m}\xspace}
 \newcommand{\Vfof}{V_\mathrm{200m,FoF}\xspace}
+\newcommand{\ctwoh}{c_\mathrm{200c}\xspace}
+
+% gal properties
+\newcommand{\mstellar}{m_*\xspace}
+\newcommand{\rstellar}{r_*\xspace}
+\newcommand{\jstellar}{j_*\xspace}
+\newcommand{\ssfr}{\mathrm{sSFR}_1\xspace}
+\newcommand{\mbh}{m_\mathrm{BH}\xspace}
+\newcommand{\gminusi}{g-i\xspace}
+
+% other props
+\newcommand{\N}[1]{N_\mathrm{#1}}
+
+% features
+\newcommand{\x}{\bm{x}\xspace}
+\newcommand{\vel}{\bm{v}\xspace}
+\newcommand{\Cxx}{C^{(\x\x)}\xspace}
+\newcommand{\Cvv}{C^{(\vel\vel)}\xspace}
+\newcommand{\CxvS}{C^{(\x\vel),S}\xspace}
+\newcommand{\CxvA}{C^{(\x\vel),A}\xspace}
+
+
 
 % words
 \newcommand{\dark}{\emph{Dark}\xspace}
 \newcommand{\hydro}{\emph{Hydro}\xspace}
-
+\newcommand{\field}[1]{\texttt{#1}}
 
 
 %%%%% Chapter: Anomalies %%%%%

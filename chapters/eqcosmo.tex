@@ -1,3 +1,5 @@
+This chapter is based on work in collaboration with David W. Hogg, Shy Genel, and Soledad Villar.
+
 \graphicspath{{figures/figures_eqcosmo/}}
 
 
@@ -15,22 +17,47 @@ Further, our results are interpretable in terms of the information in DM phase-s
 
 \section{Introduction}
 
+[dm halo formation and gal-halo connection]
+
 One of the key goals of modern galaxy redshift surveys is to infer the cosmological parameters that govern the composition and evolution of the universe.
 In order to perform this inference, we need to model the galaxy distribution; we do so using massive simulations of the cosmic web.
 These N-body simulations, however, only evolve dark matter (DM) particles gravitationally. 
 Hydrodynamic simulations to simulate galaxies are much more expensive, so often DM-only simulations are run and then ``populated'' with galaxies post-facto, using empirically motivated models.
 
+There is a growing body of work on learning the relationship between dark matter and galaxy properties using machine learning (ML) techniques.
+[halo properties papers]
+\cite{jo_machine-assisted_2019} show that using extremely randomized trees (ERTs) and including a two-stage learning approach and environmental property features produce accurate galaxy property predictions in the IllustrisTNG simulation.
+\cite{lovell_machine_2021} use ERTs to learn the relationship between halos in the EAGLE simulation and galaxies in the zoom C-EAGLE simulations of galaxy clusters.
+\cite{de_santi_mimicking_2021} compare the performance of different ML models on predicting galaxy properties from IllustrisTNG, and find success in predicting the stellar mass and reproducing galaxy power spectra.
+\cite{jespersen_learning_2022} use graph neural networks on DM halo merger trees to predict galaxy properties computed from semi-analytic models.
+
+[full halo distribution papers]
+Other works use the dark matter density field as inputs, rather than halo features.
+\cite{kasmanoff_dm2gal_2020} voxelize the DM field of the IllustrisTNG DM-only simulation and predict the stellar mass in voxels centered on subhalos using convolutional neural networks.
+
+[dm history / structure formation papers]
+\cite{he_learning_2018} use a deep neural network to emulate gravitational structure formation, taking an initial displacement field of a particle grid as inputs and predicting the final displacement field based on an approximate N-body simulation.  
+
+[equivariant ML]
+
+[equivariant ML for gal-halo / cosmo]
+\cite{dai_learning_2020} use Lagrangian Deep Learning to reproduce both dark matter evolution and hydrodynamical outputs, based on an initial linear density field; this approach respects translational and rotational symmetries.
+
+[this work]
 The goal of this work is to use a theoretically motivated approach to populate DM-only simulations with galaxies.
 We propose an approach that enforces the known symmetries of cosmological simulations, including translational and rotational symmetry, when mapping DM halos to galaxy properties.
 We use the method of \emph{invariant scalars} \citep{Villar2021a}, which represents equivariant functions using a collection of scalar quantities, directly incorporating symmetry preservation into prediction tasks.
 
+[notation]
 In this work, we use the following notation: 
 Scalars are denoted by lowercase variables, vectors by lowercase bold variables, and tensors by uppercase bold variables.
 \ksf{etc}
 
+[outline]
+\ksf{TODO update outline!}
 This paper is outlined as follows.
 In \S\ref{sec:sim_sample}, we introduce the simulation used and our sample selection. 
-In \S\ref{sec:methods}, we describe the invariant scalars approach and our linear regression model.
+In \S\ref{sec:methods}, we describe the invariant scalars approach and our prediction model.
 In \S\ref{sec:results}, we present the results of predicting galaxy properties from DM halo features, and in \S\ref{sec:discussion}, we interpret these results and discuss their implications and applications.
 
 
@@ -40,13 +67,13 @@ In \S\ref{sec:results}, we present the results of predicting galaxy properties f
 \subsection{The IllustrisTNG simulations}
 \label{sec:tng}
 
-The Illustris TNG simulations are cosmological magnetohydrodynamical simulations that co-evolve dark matter and baryons to model galaxy formation \citep{springel_first_2018,nelson_first_2018,pillepich_simulating_2018,naiman_first_2018,marinacci_first_2018}.\footnote{Data products from the TNG Project are publicly accessible at \url{https://www.tng-project.org/}.}
+The Illustris TNG simulations are cosmological magnetohydrodynamical simulations that co-evolve dark matter and baryons to model galaxy formation \citep{springel_first_2018,nelson_first_2018,pillepich_first_2018,naiman_first_2018,marinacci_first_2018}.\footnote{Data products from the TNG Project are publicly accessible at \url{https://www.tng-project.org/}.}
 The simulations are run starting from initial conditions at $z=127$ with cosmological parameters from \cite{ade_planck_2016} $\Omega_m = \Omega_{dm} + \Omega_b = 0.3089$, $\Omega_b = 0.0486$, $\Omega_\Lambda = 0.6911$, Hubble constant $H_0 = 100$ $h$ km s$\inv$ Mpc$\inv$ with $h = 0.6774$, $\sigma_8 = 0.8159$, and $n_s = 0.9667$.
 They model baryonic processes including ionizing background radiation, star formation and stellar feedback, stellar evolution and chemical enrichment, pressurization of the interstellar medium from supernovae, and the growth of and feedback from supermassive black holes.   
 We use the TNG-100-1 simulation, which has a size of $L = (75 \hMpc)^3$, $1820^3$ DM particles and the same number of gas cells, and mass resolutions of $m_\text{DM} = 7.5 \times 10^6 \Msun$ and $m_\text{gas} = 1.4 \times 10^6 \Msun$.
 The simuluation also evolves star/wind and black hole particles.
 It has a matched DM-only simulation run with the same initial conditions, TNG-100-1-Dark, with mass resolution of $8.9 \times 10^6 \Msun$.
-We refer to the DM-only simulation (TNG-100-1-Dark) as \dark and the hydrodynamical simulation (TNG-100-1) as \hydro in the rest of this work.
+We refer to the DM-only simulation (TNG100-1-Dark) as \dark and the hydrodynamical simulation (TNG100-1) as \hydro in the rest of this work.
 For most of this work, unless otherwise stated, we use the $z=0$ snapshot.
 
 We use the DM halo catalogs provided by the TNG project as the starting point for our sample.
@@ -94,7 +121,7 @@ We consider the most massive progenitor branch of the assembly history of each \
 We compile the mass of the halo's most massive progenitor for each of the TNG snapshots. 
 A natural quantity to try to predict would be the fraction of the $z=0$ halo mass accreted as a function of redshift.
 However, different halos can be traced back to different redshifts, and this inconsistency causes difficulties at the prediction stage.
-We thus choose to learn the scale factor $a$ (related to the redshift $z$ by $a=1/(1+z)$) at which the halo has accreted a given fraction of its mass, $M_\mathrm{vir}(a)$/$M_\mathrm{vir}(a=1)$, where $M_\mathrm{vir}$ is given by the \texttt{HalopropMvir} field of the SC-SAM data and $a=1$ is the present day.
+We thus choose to learn the scale factor $a$ (related to the redshift $z$ by $a=1/(1+z)$) at which the halo has accreted a given fraction of its mass, $M_\mathrm{vir}(a)$/$M_\mathrm{vir}(a=1)$, where $M_\mathrm{vir}$ is given by the \field{HalopropMvir} field of the SC-SAM data and $a=1$ is the present day.
 This swapped quantity gets at the same information as the natural quantity but is more stable in predictions.
 We compute this at XXX linearly spaced mass fractions between 0 and 1 (exclusive). 
 As we only have the history at a finite number of snapshots, we perform a linear interpolation between the mass fractions and scale factors to estimate the scale factor at a given mass fraction.
@@ -102,27 +129,54 @@ If the target mass fraction is outside the bounds of the data (for example, if t
 
 
 
-\subsection{Galaxy properties and uncertainties}
+\subsection{Galaxy properties}
 \label{sec:galprops}
 
+% TODO: add uncertainty info here
+We aim to predict the properties of central galaxies hosted by a given dark matter halo.
+In this section we detail these properties and the associated choices we make. 
+We choose to predict only scalar properties for this work, as we focus on enforcing \emph{invariance} to physical symmetries, though we could also predict vector and higher order properties and enforce \emph{equivaraince}.
 
+The primary target is the galaxy stellar mass $\mstellar$, the mass of all of the star particles belonging to the twin \hydro subhalo of the \dark halo.
+We use the TNG field \field{SubhaloMassType} for star particles, and convert to units of log($\hMsun$).
+Stellar mass is the main quantity used for creating mock catalogs, and is tightly coupled to nearly all other galaxy properties, so we focus on this quantity in this work.
+We also aim to predict the following other baryonic properties: 
+the stellar half-mass radius $\rstellar$, the specific star formation rate averaged over 1 Gyr $\ssfr$, the specific stellar angular momentum $\jstellar$, the black hole mass $\mbh$, and the color $\gminusi$. 
+The stellar radius $\rstellar$ is the TNG property \field{SubhaloHalfmassRadType} of the subhalo for star particles, in units of log(kpc/$h$).
+The value of $\ssfr$ is based on the star formation rate catalogs provided by the TNG Project \citep{donnari_star-formation_2019,pillepich_first_2019}.
+We use the \field{SFR\_MsunPerYrs\_in\_all\_1000Myrs} field, the star formation rate including all bound star particles of the subahlo, and take the ratio with the stellar mass $\mstellar$; we use units of log(yr$\inv$).
+For the galaxies that have $\ssfr=0$, we assign a small value based on the average gas mass cell and the 1 Gyr timescale ($\text{SFR}_\mathrm{zero} = 10^{-3} \hMsun \text{yr}\inv$).
+We use the $\jstellar$ computed by the approach of \cite{genel_galactic_2015} in the same way as the \field{SpecificAngMom} field in the TNG Project catalog, with units km s$\inv$ kpc. 
+The $\mbh$ value is that given by the TNG field \field{SubhaloBHMass} of the subhalo, in units of log($\hMsun$).
+For galaxies with zero black hole mass, we assign the value to be half of the minimum black hole mass in our sample. 
+We use the $g-i$ color comptuted from synthetic SDSS photometry as provided by the TNG project \citep{nelson_first_2018}; the photometry is in units of AB magnitudes. 
+The distributions of these properties as a function of \dark halo mass are shown in the left column of Figure~\ref{fig:gal_props}.
 
 
 \section{The invariant scalars approach}
 \label{sec:methods}
 
-Our approach for mapping the halo particle distribution to galaxies uses the ``scalars'' approach of \cite{Villar2021a}.
-The core idea is that functions equivariant to certain transformations can be expressed in terms of a set of scalars, constructed from the input quantities.  
-Motivated by the fact that the physical laws that govern cosmological simulations obey exact symmetries, specifically translation, rotation, and permutation (of the particles), we apply the scalars approach to the particle distribution of dark matter halos with the goal of performing prediction tasks.
-Specifically, we use a multipole expansion to compress the particle positions and velocities of each halo into a set of ``geometric features'' that describe the phase-space structure of the halo; this is discussed in \S\ref{sec:geometric_features}.
-We then construct scalar contractions of these geometric features, which are scalars, vectors, and tensors, and these ``scalar features'' are invariant to transformations of the particles. 
-This step is informed by Einstein summation notation, which only allows invariant scalars to be produced; the details of our scalar feature construction is discussed in \S\ref{sec:scalar_features}.
-We can finally use these scalar features as the inputs for our prediction task; in our case we perform a linear regression on them (\S\ref{sec:regression}), though they could also be used with other models such as neural networks.
+Our method for characterizing DM halos is based on the ``scalars'' approach of \cite{Villar2021a}.
+The core idea is that functions invariant or equivariant to certain transformations can be expressed in terms of a set of scalars, constructed from the input quantities.  
+This is motivated by the fact that the physical laws that govern the evolution of the universe---and thus cosmological simulations---obey exact classical symmetries.
+We outline our approach here to apply the scalars approach to DM halo characterization and prediction tasks, and go into further detail in the rest of this section.
 
-In contrast, typical approaches use a small set of hand-constructed properties of the halos; while these do often obey physical symmetries, this is not enforced, and the properties do not necessarily capture the complexity of the halos, in particular their phase-space structure.
-A maximalist approach could use the full particle distribution, but this is prohibitively expensive and would not obey the known symmetries.
-The scalars approach allows for a flexible, lightweight set of halo features that respects symmetries and provides a more complete representation of halos.
+Our goal is to characterize DM halos in a way that captures detailed phase-space structure while enforcing invariance to transformations.
+(The same approach applies to equivariance, but here we aim to predict scalar properties and thus focus on invariance.)
+We specifically consider rotation, translation, velocity boosts, rotation, and permutation (of the particles); these are detailed in \S\ref{sec:symmetries}.
+For each \dark halo, we use a multipole expansion to compress the particle positions and velocities of each halo into a set of ``geometric features'' that describe the phase-space structure of the halo; this is discussed in \S\ref{sec:geometric_features}.
+We then construct scalar contractions of these geometric features, which are scalars, vectors, and tensors; these ``scalar features'' are invariant to transformations of the particles. 
+This step is informed by Einstein summation notation, which only allows invariant scalars to be produced; the details of our scalar feature construction is discussed in \S\ref{sec:scalar_features}.
+We can finally use these scalar features as the inputs for our prediction task; in our case we use a Gradient Boosted Tree model (\S\ref{sec:model}), though we note that the scalars could be used with other model choices.
+
+In contrast to this approach, many standard approaches use a small set of hand-constructed properties of the halos, such as the mass, concentration, and spin.
+While these do often obey physical symmetries, this is not enforced; further, the properties are hand-picked and can be non-trivial to compute, and they do not necessarily capture the complexity of the phase-space structure of the halos.
+We use these ``standard features'' as a benchmark, detailed in \S\ref{sec:benchmarks}.
+Other approaches work on the full particle distribution, or the smoothed density field; while this captures the detailed halo structure, it does not obey many of the physical symmetries (depending on implementation), and can be very expensive.
+The scalars approach captures the benefits of both of these standard approaches: it allows for a flexible, lightweight set of halo features that respects symmetries and provides a more complete representation of DM structure.
+\ksf{move this to discussion?}
 We also expect the enforced equivariance to make the approach more generalizable, for instance to different resolutions or simulation codes.
+
 
 \subsection{The physical symmetries}
 \label{sec:symmetries}
@@ -134,49 +188,70 @@ We also expect the enforced equivariance to make the approach more generalizable
 \label{sec:geometric_features}
 
 \begin{table}
-    \caption{The geometric features we construct from the dark halo particles, following the multipole expansion of \refeq{eq:geo}. The table gives, for each feature, its name, its orders in mass, position, and velocity, and its interpretation.  \ksf{better name for covariance object?} \ksf{how to sort? be consistent w how i do for feature importance! m, x+v, v, x? (now not doing x+v, and doing x, v - confusing what makes sense)}}
-    \label{tbl:geometric_features}
+    \caption{The geometric features we construct from the \dark halo particles, following the multipole expansion of \refeq{eq:geo}. The table gives for each feature its name in multipole moment and more readable notation, its orders in mass, position, and velocity, and its physical interpretation.}
+    \label{tab:geos}
     \vspace{0.5em}
     \centering
     \begin{tabular}{|l|l|l|l|l|l|}
     \hline
-    moment & name & $O(m)$ & $O(\x)$ & $O(\vel)$ & interpretation \\
+    moment & name & $O(m)$ & $O(\x)$ & $O(\vel)$ & physical interpretation \\
     \hline
     $g_{00n}$ & $m_n$ & 1 & 0 & 0 & mass in $n$th bin \\
-    $g_{10n}$ & $\langle \x \rangle_n$ & 1 & 1 & 0 & mass-weighted position of $n$th bin \\
-    $g_{01n}$ & $\langle \vel \rangle_n$ & 1 & 0 & 1 & mass-weighted velocity of $n$th bin \\
-    $g_{20n}$ & $C^{(\x\x)}_n$ & 1 & 2 & 0 & variance tensor of positions in $n$th bin \\
+    $g_{10n}$ & $\x_n$ & 1 & 1 & 0 & mass-weighted position of $n$th bin \\
+    $g_{01n}$ & $\vel_n$ & 1 & 0 & 1 & mass-weighted velocity of $n$th bin \\
+    $g_{20n}$ & $\Cxx_n$ & 1 & 2 & 0 & variance tensor of positions in $n$th bin \\
     $g_{11n}$ & $C^{(\x\vel)}_n$ & 1 & 1 & 1 & covariance of positions and velocities in the $n$th bin \\
-    $g_{02n}$ & $C^{(\vel\vel)}_n$ & 1 & 0 & 2 & variance tensor of velocities in $n$th bin \\
+    $g_{02n}$ & $\Cvv_n$ & 1 & 0 & 2 & variance tensor of velocities in $n$th bin \\
     \hline
     \end{tabular}
 \end{table}
 
-We first compute a set of ``geometric features'' from our data from the particle distribution, using their masses, positions, and velocities. 
+We first compute a set of \emph{geometric features} from our data from the particle distribution, specifically their masses, positions, and velocities. 
+There are multiple reasons we do this.
+Theoretically we could compute scalars directly from the particles that consitute the halo; in fact, this would be simpler as these are all scalars and vector inputs.
+However, this results in an enormous number of scalars as it would require the inner product of each pair of particles, scaling as the square of the number of particles.
+It also would produce a different number of particles for each halo, which is difficult to handle at the prediction stage.
+Finally, the ordering of the scalars is not clear and the permutation invariance would be brittle at best.
+By first condensing the particles into a uniform set of geometric features, we circumvent all of these issues.
+We note that there are many ways to handle this step, and we have chosen one relatively simple option.
+
 We choose the geometric features to be based on a multipole expansion, computing moments of the data in a set of radial shells. 
-The geometric features $g_{\ell p n}$ are: 
+We define the geometric features $g_{\ell p n}$ as: 
 \label{eq:geo}
 \begin{equation}
-    g_{\ell p n} = \sum_i m_i W_n(r_i)  \left[ \x_i^{\otimes \ell} \, \otimes \, \vel_i^{\otimes p} \right]
+    g_{\ell p n} = \sum_i m_i \, W_n(r_i) \, \left( \x_i^{\otimes \ell} \, \otimes \, \vel_i^{\otimes p} \right)
 \end{equation}
-where $i$ indexes the particle, $m_i$ is the mass of the $i$th particle, $W_n(r_i)$ is the $n$th window function, and $r_i$ is the distance between the position of the $i$th particle and some fiducial point.
-We choose this fiducial point, which functions as the halo center, to be the location of the most bound particle in the halo (the particle with the minimum potential energy).
-The quantity $x_i^{\otimes \ell}$ is the $\ell$th moment (outer product $\ell$ times) of the particle position (with respect to the fiducial point); for $\ell = 1$, this is just the position of the particle.
-The quantity $v_i^{\otimes p}$ is the same but for the velocities, where the velocities are with respect to the center of velocity of all the particles in the halo.
-We see that $g_{00n}$ are scalars, $g_{01n}$ and $g_{10n}$ are vectors, $g_{20n}$, $g_{02n}$, and $g_{11n}$ are tensors, and so on.
-These geometric features have, at least at low order, interpretable meaning in terms of the halo shape.
-For instance in the $n$th window, $g_{00n}$ is the mass of all the particles in that bin, $g_{10n}$ is their center of mass position, and $g_{20n}$ is their variance tensor.
-\ksf{TODO: use fancy big O}
+where $i$ indexes the particle, $m_i$ is the mass of the $i$th particle, $W_n(r_i)$ is the $n$th window function (defining the radial bins), and $r_i$ is the distance between the position of the $i$th particle and some fiducial point.
+% TODO: should switch this position thing in code to be clear, then update here
+We choose this fiducial point, which functions as the halo center, to be the location of the most bound particle in the halo (the particle with the minimum potential energy), as given by the TNG field \field{SubhaloPos} for the halo's central subhalo (for our sample, this is equivalent to \field{GroupPos} of the \dark halo).
+The quantity $x_i^{\otimes \ell}$ is the $\ell$th moment (outer product $\ell$ times) of the particle position (with respect to the fiducial point).
+For $\ell = 0$, this is 1; for $\ell = 1$, this is the vector position of the particle; and for $\ell = 2$, this is a tensor computed from the outer product of the particle position with itself; and so on.
+The quantity $v_i^{\otimes p}$ is the same but for the velocities, with $p$ indexing the velocity moments, where the velocities are with respect to the center of mass velocity of all the particles in the halo.
+
+The geometric features up to second order in $\ell + p$ are shown in Table~\ref{tab:geos}.
+They all have the same mass order, $O(m)=1$, as they just include a sum over particle masses.
+The $\x$ and $\vel$ orders are determined by the $\ell$ and $p$ values.
+We see that $g_{00n}$ are scalars, $g_{01n}$ and $g_{10n}$ are vectors, $g_{20n}$, $g_{02n}$, and $g_{11n}$ are (rank-2) tensors, and so on.
+These geometric features have, at least at low order, interpretable meaning in terms of the halo shape; we give them names based on this.
+In the $n$th window, $g_{00n}$ ($m_n$) is the mass of all the particles in that bin; $g_{10n}$ ($\x_n$) is their mass-weighted position (note that it is not quite the center of mass position because we do not divide out the total bin mass); $g_{01n}$ ($\vel_n$) is their mass-weighted velocity; $g_{20n}$ ($\Cxx_n$) is the variance tensor of the positions; $g_{02n}$ ($\Cvv_n$) is the variance tensor of the velocities; and $g_{11n}$ ($C^{(\x\vel)}_n$) is the covariance tensor of the positions and velocities.
+In the rest of this work, we use these names for readability.
+\ksf{what notation should i be using for the orders, O()? should also figure out diff bw order and degree!}
 
 We make the following choices when computing our set of geometric features.
-We compute the geometric features up to second order in position and velocity combined, $O(\x) + O(\vel) \leq 2$; this means we don't have objects of higher rank than a rank-2 tensor. 
-We include cross-terms between position and velocity.
+We compute the geometric features up to second order in position and velocity combined, $O(\x) + O(\vel) \leq 2$ (as shown in Table~\ref{tab:geos}); this means we don't have objects of higher rank than a rank-2 tensor.
 We use a top-hat window function producing hard-edged bins. 
-Our bins are functions of each halos radius, given by $\Rtwoh$, the radius that encloses a mass of 200 times the mean density of the universe at that time.
-Specifically we choose three bins that represent the inner part of the halo, the outer region but within $\Rtwoh$, and the outskirts of the halo: $n=0: [0, 0.375\Rtwoh]$, $n=1: [0.375\Rtwoh, \Rtwoh]$, $n=2: [\Rtwoh, \infty]$.
-\ksf{figure out better notation here}
-\ksf{for names, should even give in bins names, like inner, mid, outskirts?}
-A full description of these geometric features and their orders can be found in Table~\ref{tbl:geometric_features}.
+Our bins are functions of halos radius, defined by $\Rtwoh$, the radius that encloses a mass of 200 times the mean density of the universe at that time.
+For our fiducial features, we choose three bins within $\Rtwoh$, chosen to represent different regions of the halo: the inner core, the middle region, and the outer halo.
+These are defined by bin edges $[0, 0.1\Rtwoh, 0.4\Rtwoh, \Rtwoh]$, and we index them by $n=[0,1,2]$ in our notation.
+
+We rescale the geometric features to make them dimensionless.
+We divide out factors of $\Mfof$, $\Rtwoh$, and $\Vfof$ (computed as $\sqrt{G\Mfof/\Rtwoh}$ where $G$ is the gravitational constant) based on the mass, position, and velocity order respectively; for example, for $\x$ we divide out one factor of $\Mfof$ and one of $\Rtwoh$.
+
+We also we must specially handle the features $C^{(\x\vel)}_n$, as the ordering of the $\x$ and $\vel$ terms in the product matters.
+In this case, we can construct the symmetric feature $ \CxvS_n = \frac{1}{2} (C^{(\x\vel)}_n + C^{(\vel\x)}_n)$ and the antisymmetric feature $\CxvA_n = \frac{1}{2} (C^{(\x\vel)}_n - C^{(\vel\x)}_n)$.
+These are pseudotensors, and thus require special handling when constructing the scalars, detailed in the next section.
+
+This procedure results in 7 geometric features per bin; for our 3 fiducial bins, this is 21 features per halo.
 
 \subsection{Invariant scalar features}
 \label{sec:scalar_features}
@@ -190,66 +265,82 @@ A full description of these geometric features and their orders can be found in 
 
 
 \begin{table}
-    \caption{All scalar polynomial features constructed from the geometric features, up to second order in $m$,  $O(m) \leq 2$, and fourth order in each of $\x$ and $\vel$, $O(\x) \leq 4$ and $O(\vel) \leq 4$. The indices $n$ and $n'$ index the radial bins of the geometric features, $q$ and $q'$ index the eigenvalues, and $j$ and $k$ are the indices summed over in Einstein summation notation. \ksf{Try to compute this table algorithmically in code? going to be tricky... but good check!} \ksf{eigenvalues in einstein notation??}} 
-    \label{tbl:scalar_polynomials}
+    \caption{The scalar features constructed from the geometric features, up to second order in $m$ ($O(m) \leq 2$), and fourth order in each of $\x$ and $\vel$, $O(\x) \leq 4$ and $O(\vel) \leq 4$. The indices $n$ and $n'$ index the radial bins of the geometric features, $q$ and $q'$ index the eigenvalues, and $j$ and $k$ are the indices summed over in Einstein summation notation. We show the vector notation and/or and Einstein summation notation depending on whether there is a clear representation in that notation.} 
+    \label{tab:scalars}
     \vspace{0.5em}
     \centering
     \begin{tabular}{|l|l|l|l|l|l|}
     \hline
     vector not. & summation not. & $O(m)$ & $O(x)$ & $O(v)$ \\
     \hline
-    $g_{00n}$ & $g_{00n}$ & 1 & 0 & 0 \\
-    %$\mathrm{Tr}(g_{20n})$ & $[g_{20n}]_{jj}$ & 1 & 2 & 0 \\
-    $\lambda_q(g_{11n})$ & ? & 1 & 1 & 1 \\
-    $\lambda_q(g_{20n})$ & ? & 1 & 2 & 0 \\
-    $\lambda_q(g_{02n})$ & ? & 1 & 2 & 2 \\
-    $g_{00n} \, g_{00n'}$ & $g_{00n} \, g_{00n'}$ & 2 & 0 & 0 \\
-    $g_{00n} \, \lambda_q(g_{20n})$ & ? & 2 & 2 & 0 \\
-    %$g_{00n} \, \mathrm{Tr}(g_{20n'})$ & $g_{00n} \, [g_{20n'}]_{jj}$ & 2 & 2 & 0 \\
-    $g_{10n}\T \cdot g_{10n'}$ & $[g_{10n}]_j \, [g_{10n'}]_j$ & 2 & 2 & 0 \\
-    $g_{10n}\T \cdot g_{01n'}$ & $[g_{10n}]_j \, [g_{01n'}]_j$ & 2 & 1 & 1 \\
-    $g_{01n}\T \cdot g_{01n'}$ & $[g_{01n}]_j \, [g_{01n'}]_j$ & 2 & 0 & 2 \\
-    $\lambda_q(g_{20n}) \, \lambda_{q'}(g_{20n'})$ & ? & 2 & 4 & 0 \\
-    $ ? $ & $[g_{20n}]_{jk} \, [g_{20n'}]_{jk}$ & 2 & 4 & 0 \\
-    $ ? $ & $[g_{20n}]_{jk} \, [g_{11n'}]_{jk}$ & 2 & 3 & 1 \\
-    $ ? $ & $[g_{11n}]_{jk} \, [g_{11n'}]_{jk}$ & 2 & 2 & 2 \\
-    $ ? $ & $[g^A_{11n}]_{jk} \, [g^A_{11n'}]_{jk}$ & 2 & 2 & 2 \\
-    $ ? $ & $[g_{20n}]_{jk} \, [g_{02n'}]_{jk}$ & 2 & 2 & 2 \\
-    $ ? $ & $[g_{11n}]_{jk} \, [g_{02n'}]_{jk}$ & 2 & 1 & 3 \\
-    $ ? $ & $[g_{02n}]_{jk} \, [g_{02n'}]_{jk}$ & 2 & 0 & 4 \\
+    $m_n$ & $m_n$ & 1 & 0 & 0 \\
+    $\lambda_q(\Cxx_n)$ & & 1 & 1 & 1 \\
+    $\lambda_q(\CxvS_n)$ & & 1 & 2 & 0 \\
+    $\lambda_q(\Cvv_n)$ & & 1 & 2 & 2 \\
+    $\x_n\T \cdot \x_{n'}$ & $[\x_{n}]_j \, [\x_{n'}]_j$ & 2 & 2 & 0 \\
+    $\x_n\T \cdot \vel_{n'}$ & $[\x_{n}]_j \, [\vel_{n'}]_j$ & 2 & 1 & 1 \\
+    $\vel_n\T \cdot \vel_{n'}$ & $[\vel_{n}]_j \, [\vel_{n'}]_j$ & 2 & 2 & 0 \\
+     & $[\Cxx_n]_{jk} \, [\Cxx_{n'}]_{jk}$ & 2 & 4 & 0 \\
+     & $[\Cxx_n]_{jk} \, [\CxvS_{n'}]_{jk}$ & 2 & 3 & 1 \\
+     & $[\CxvS_{n}]_{jk} \, [\CxvS_{n'}]_{jk}$ & 2 & 2 & 2 \\
+     & $[\CxvA_{n}]_{jk} \, [\CxvA_{n'}]_{jk}$ & 2 & 2 & 2 \\
+     & $[\Cxx_{n}]_{jk} \, [\Cvv_{n'}]_{jk}$ & 2 & 2 & 2 \\
+     & $[\CxvS_{n}]_{jk} \, [\Cvv_{n'}]_{jk}$ & 2 & 1 & 3 \\
+     & $[\Cvv_{n}]_{jk} \, [\Cvv_{n'}]_{jk}$ & 2 & 0 & 4 \\
     \hline
     \end{tabular}
 \end{table}
 
-We can contract these geometric features to obtain ``polynomial features'' that will be the inputs to our model.
-As our goal is to predict the mass of the galaxy, a scalar, we must only use scalar values as the input.
-Our ``scalar features'' are then all allowed contractions of the geometric features that produce scalars. 
-Broadly, scalars can be multiplied by other scalars; for vectors, one can take the outer product of it with another vector; and for tensors, one can perform a full contraction of it with another tensor, or take its trace or eigenvalues.
-One natural way to neatly enumerate these scalars is using Einstein summation notation, as it only allows invariant scalars to be produced.
-To construct a scalar, there must be no hanging indices, so we know that all indices used in the summation must be repeated.
+We combine these geometric features with each other to obtain \emph{scalar features}, scalar quantities that are invariant to the desired physical symmetries.
+To construct these combinations, we produce all allowed \emph{contractions} of the geometric features that produce scalar quantities.
+For instance, one can multiply a pair of scalars; take the inner product of a pair of vectors; take contractions of a pair of tensors; and take the trace or eigenvalues of a tensor.
+In fact, when considering up to rank-2 tensors and scalars up to second order in mass, as we do here, these are all of the possible ways of combining geometric features.
+(If we considered higher mass orders, we could construct features such as $\x \, \Cxx \, \x\T$.)
+One natural way to enumerate these scalars is using Einstein summation notation, as it only allows invariant scalars to be produced (see Appendix~F of \citealt{Villar2021a} for a detailed discussion).
+In short, to construct a scalar there must be no hanging indices, so we know that all indices used in the summation must be repeated.
 
 We make some specific choices regarding the computed scalars.
-We limit ourselves to certain orders in $m$, $\x$, and $\vel$, as the number of possible scalars expands greatly at higher order.
-We choose to use the eigenvalues $\lambda_q$ of each tensor, where $q=1$ is the maximum eigenvalue, which gives more information than just the trace.
-We include cross-terms across different bins $n$ and $n'$, and cross-terms between position and velocity geometric features (there is already a geometric term that depends on both position and velocity, $C^{\x \vel}$).
-The allowed scalar contractions are shown in Table~\ref{tbl:scalar_features}.
+We limit the scalars to second order in $m$, which in our case means a single geometric feature or a combination of two features.
+We also limit to fourth order in $\x$ and fourth in $\vel$, though this is already constrained by our second-order limits in these quantities for the geometric feature construction.
+We choose to use the eigenvalues $\lambda_q$ of each tensor, where $q=1$ is the maximum eigenvalue and $q=3$ the smallest, as these give more information than just the trace.
+We include cross-terms across different bins $n$ and $n'$, and cross-terms between position and velocity geometric features.
+For the pseudotensors, namely $\CxvA_n$, we can only contract them with other pseudotensors to construct true scalars (contractions of a pseudotensor with a tensor would result in a pseudoscalar).
+The allowed scalar contractions are shown in Table~\ref{tab:scalars}.
+With our 3 fiducial bins, this produces 102 unique scalar features.
 
-One feature that we must handle specially is $g_{11n}$, which is the cross term of $\x$ and $\vel$, as the ordering of these terms matters
-In this case, we can construct the symmetric feature $g^S_{11n} = \frac{1}{2} \sum_i m_i W_n(r_i) \left[ \x_i \, \otimes \, \vel_i + \vel_i \, \otimes \, \x_i \right]$ and the antisymmetric feature $g^A_{11n} = \frac{1}{2} \sum_i m_i W_n(r_i) \left[ \x_i \, \otimes \, \vel_i - \vel_i \, \otimes \, \x_i \right]$.
-\ksf{better notation here?}
-The antisymmetric feature is a pseudo-tensor, and the only way we can obtain a scalar is to contract it with another pseudo-tensor; which in our case will be another antisymmetric feature $g^A_{11n'}$.
-The symmetric feature is a vector and can be treated like any other vector, so for conciseness we refer to $g^S_{11n}$ as simply $g_{11n}$.
-
-We rescale our scalar features by overall halo quantities, so that the features are dimensionless and obey ``units symmetry''.
-For every mass order, we scale the feature by the total mass of the halo, $\Mtot$; for every $\x$ order, we scale by the root-mean-square of the particle positions, $\xrms$; and for every $\vel$ order, we scale by the root-mean-square of the particle velocities.
-We include these quantities as additional features, as described in \S\ref{sec:regression}.
+When we make predictions with these scalar features, we additionally include the mass, radius, and velocity quantities we used to rescale the geometric features: $\Mfof$, $\Rtwoh$, and $\Vfof$. 
+This allows us to encode the broad features and the halo shape separately, and understand their relative contributions to prediction tasks.
 
 
-\section{Prediction model}
-\label{sec:regression}
+\section{Feature sets and prediction model}
+\label{sec:features_model}
+
+\subsection{Feature sets: scalars and benchmarks}
+
+[Our fiducial feature set is...]
+
+As a baseline comparison for the predictions with our invariant scalar features, we construct other ``benchmark'' feature sets.
+The first set is using only the mass, radius, and velocity: $\Mfof$, $\Rtwoh$, and $\Vfof$. 
+These quantities are all directly related ($\Mfof$ is the bound mass inside $\Rtwoh$, and $\Vfof$ is proportional to the square root of the ratio of $\Mfof$ and $\Rtwoh$), so this feature set captures broad trends with these basic quantities.
+
+The second is using standard ``catalog'' features that are used in typical approaches to this and related tasks.
+We include $\ctwoh$, the halo concentration defined as the dimensionless ratio of $R_{200c}$, the radius enclosing 200 times the critical density of the universe, and $R_\mathrm{s}$, the scale radius computed by fitting an NFW profile to the DM halo density; this is the TNG field \field{c200c} computed by \cite{anbajagane_baryonic_2021}.
+We use the one-dimensional velocity dispersion $\sigma_{v}$, computed from the halo's central \dark subhalo, as given by the TNG field \field{SubhaloVelDisp}; this is computed from all particles belonging to the subhalo, and is the 3D velocity dispersion divided by $\sqrt{3}$, in units $km/s$.
+We also include the spin $\lambda$, computed as $\lambda = \sqrt{\lambda_x^2 + \lambda_y^2 + \lambda_z^2}$, where the spins along each axis are from the TNG field \field{SubhaloSpin} for the central \dark subhalo, which are the mass-weighted sum of the coordinate along each axis times the relative velocity of all particles.
+We additionally include $\Mfof$, $\Rtwoh$, and $\Vfof$ in this set.
+Other works include other features such as environmental properties of the local density around the halo, and formation history properties such as the age, formation time, or number of mergers of the halo.
+As we only consider $z=0$ features and particles in the halo FoF for our invariant scalars approach in this work, we do not include this environmental and formation properties for a more direct comparison (though this is for simplication purposes and a full analysis for practical use could and should use this information for all feature sets).
+
+We finally consider a set of features constructed from the \emph{components} of the geometric features.
+That is, we unroll each geometric feature into its components in $x$, $y$, and $z$, giving 1 quantity for scalars, 3 for vectors, and 9 for tensors, and use these as the feature set. 
+Including the components of both the symmetric and antisymmetric components of the position-velocity covariance tensor, this results in 43 features per bin; for our 3 fiducial bin case, this gives 129 features.
+We also include the $\Mfof$, $\Rtwoh$, and $\Vfof$ features in this set.
+
+
+\subsection{Prediction model}
+\label{sec:model}
 
 To predict the desired output scalars, we train a fully collected neural network.
-
 
 The neural net takes as input a set of scalar features as described in \S\ref{sec:scalar_features} for a given halo, along with the overall quantities used for rescaling, $\Mtot$, $\xrms$, and $\vrms$ (we take their logarithms to reduce the dynamic range).
 The labels are the scalar galaxy properties of interest.
