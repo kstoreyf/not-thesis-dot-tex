@@ -17,15 +17,18 @@ Further, our results are interpretable in terms of the information in DM phase-s
 
 \section{Introduction}
 
-[dm halo formation and gal-halo connection]
+Overdense regions of dark matter (DM) in the universe collapse to form DM ``halos'', which merge and grow to form the underlying structure of the cosmic web (e.g. \citealt{davis_evolution_1985,bond_how_1996,boylan-kolchin_resolving_2009}). 
+These DM halos play host to the galaxies that populate our universe, and DM evolution and galaxy formation are deeply intertwined. 
+The merger history of halos affects how their galaxies develop, and galactic feedback can in turn affect the growth of structure.
+This relationship, known as the galaxy--halo connection \citep{WechslerTinker2018}, is core to both galaxy formation and large-scale structure.
 
+Cosmological hydrodynamic simulations have become extremely powerful tools to model the formation of structure and galaxies (e.g. \citealt{springel_gadget_2001, genel_introducing_2014,dave_simba_2019}).
+However, they are very computationally expensive, consuming millions of CPU-hours; even their DM-only counterparts are relatively expensive.
+Recently, there have been efforts to \emph{emulate} these cosmological simulations with faster tools, such as machine learning (ML) techniques.
+These offer the opportunity to both help us understand the key physical processes affecting structure galaxy formation, as well as construct the large number of mock galaxy catalogs needed to analyze current galaxy surveys. 
 
-One of the key goals of modern galaxy redshift surveys is to infer the cosmological parameters that govern the composition and evolution of the universe.
-In order to perform this inference, we need to model the galaxy distribution; we do so using massive simulations of the cosmic web.
-These N-body simulations, however, only evolve dark matter (DM) particles gravitationally. 
-Hydrodynamic simulations to simulate galaxies are much more expensive, so often DM-only simulations are run and then ``populated'' with galaxies post-facto, using empirically motivated models.
-
-There is a growing body of work on learning the relationship between dark matter and galaxy properties using machine learning (ML) techniques.
+There is a growing body of work on learning the relationship between dark matter and galaxy properties using ML-based approaches.
+Many of these use a small set of properties of identified DM halos as input features, and focus on predicting the galaxy stellar mass as well as other baryonic properties.
 \cite{jo_machine-assisted_2019} show that using extremely randomized trees (ERTs) and including a two-stage learning approach and environmental property features produce accurate galaxy property predictions in the IllustrisTNG simulation.
 \cite{lovell_machine_2021} use ERTs to learn the relationship between halos in the EAGLE simulation and galaxies in the zoom C-EAGLE simulations of galaxy clusters.
 \cite{de_santi_mimicking_2021} compare the performance of different ML models on predicting galaxy properties from IllustrisTNG, and find success in predicting the stellar mass and reproducing galaxy power spectra.
@@ -38,8 +41,11 @@ This approach operates on inputs closer to the raw data, but presents its own ch
 \cite{yip_dark_2019} implement a cascade of convolutional neural networks (CNNs) to predict the 3D galaxy distribution from a voxelization of the IllustrisTNG DM-only simulation.
 Along a similar vein, \cite{kasmanoff_dm2gal_2020} predict the stellar mass in voxels centered on subhalos using CNNs in IllustrisTNG.
 
-[dm history / structure formation papers]
-\cite{he_learning_2018} use a deep neural network to emulate gravitational structure formation, taking an initial displacement field of a particle grid as inputs and predicting the final displacement field based on an approximate N-body simulation.  
+Another line of inquiry seeks to use ML to emulate and understand structure formation in the dark sector.
+Many works have explored using neural networks to map the initial displacement field of a particle grid as to the final displacement field, targeting a full or approximate N-body simulation \citep{he_learning_2018,jamieson_field_2022}.
+Others aim to map the final displacements from a very inexpensive N-body simulation substitute to a more realistic output \citep{piras_fast_2023}. 
+To develop a deeper understanding of structure formation, \cite{lucie-smith_insights_2022} use gradient-boosted trees to predict late-time mass profiles of DM halos based on input initial conditions and elucidate the relevant scales at play.
+\cite{etezad-razavi_unravelling_2023} investigate the role of the velocity field on DM halo masses using CNNs.
 
 While ML techniques are extremely powerful at making predictions, they are generally agnostic to the underlying physical processes they model.
 One key aspect of physical laws is \emph{symmetries}: we expect that our results will change in exact ways, or not change at all, under certain transformations.
@@ -53,24 +59,33 @@ Approaches to learning the galaxy--halo connection that are based on a set of ha
 On the other hand, ML models operating directly on the dark matter density field do not typically respect all of these symmetries.
 Recent work has applied explicitly equivariant neural network architectures and approaches to structure formation and the galaxy--halo connection in cosmological simulations.
 \cite{dai_learning_2020} use Lagrangian Deep Learning to reproduce both dark matter evolution and hydrodynamical outputs, based on an initial linear density field; this approach respects translational and rotational symmetries.
-\cite{thiele_predicting_2022} use permutation- and rotation-invariant DeepSets to predict the thermal Sunyaev-Zel'dovich field in galaxy clusters in IllustrisTNG, using input features constructed by the invariant scalars approach of \cite{Villar2021a}.
+\cite{thiele_predicting_2022} use permutation- and rotation-invariant DeepSets to predict the thermal Sunyaev-Zel'dovich field in galaxy clusters in IllustrisTNG.
 
-[this work]
-The goal of this work is to use a theoretically motivated approach to populate DM-only simulations with galaxies.
-We propose an approach that enforces the known symmetries of cosmological simulations, including translational and rotational symmetry, when mapping DM halos to galaxy properties.
-We use the method of \emph{invariant scalars} \citep{Villar2021a}, which represents equivariant functions using a collection of scalar quantities, directly incorporating symmetry preservation into prediction tasks.
+In this work, we propose an equivariant approach to characterizing the dark matter distribution that enforces the known symmetries of cosmological simulations. 
+We use the method of \emph{invariant scalars} introduced by \cite{Villar2021a}, which offers a lightweight approach to representing invariant and equivariant functions using a collection of scalar quantities.
+The core idea is that geometric objects---such as vectors of particle positions and velocities---can be \emph{contracted} to form scalars that are invariant to transformations, namely translations, rotations, velocity boosts, and permutations.
 
-[notation]
+Previous work has shown that this ``scalars'' approach improves performance on prediction tasks.
+\cite{yao_simple_2021} demonstrated the approach on a toy dynamical system and showed that it outperformed state-of-the-art approaches in both speed and accuracy.
+It has recently been applied to large-scale structure problems: \cite{villanueva-domingo_learning_2022} used scalars in combination with graph neural networks applied to simulated galaxy catalogs to perform cosmological inference.
+\cite{thiele_predicting_2022} constructed invariant scalars from input dark matter particles as well as galaxy cluster-scale features as inputs to their DeepSet architecture.
+
+We apply the invariant scalars approach to the particle distribution of DM halos in the IllustrisTNG DM-only simulation.
+To obtain a uniform set of features across halos while preserving detailed structure, we first compress the DM halo particles into geometric multipole moments, and then combine these into invariant scalar features.
+This provides a characterization of DM halos that encodes high-order phase-space structure while preserving physical symmetries.
+To learn the mapping from DM halos to baryonic properties, we construct a set of matched DM halos in the DM-only simulation to central galaxies in the TNG hydrodynamical simulation.
+We use a XXX model with the scalars as inputs to predict galaxy properties, and compare this approach to benchmark feature sets. 
+We also demonstrate that these features allow for accurate predictions of the mass assembly history of the DM halos.
+
 In this work, we use the following notation: 
-Scalars are denoted by lowercase variables, vectors by lowercase bold variables, and tensors by uppercase bold variables.
-\ksf{etc}
+Scalars are denoted by lowercase variables, vectors by lowercase bold variables, and tensors by uppercase variables.
 
 This paper is outlined as follows.
 In \S\ref{sec:sim_sample}, we introduce the simulation used and our halo and galaxy sample selection. 
 We discuss our approach to constructing invariant scalars from dark matter halo particle distributions in \S\ref{sec:scalars_approach} 
 In \S\ref{sec:features_model}, we detail the fiducial scalar feature set and other benchmark feature sets we use as inputs, and describe the prediction model.
 In \S\ref{sec:results}, we present the results of predicting the mass assembly history and galaxy properties from DM halo features, and in \S\ref{sec:discussion}, we interpret these results and discuss their implications and applications.
-We summarize our results and conclusions in \S\ref{sec:summary}
+We summarize our results and conclusions in \S\ref{sec:summary}.
 
 
 \section{Simulation and Sample Construction}
@@ -179,7 +194,7 @@ We specifically consider rotation, translation, velocity boosts, rotation, and p
 For each \dark halo, we use a multipole expansion to compress the particle positions and velocities of each halo into a set of ``geometric features'' that describe the phase-space structure of the halo; this is discussed in \S\ref{sec:geometric_features}.
 We then construct scalar contractions of these geometric features, which are scalars, vectors, and tensors; these ``scalar features'' are invariant to transformations of the particles. 
 This step is informed by Einstein summation notation, which only allows invariant scalars to be produced; the details of our scalar feature construction is discussed in \S\ref{sec:scalar_features}.
-We can finally use these scalar features as the inputs for our prediction task; in our case we use a Gradient Boosted Tree model (\S\ref{sec:model}), though we note that the scalars could be used with other model choices.
+We can finally use these scalar features as the inputs for our prediction task; in our case we use a Gradient Boosted Tree model (\S\ref{sec:prediction_model}), though we note that the scalars could be used with other model choices.
 
 In contrast to this approach, many standard approaches use a small set of hand-constructed properties of the halos, such as the mass, concentration, and spin.
 While these do often obey physical symmetries, this is not enforced; further, the properties are hand-picked and can be non-trivial to compute, and they do not necessarily capture the complexity of the phase-space structure of the halos.
@@ -351,7 +366,7 @@ We also include the $\Mfof$, $\Rtwoh$, and $\Vfof$ features in this set.
 
 
 \subsection{Prediction model}
-\label{sec:model}
+\label{sec:prediction_model}
 
 To predict the desired output scalars, we train a fully collected neural network.
 
