@@ -712,6 +712,75 @@ When we apply the emulation approach to real data, we will ensure that the measu
 This will address both of the issues we found when performing this test, and ensure that we are able to find a good fit to the data.
 
 
+
+\section{Additional Results and Tests}
+
+\subsection{Full posterior plots}
+
+\begin{figure*}[p!]%[htpb]
+\centering
+\subfloat[\label{fig:contour_addin_allcosmo}]{\includegraphics[width=0.6\textwidth]{contour_addin_allcosmo}}
+\vspace{1em}
+\subfloat[\label{fig:contour_addin_keymix}]{\includegraphics[width=0.5\textwidth]{contour_addin_keymix}}
+\caption{Posteriors for all free parameters in our recovery test of a single cosmology+HOD model, when adding in observables successively. Contours are shown for (a) all cosmological parameters, (b) a mix of the key cosmological, HOD, and assembly bias parameters, and (c) all HOD and assembly bias parameters.}
+\end{figure*}
+
+\begin{figure*}[p!]\ContinuedFloat
+\centering
+\subfloat[\label{fig:contour_addin_allhodab}]{\includegraphics[width=0.8\textwidth]{contour_addin_allhodab}}
+\label{fig:contours_full}
+\caption{Continued from previous page.}
+\end{figure*}
+
+We show contour plots of all the recovered parameters for a single cosmology+HOD test model in Figure~\ref{fig:contours_full}, when successively adding in our observables.
+In Figure~\ref{fig:contour_addin_allcosmo}, we show the cosmological parameters; in Figure~\ref{fig:contour_addin_keymix}, a combination of the key cosmological, HOD, and assembly bias parameters; and in Figure~\ref{fig:contour_addin_allhodab}, all the HOD and assembly bias parameters.
+We can clearly see the degeneracies between many of the parameters here, and for many of these, including the beyond-standard statistics breaks the degeneracy. 
+This is true for degeneracies between cosmological parameters and HOD parameters, as with $\sig$ and $\msat$; between HOD parameters, as with $\vbs$ and $\sigma_{\mathrm{log}M}$; and between assembly bias parameters, as with $\fenv$ and $\sigma_\mathrm{env}$.
+This helps explain how the combination of our flexible assembly bias model and the emulation of beyond-standard statistics improves our precision on cosmological parameter constraints.
+
+
+\subsection{Covariance matrix comparison}
+\label{appendix:cov}
+
+\begin{figure*}[t]
+\centering
+\subfloat[\label{fig:contour_cov_c1h12}]{\includegraphics[width=0.47\textwidth]{contour_cov_c1h12}}
+\hspace{1em}
+\subfloat[\label{fig:contour_cov_c6h62}]{\includegraphics[width=0.47\textwidth]{contour_cov_c6h62}}
+\caption{A comparison of the effect of the covariance matrix on recovered parameters. Panels (a) and (b) show recovery tests of key parameters for two different cosmology+HOD models, using all five observables, with the original covariance matrix compared to the covariance matrix with a Gaussian smoothing.}
+\label{fig:contour_cov}
+\end{figure*}
+
+We compare the posteriors of recovery tests when using the original noisy covariance matrix compared with the Gaussian-smoothed covariance matrix, as described in \S\ref{sec:cov}.
+The results are shown in Figure~\ref{fig:contour_cov} for two different cosmology+HOD models for a mix of key cosmological and HOD parameters.
+We find that for the generally well-behaved model, Figure~\ref{fig:contour_cov_c1h12}, the posteriors are similar between the two covariance matrices, with the smoothed matrix resulting in slightly more accurate parameter estimates.
+For the less well-behaved model, shown in  Figure~\ref{fig:contour_cov_c6h62}, the posteriors are quite noisy with the original covariance matrix.
+Using the smoothed version cleans up some of the spurious modes in the posteriors, suggesting that the smoothing does help in avoiding issues related to noise in the covariance matrix. 
+However, some of the modes persist even when using the smoothed matrix, indicating that perhaps we are still not properly sampling our parameter space, or that some of these regions of parameter space may be actual good fits to the observables and indicate true degeneracies in the parameters.
+
+
+\subsection{Recovery test results for HOD \& assembly bias parameters}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.6\textwidth]{recovery_hodab}
+\caption{The precision of recovery tests when successively adding in observables, averaged over the 70 test models, for the HOD parameter $\msat$ and the three assembly bias parameters. Definitions are the same as in Figure~\ref{fig:recovery_single}.}
+\label{fig:recovery_hodab}
+\end{figure*}
+
+We show the precision of our recovery tests for the HOD parameter $\msat$ and the three assembly bias parameters, $\fenv$, $\delta_\mathrm{env}$, and $\sigma_\mathrm{env}$, in Figure~\ref{fig:recovery_hodab}.
+Results are shown averaged over the 70 test models, when successively adding in each of our five observables.
+We see that for all of the parameters, each of the observables provides additional information on the parameter, with the exception of $\cfq$.
+The two beyond-standard statistics $\upf$ and $\mcf$ provide significantly increased precision compared to the standard statistics alone.
+This indicates that the additional constraining power from these statistics for the cosmological parameters may be related to their heightened sensitivity to assembly bias, and the ability of the combination of many observables to constrain the flexible HOD model.
+
+It is somewhat surprising that $\wprp$ on its own provides significant constraining power over the prior on $\fenv$, the amplitude of environmental assembly bias.
+Investigating the relationship between these, we find that with the rest of the parameters fixed, at large scales $\wprp$ decreases as $\fenv$ is increased. 
+This makes sense as positive $\fenv$ values effectively transfer halos from high- to low- density regions, reducing overall clustering which translates to a lower two-halo term.
+It is notable that this effect is significant enough to be able to constrain this parameter, and highlights the importance of including a flexible model of environmental assembly bias. 
+
+
+
 \section{Discussion \& Conclusions}
 \label{sec:discussion}
 
@@ -778,7 +847,7 @@ In future work, we could train the model on all bins simultaneously to include t
 \textit{Software:} numpy \citep{VanDerWalt2011}, IPython \citep{Perez2007}, scipy \citep{Virtanen2020}, matplotlib \citep{Hunter2007}, corrfunc \citep{SinhaGarrison2019, Sinha2020}, halotools \citep{Hearin2017}, dynesty \citep{Speagle2020}, george \citep{Ambikasaran2016}, getdist \citep{Lewis2019}.
 Our emulator and related data products are publicly accessible at \url{https://github.com/kstoreyf/aemulator}.
 
-\section*{}
+\section{Chapter Acknowledgements}
 
 K.S.F. thanks Sean McLaughlin, Johannes Lange, Sihan Yuan, David W. Hogg, and the Astronomical Data group at the Center for Computational Astrophysics for helpful discussions.
 This work received support from the U.S. Department of Energy under contract number DE-AC02-76SF00515 and from the Kavli Institute for Particle Astrophysics and Cosmology.
@@ -787,99 +856,5 @@ J.L.T. acknowledges support of NSF grant AST-2009291.
 J.D.~is supported by the Lawrence Berkeley National Laboratory Chamberlain Fellowship.
 This research made use of computational resources at SLAC National Accelerator Laboratory and the NYU Department of Physics; authors thank the SLAC computational team and Mulin Ding at NYU for computational support.
 This research used resources of the National Energy Research scientific Computing Center, a DOE Office of Science User Facility supported by the Office of Science of the U.S. Department of Energy under Contract No. DE-AC0205CH11231.
-
-
-
-\appendix
-
-\section{Full posterior plots}
-
-\begin{figure*}[p!]%[htpb]
-\centering
-\subfloat[\label{fig:contour_addin_allcosmo}]{\includegraphics[width=0.6\textwidth]{contour_addin_allcosmo}}
-\vspace{1em}
-\subfloat[\label{fig:contour_addin_keymix}]{\includegraphics[width=0.5\textwidth]{contour_addin_keymix}}
-\caption{Posteriors for all free parameters in our recovery test of a single cosmology+HOD model, when adding in observables successively. Contours are shown for (a) all cosmological parameters, (b) a mix of the key cosmological, HOD, and assembly bias parameters, and (c) all HOD and assembly bias parameters.}
-\end{figure*}
-
-\begin{figure*}[p!]\ContinuedFloat
-\centering
-\subfloat[\label{fig:contour_addin_allhodab}]{\includegraphics[width=0.8\textwidth]{contour_addin_allhodab}}
-\label{fig:contours_full}
-\caption{Continued from previous page.}
-\end{figure*}
-
-We show contour plots of all the recovered parameters for a single cosmology+HOD test model in Figure~\ref{fig:contours_full}, when successively adding in our observables.
-In Figure~\ref{fig:contour_addin_allcosmo}, we show the cosmological parameters; in Figure~\ref{fig:contour_addin_keymix}, a combination of the key cosmological, HOD, and assembly bias parameters; and in Figure~\ref{fig:contour_addin_allhodab}, all the HOD and assembly bias parameters.
-We can clearly see the degeneracies between many of the parameters here, and for many of these, including the beyond-standard statistics breaks the degeneracy. 
-This is true for degeneracies between cosmological parameters and HOD parameters, as with $\sig$ and $\msat$; between HOD parameters, as with $\vbs$ and $\sigma_{\mathrm{log}M}$; and between assembly bias parameters, as with $\fenv$ and $\sigma_\mathrm{env}$.
-This helps explain how the combination of our flexible assembly bias model and the emulation of beyond-standard statistics improves our precision on cosmological parameter constraints.
-
-
-\section{Covariance matrix comparison}
-\label{appendix:cov}
-
-\begin{figure*}[t]
-\centering
-\subfloat[\label{fig:contour_cov_c1h12}]{\includegraphics[width=0.47\textwidth]{contour_cov_c1h12}}
-\hspace{1em}
-\subfloat[\label{fig:contour_cov_c6h62}]{\includegraphics[width=0.47\textwidth]{contour_cov_c6h62}}
-\caption{A comparison of the effect of the covariance matrix on recovered parameters. Panels (a) and (b) show recovery tests of key parameters for two different cosmology+HOD models, using all five observables, with the original covariance matrix compared to the covariance matrix with a Gaussian smoothing.}
-\label{fig:contour_cov}
-\end{figure*}
-
-We compare the posteriors of recovery tests when using the original noisy covariance matrix compared with the Gaussian-smoothed covariance matrix, as described in \S\ref{sec:cov}.
-The results are shown in Figure~\ref{fig:contour_cov} for two different cosmology+HOD models for a mix of key cosmological and HOD parameters.
-We find that for the generally well-behaved model, Figure~\ref{fig:contour_cov_c1h12}, the posteriors are similar between the two covariance matrices, with the smoothed matrix resulting in slightly more accurate parameter estimates.
-For the less well-behaved model, shown in  Figure~\ref{fig:contour_cov_c6h62}, the posteriors are quite noisy with the original covariance matrix.
-Using the smoothed version cleans up some of the spurious modes in the posteriors, suggesting that the smoothing does help in avoiding issues related to noise in the covariance matrix. 
-However, some of the modes persist even when using the smoothed matrix, indicating that perhaps we are still not properly sampling our parameter space, or that some of these regions of parameter space may be actual good fits to the observables and indicate true degeneracies in the parameters.
-
-
-\section{Recovery test results for HOD \& assembly bias parameters}
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.6\textwidth]{recovery_hodab}
-\caption{The precision of recovery tests when successively adding in observables, averaged over the 70 test models, for the HOD parameter $\msat$ and the three assembly bias parameters. Definitions are the same as in Figure~\ref{fig:recovery_single}.}
-\label{fig:recovery_hodab}
-\end{figure*}
-
-We show the precision of our recovery tests for the HOD parameter $\msat$ and the three assembly bias parameters, $\fenv$, $\delta_\mathrm{env}$, and $\sigma_\mathrm{env}$, in Figure~\ref{fig:recovery_hodab}.
-Results are shown averaged over the 70 test models, when successively adding in each of our five observables.
-We see that for all of the parameters, each of the observables provides additional information on the parameter, with the exception of $\cfq$.
-The two beyond-standard statistics $\upf$ and $\mcf$ provide significantly increased precision compared to the standard statistics alone.
-This indicates that the additional constraining power from these statistics for the cosmological parameters may be related to their heightened sensitivity to assembly bias, and the ability of the combination of many observables to constrain the flexible HOD model.
-
-It is somewhat surprising that $\wprp$ on its own provides significant constraining power over the prior on $\fenv$, the amplitude of environmental assembly bias.
-Investigating the relationship between these, we find that with the rest of the parameters fixed, at large scales $\wprp$ decreases as $\fenv$ is increased. 
-This makes sense as positive $\fenv$ values effectively transfer halos from high- to low- density regions, reducing overall clustering which translates to a lower two-halo term.
-It is notable that this effect is significant enough to be able to constrain this parameter, and highlights the importance of including a flexible model of environmental assembly bias. 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
