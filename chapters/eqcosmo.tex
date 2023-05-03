@@ -19,29 +19,41 @@ Further, our results are interpretable in terms of the information in DM phase-s
 
 [dm halo formation and gal-halo connection]
 
+
 One of the key goals of modern galaxy redshift surveys is to infer the cosmological parameters that govern the composition and evolution of the universe.
 In order to perform this inference, we need to model the galaxy distribution; we do so using massive simulations of the cosmic web.
 These N-body simulations, however, only evolve dark matter (DM) particles gravitationally. 
 Hydrodynamic simulations to simulate galaxies are much more expensive, so often DM-only simulations are run and then ``populated'' with galaxies post-facto, using empirically motivated models.
 
 There is a growing body of work on learning the relationship between dark matter and galaxy properties using machine learning (ML) techniques.
-[halo properties papers]
 \cite{jo_machine-assisted_2019} show that using extremely randomized trees (ERTs) and including a two-stage learning approach and environmental property features produce accurate galaxy property predictions in the IllustrisTNG simulation.
 \cite{lovell_machine_2021} use ERTs to learn the relationship between halos in the EAGLE simulation and galaxies in the zoom C-EAGLE simulations of galaxy clusters.
 \cite{de_santi_mimicking_2021} compare the performance of different ML models on predicting galaxy properties from IllustrisTNG, and find success in predicting the stellar mass and reproducing galaxy power spectra.
-\cite{jespersen_learning_2022} use graph neural networks on DM halo merger trees to predict galaxy properties computed from semi-analytic models.
+\cite{delgado_modeling_2021} use a random forest regressor to identify key secondary halo properties for modelling the galaxy--halo connection using IllustrisTNG.
+\cite{stiskalek_scatter_2022} also explore how secondary halo properties affect the galaxy--halo connection, specifically analyzing the scatter in the stellar-to-halo mass relation in IllustrisTNG using a neural network ensemble.   
+\cite{jespersen_learning_2022} use graph neural networks on DM halo merger trees of halos in the DM-only IllustrisTNG simulation to predict galaxy properties computed from semi-analytic models.
 
-[full halo distribution papers]
 Other works use the dark matter density field as inputs, rather than halo features.
-\cite{kasmanoff_dm2gal_2020} voxelize the DM field of the IllustrisTNG DM-only simulation and predict the stellar mass in voxels centered on subhalos using convolutional neural networks.
+This approach operates on inputs closer to the raw data, but presents its own challenges such as the high sparsity in the stellar mass distribution.
+\cite{yip_dark_2019} implement a cascade of convolutional neural networks (CNNs) to predict the 3D galaxy distribution from a voxelization of the IllustrisTNG DM-only simulation.
+Along a similar vein, \cite{kasmanoff_dm2gal_2020} predict the stellar mass in voxels centered on subhalos using CNNs in IllustrisTNG.
 
 [dm history / structure formation papers]
 \cite{he_learning_2018} use a deep neural network to emulate gravitational structure formation, taking an initial displacement field of a particle grid as inputs and predicting the final displacement field based on an approximate N-body simulation.  
 
-[equivariant ML]
+While ML techniques are extremely powerful at making predictions, they are generally agnostic to the underlying physical processes they model.
+One key aspect of physical laws is \emph{symmetries}: we expect that our results will change in exact ways, or not change at all, under certain transformations.
+Some ML models are naturally \emph{equivariant} to certain symmetries, such as convolutional neural networks to translations and graph neural networks to permutations.
+Recently, additional ML approaches that enforce physical symmetries have been developed.
+CNNs have been extended to incorporate rotational symmetries \citep{cohen2019gauge,wang2021incorporating,ocampo_scalable_2023}.
+Most relevant to our focus on simulated dark matter halos,neural networks that operate on point clouds have been developed that enforce rotation, translation, and permutation equivariance using a variety of approaches.
+These include irreducible representations \citep{thomas2018tensor}, self-attention mechanisms \citep{fuchs2020se}, and convolutions \citep{kondor2018covariant,zhang2019rotation}, as well as extensions of graph neural networks \cite{Satorras2021}.
 
-[equivariant ML for gal-halo / cosmo]
+Approaches to learning the galaxy--halo connection that are based on a set of halo properties are often naturally obey obey the relevant symmetries; for instance, mass and concentration are invariant to rotations, translations, and permutations of the DM halo particles.
+On the other hand, ML models operating directly on the dark matter density field do not typically respect all of these symmetries.
+Recent work has applied explicitly equivariant neural network architectures and approaches to structure formation and the galaxy--halo connection in cosmological simulations.
 \cite{dai_learning_2020} use Lagrangian Deep Learning to reproduce both dark matter evolution and hydrodynamical outputs, based on an initial linear density field; this approach respects translational and rotational symmetries.
+\cite{thiele_predicting_2022} use permutation- and rotation-invariant DeepSets to predict the thermal Sunyaev-Zel'dovich field in galaxy clusters in IllustrisTNG, using input features constructed by the invariant scalars approach of \cite{Villar2021a}.
 
 [this work]
 The goal of this work is to use a theoretically motivated approach to populate DM-only simulations with galaxies.
@@ -53,12 +65,12 @@ In this work, we use the following notation:
 Scalars are denoted by lowercase variables, vectors by lowercase bold variables, and tensors by uppercase bold variables.
 \ksf{etc}
 
-[outline]
-\ksf{TODO update outline!}
 This paper is outlined as follows.
-In \S\ref{sec:sim_sample}, we introduce the simulation used and our sample selection. 
-In \S\ref{sec:methods}, we describe the invariant scalars approach and our prediction model.
-In \S\ref{sec:results}, we present the results of predicting galaxy properties from DM halo features, and in \S\ref{sec:discussion}, we interpret these results and discuss their implications and applications.
+In \S\ref{sec:sim_sample}, we introduce the simulation used and our halo and galaxy sample selection. 
+We discuss our approach to constructing invariant scalars from dark matter halo particle distributions in \S\ref{sec:scalars_approach} 
+In \S\ref{sec:features_model}, we detail the fiducial scalar feature set and other benchmark feature sets we use as inputs, and describe the prediction model.
+In \S\ref{sec:results}, we present the results of predicting the mass assembly history and galaxy properties from DM halo features, and in \S\ref{sec:discussion}, we interpret these results and discuss their implications and applications.
+We summarize our results and conclusions in \S\ref{sec:summary}
 
 
 \section{Simulation and Sample Construction}
@@ -154,7 +166,7 @@ The distributions of these properties as a function of \dark halo mass are shown
 
 
 \section{The invariant scalars approach}
-\label{sec:methods}
+\label{sec:scalars_approach}
 
 Our method for characterizing DM halos is based on the ``scalars'' approach of \cite{Villar2021a}.
 The core idea is that functions invariant or equivariant to certain transformations can be expressed in terms of a set of scalars, constructed from the input quantities.  
@@ -188,20 +200,20 @@ We also expect the enforced equivariance to make the approach more generalizable
 \label{sec:geometric_features}
 
 \begin{table}
-    \caption{The geometric features we construct from the \dark halo particles, following the multipole expansion of \refeq{eq:geo}. The table gives for each feature its name in multipole moment and more readable notation, its orders in mass, position, and velocity, and its physical interpretation.}
+    \caption{The geometric features we construct from the \dark halo particles, following the multipole expansion of \eqt{eq:geo}. The table gives for each feature its name in multipole moment and more readable notation, its order (rank), and its degree in mass, position, and velocity, and its physical interpretation. All of the geometric features have mass degree of 1 as the are constructed as single sums over masses.}
     \label{tab:geos}
     \vspace{0.5em}
     \centering
-    \begin{tabular}{|l|l|l|l|l|l|}
+    \begin{tabular}{|l|l|l|l|l|l|l|}
     \hline
-    moment & name & $O(m)$ & $O(\x)$ & $O(\vel)$ & physical interpretation \\
+    moment & name & order & $m$ deg. & $\x$ deg. & $\vel$ deg. & physical interpretation \\
     \hline
-    $g_{00n}$ & $m_n$ & 1 & 0 & 0 & mass in $n$th bin \\
-    $g_{10n}$ & $\x_n$ & 1 & 1 & 0 & mass-weighted position of $n$th bin \\
-    $g_{01n}$ & $\vel_n$ & 1 & 0 & 1 & mass-weighted velocity of $n$th bin \\
-    $g_{20n}$ & $\Cxx_n$ & 1 & 2 & 0 & variance tensor of positions in $n$th bin \\
-    $g_{11n}$ & $C^{(\x\vel)}_n$ & 1 & 1 & 1 & covariance of positions and velocities in the $n$th bin \\
-    $g_{02n}$ & $\Cvv_n$ & 1 & 0 & 2 & variance tensor of velocities in $n$th bin \\
+    $g_{00n}$ & $m_n$ & 0 & 1 & 0 & 0 & mass in $n$th bin \\
+    $g_{10n}$ & $\x_n$ & 1 & 1 & 1 & 0 & mass-weighted position of $n$th bin \\
+    $g_{01n}$ & $\vel_n$ & 1 & 1 & 0 & 1 & mass-weighted velocity of $n$th bin \\
+    $g_{20n}$ & $\Cxx_n$ & 2 & 1 & 2 & 0 & variance tensor of positions in $n$th bin \\
+    $g_{11n}$ & $C^{(\x\vel)}_n$ & 2 & 1 & 1 & 1 & covariance of pos. and vels. in $n$th bin \\
+    $g_{02n}$ & $\Cvv_n$ & 2 & 1 & 0 & 2 & variance tensor of velocities in $n$th bin \\
     \hline
     \end{tabular}
 \end{table}
@@ -265,28 +277,28 @@ This procedure results in 7 geometric features per bin; for our 3 fiducial bins,
 
 
 \begin{table}
-    \caption{The scalar features constructed from the geometric features, up to second order in $m$ ($O(m) \leq 2$), and fourth order in each of $\x$ and $\vel$, $O(\x) \leq 4$ and $O(\vel) \leq 4$. The indices $n$ and $n'$ index the radial bins of the geometric features, $q$ and $q'$ index the eigenvalues, and $j$ and $k$ are the indices summed over in Einstein summation notation. We show the vector notation and/or and Einstein summation notation depending on whether there is a clear representation in that notation.} 
+    \caption{The scalar features constructed from the geometric features, up to second degree in $m$, and up to fourth degree in each of $\x$ and $\vel$. All of the features have order 0 as they are rank-0 scalars. The indices $n$ and $n'$ index the radial bins of the geometric features, $q$ and $q'$ index the eigenvalues, and $j$ and $k$ are the indices summed over in Einstein summation notation. We show the vector notation and/or and Einstein summation notation depending on whether there is a clear representation in that notation.} 
     \label{tab:scalars}
     \vspace{0.5em}
     \centering
-    \begin{tabular}{|l|l|l|l|l|l|}
+    \begin{tabular}{|l|l|l|l|l|l|l|}
     \hline
-    vector not. & summation not. & $O(m)$ & $O(x)$ & $O(v)$ \\
+    vector not. & summation not. & order & $m$ deg. & $\x$ deg. & $\vel$ deg. \\
     \hline
-    $m_n$ & $m_n$ & 1 & 0 & 0 \\
-    $\lambda_q(\Cxx_n)$ & & 1 & 1 & 1 \\
-    $\lambda_q(\CxvS_n)$ & & 1 & 2 & 0 \\
-    $\lambda_q(\Cvv_n)$ & & 1 & 2 & 2 \\
-    $\x_n\T \cdot \x_{n'}$ & $[\x_{n}]_j \, [\x_{n'}]_j$ & 2 & 2 & 0 \\
-    $\x_n\T \cdot \vel_{n'}$ & $[\x_{n}]_j \, [\vel_{n'}]_j$ & 2 & 1 & 1 \\
-    $\vel_n\T \cdot \vel_{n'}$ & $[\vel_{n}]_j \, [\vel_{n'}]_j$ & 2 & 2 & 0 \\
-     & $[\Cxx_n]_{jk} \, [\Cxx_{n'}]_{jk}$ & 2 & 4 & 0 \\
-     & $[\Cxx_n]_{jk} \, [\CxvS_{n'}]_{jk}$ & 2 & 3 & 1 \\
-     & $[\CxvS_{n}]_{jk} \, [\CxvS_{n'}]_{jk}$ & 2 & 2 & 2 \\
-     & $[\CxvA_{n}]_{jk} \, [\CxvA_{n'}]_{jk}$ & 2 & 2 & 2 \\
-     & $[\Cxx_{n}]_{jk} \, [\Cvv_{n'}]_{jk}$ & 2 & 2 & 2 \\
-     & $[\CxvS_{n}]_{jk} \, [\Cvv_{n'}]_{jk}$ & 2 & 1 & 3 \\
-     & $[\Cvv_{n}]_{jk} \, [\Cvv_{n'}]_{jk}$ & 2 & 0 & 4 \\
+    $m_n$ & $m_n$ & 0 & 1 & 0 & 0 \\
+    $\lambda_q(\Cxx_n)$ & & 0 & 1 & 1 & 1 \\
+    $\lambda_q(\CxvS_n)$ & & 0 & 1 & 2 & 0 \\
+    $\lambda_q(\Cvv_n)$ & & 0 & 1 & 2 & 2 \\
+    $\x_n\T \cdot \x_{n'}$ & $[\x_{n}]_j \, [\x_{n'}]_j$ & 0 & 2 & 2 & 0 \\
+    $\x_n\T \cdot \vel_{n'}$ & $[\x_{n}]_j \, [\vel_{n'}]_j$ & 0 & 2 & 1 & 1 \\
+    $\vel_n\T \cdot \vel_{n'}$ & $[\vel_{n}]_j \, [\vel_{n'}]_j$ & 0 & 2 & 2 & 0 \\
+     & $[\Cxx_n]_{jk} \, [\Cxx_{n'}]_{jk}$ & 0 & 2 & 4 & 0 \\
+     & $[\Cxx_n]_{jk} \, [\CxvS_{n'}]_{jk}$ & 0 & 2 & 3 & 1 \\
+     & $[\CxvS_{n}]_{jk} \, [\CxvS_{n'}]_{jk}$ & 0 & 2 & 2 & 2 \\
+     & $[\CxvA_{n}]_{jk} \, [\CxvA_{n'}]_{jk}$ & 0 & 2 & 2 & 2 \\
+     & $[\Cxx_{n}]_{jk} \, [\Cvv_{n'}]_{jk}$ & 0 & 2 & 2 & 2 \\
+     & $[\CxvS_{n}]_{jk} \, [\Cvv_{n'}]_{jk}$ & 0 & 2 & 1 & 3 \\
+     & $[\Cvv_{n}]_{jk} \, [\Cvv_{n'}]_{jk}$ & 0 & 2 & 0 & 4 \\
     \hline
     \end{tabular}
 \end{table}
@@ -316,10 +328,11 @@ This allows us to encode the broad features and the halo shape separately, and u
 \label{sec:features_model}
 
 \subsection{Feature sets: scalars and benchmarks}
+\label{sec:benchmarks}
 
-[Our fiducial feature set is...]
-
+Our fiducial feature set is the 102 scalar features per halo described in \S\ref{sec:scalar_features}.
 As a baseline comparison for the predictions with our invariant scalar features, we construct other ``benchmark'' feature sets.
+
 The first set is using only the mass, radius, and velocity: $\Mfof$, $\Rtwoh$, and $\Vfof$. 
 These quantities are all directly related ($\Mfof$ is the bound mass inside $\Rtwoh$, and $\Vfof$ is proportional to the square root of the ratio of $\Mfof$ and $\Rtwoh$), so this feature set captures broad trends with these basic quantities.
 
