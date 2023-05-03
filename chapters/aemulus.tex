@@ -97,8 +97,8 @@ We also incorporate several more HOD parameters for increased flexibility, as we
 
 This paper is organized as follows:
 In \S\ref{sec:sims_gals}, we describe the $N$-body simulations and halo occupation distribution model used, and in \S\ref{sec:observables}, we outline the five clustering statistics we use for inference.
-We detail our emulation and inference methods in \S\ref{sec:methods}, and show the results of recovery tests on both \aemulus mocks and an external mock catalog in \S\ref{sec:results}.
-In \S\ref{sec:discussion}, we discuss the implications of these results and our conclusions.
+We detail our emulation and inference methods in \S\ref{sec:methods}, and show the results of recovery tests on both \aemulus mocks and an external mock catalog in \S\ref{sec:results_aemulus}.
+In \S\ref{sec:discussion_aemulus}, we discuss the implications of these results and our conclusions.
 
 
 \section{Simulations and Galaxy Bias Model}
@@ -466,7 +466,7 @@ Here $\bm{y}_\mathrm{test}$ is the statistics measured directly on the test set 
 
 
 \section{Results}
-\label{sec:results}
+\label{sec:results_aemulus}
 
 We present the results of our emulation and inference on the \aemulus test suite.
 We show the emulator performance (\S\ref{sec:emuperf}), the results of recovery tests on a single test model (\S\ref{sec:recovery_single}) and a larger test sample (\S\ref{sec:recovery_statistical}), and an analysis of the scale dependence of our results (\S\ref{sec:scaledep}).
@@ -640,7 +640,7 @@ Thus, a vertical bar far in the small scale regime means that most of the inform
 As we include smaller scales, the precision increases monotonically.
 Using the vertical bars described above, we find that for $\gfs$ for the 4-observable constraint, scales from $0.1-4 \, \hMpc$ provide as much information as the scales $4-50 \, \hMpc$.
 We also find that significant amounts of information are added all the way down to the smallest bin with minimum scale $0.1 \, \hMpc$.
-This is a remarkable finding given that previous analyses either have not pushed to scales this small, or did not find as significant a contribution from small scales; we discuss this further in \S\ref{sec:discussion}.
+This is a remarkable finding given that previous analyses either have not pushed to scales this small, or did not find as significant a contribution from small scales; we discuss this further in \S\ref{sec:discussion_aemulus}.
 
 To understand this result, we look at the constraints from individual observables for $\gfs$.
 For $\cfq$, half of the information comes from scales below 2 $\hMpc$; for $\cfm$, below 3 $\hMpc$; for $\mcf$, below 6 $\hMpc$; and for $\wprp$, below $\simo10 \hMpc$ (for $\upf$, this is $\simo20 \hMpc$).
@@ -782,7 +782,7 @@ It is notable that this effect is significant enough to be able to constrain thi
 
 
 \section{Discussion \& Conclusions}
-\label{sec:discussion}
+\label{sec:discussion_aemulus}
 
 We have constructed Gaussian process emulators for galaxy clustering statistics using the \aemulus simulation suite, including the non-standard statistics the underdensity probability function $\upf$ and the marked correlation function $\mcf$, which we expect to contain additional information relevant to constraining cosmological parameters of interest.
 We achieve typical prediction errors of $\simo2\%$ with our emulator, depending on the scale and statistic, with a range of $<1\%-\simo10\%$.
