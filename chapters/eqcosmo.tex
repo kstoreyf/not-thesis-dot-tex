@@ -65,14 +65,14 @@ In this work, we propose an equivariant approach to characterizing the dark matt
 We use the method of \emph{invariant scalars} introduced by \cite{Villar2021a}, which offers a lightweight approach to representing invariant and equivariant functions using a collection of scalar quantities.
 The core idea is that geometric objects---such as vectors of particle positions and velocities---can be \emph{contracted} to form scalars that are invariant to transformations, namely translations, rotations, velocity boosts, and permutations.
 
-Previous work has shown that this ``scalars'' approach improves performance on prediction tasks.
+Recent work has shown that this ``scalars'' approach improves performance on prediction tasks.
 \cite{yao_simple_2021} demonstrated the approach on a toy dynamical system and showed that it outperformed state-of-the-art approaches in both speed and accuracy.
 It has recently been applied to large-scale structure problems: \cite{villanueva-domingo_learning_2022} used scalars in combination with graph neural networks applied to simulated galaxy catalogs to perform cosmological inference.
 \cite{thiele_predicting_2022} constructed invariant scalars from input dark matter particles as well as galaxy cluster-scale features as inputs to their DeepSet architecture.
 
 We apply the invariant scalars approach to the particle distribution of DM halos in the IllustrisTNG DM-only simulation.
-To obtain a uniform set of features across halos while preserving detailed structure, we first compress the DM halo particles into geometric multipole moments, and then combine these into invariant scalar features.
-This provides a characterization of DM halos that encodes high-order phase-space structure while preserving physical symmetries.
+To obtain a uniform set of features across halos while preserving detailed structure, we first compress the DM halo particles into geometric multipole moments in radial bins, and then combine these into invariant scalar features.
+This provides a characterization of DM halos that encodes interpretable, high-order phase-space structure while preserving physical symmetries.
 To learn the mapping from DM halos to baryonic properties, we construct a set of matched DM halos in the DM-only simulation to central galaxies in the TNG hydrodynamical simulation.
 We use a XXX model with the scalars as inputs to predict galaxy properties, and compare this approach to benchmark feature sets. 
 We also demonstrate that these features allow for accurate predictions of the mass assembly history of the DM halos.
@@ -92,7 +92,7 @@ We summarize our results and conclusions in \S\ref{sec:summary}.
 \label{sec:sim_sample}
 
 \subsection{The IllustrisTNG simulations}
-\label{sec:tng}
+\label{sec:sim}
 
 The Illustris TNG simulations are cosmological magnetohydrodynamical simulations that co-evolve dark matter and baryons to model galaxy formation \citep{springel_first_2018,nelson_first_2018,pillepich_first_2018,naiman_first_2018,marinacci_first_2018}.\footnote{Data products from the TNG Project are publicly accessible at \url{https://www.tng-project.org/}.}
 The simulations are run starting from initial conditions at $z=127$ with cosmological parameters from \cite{ade_planck_2016} $\Omega_m = \Omega_{dm} + \Omega_b = 0.3089$, $\Omega_b = 0.0486$, $\Omega_\Lambda = 0.6911$, Hubble constant $H_0 = 100$ $h$ km s$\inv$ Mpc$\inv$ with $h = 0.6774$, $\sigma_8 = 0.8159$, and $n_s = 0.9667$.
@@ -177,7 +177,7 @@ We use the $\jstellar$ computed by the approach of \cite{genel_galactic_2015} in
 The $\mbh$ value is that given by the TNG field \field{SubhaloBHMass} of the subhalo, in units of log($\hMsun$).
 For galaxies with zero black hole mass, we assign the value to be half of the minimum black hole mass in our sample. 
 We use the $g-i$ color comptuted from synthetic SDSS photometry as provided by the TNG project \citep{nelson_first_2018}; the photometry is in units of AB magnitudes. 
-The distributions of these properties as a function of \dark halo mass are shown in the left column of Figure~\ref{fig:gal_props}.
+The distributions of these properties as a function of \dark halo mass are shown in the left column of Figure~\ref{fig:galprops}.
 
 
 \section{The invariant scalars approach}
@@ -404,31 +404,89 @@ This achieved reasonable precision, but was less flexible than the neural net an
 \section{Results}
 \label{sec:results}
 
-\subsection{From halo shapes to galaxy stellar masses}
+\subsection{Predicting galaxy stellar masses}
+\label{sec:pred_mstellar}
 
 \begin{figure}
     \centering
     \includegraphics[width=0.7\columnwidth]{pred_mstellar.png}
-    \caption{Predictions for the galaxy stellar mass based on the halo shape scalars. The panels show the predicted stellar-to-halo mass relation, the predicted stellar mass compared to the true stellar mass, and the residuals of the stellar mass prediction compared to truth as a function of halo mass.}
+    \caption{Predictions for the galaxy stellar mass $\mstellar$ using our invariant scalar features. The panels show the predicted stellar-to-halo mass relation, the predicted stellar mass compared to the true stellar mass, and the residuals of the stellar mass prediction compared to truth as a function of halo mass. The grey lines show zero error. The colorbar shows the number density of galaxies in units $(\hMpc)^{-3} \text{dex}^{-2}$, which takes into account the size of the box, the fraction of objects in the test sample, and the 2D histogram bin widths. We achieve accurate and precise predictions of the galaxy stellar mass with our invariant features.}
     \label{fig:mstellar}
 \end{figure}
+
+We focus on predicting the stellar mass of the central galaxy hosted by each DM halo, as this is the key quantity related to galaxy sample selection and is tightly correlated with other galaxy properties.
+Our results with our fiducial feature set, the invariant scalar features with three radial bins, on our test sample of halos is shown in Figure~\ref{fig:mstellar}. 
+In the top left we show the predicted stellar mass $\mstellar$ as a function of halo mass $\Mfof$; we see that we broadly recover the true shape of the stellar-to-halo mass relation. 
+In the top right we show our predicted $\mstellar$ vs. the true $\mstellar$; our predictions are quite accurate, with a high density along the one-to-one line; the error $\sigma_{68}$, computed as the absolute symmetrized inner 68th percentile error, is 0.164 dex.
+
+In the bottom row we show the absolute error (residuals) on our predictions as a function of halo mass and stellar mass.
+We have larger errors at smaller halo and galaxy masses; this makes sense given the larger scatter in the stellar-to-halo mass relation at low halo masses, which is partially caused by shot noise dominating at those scales.
+We also see an increase in error at high halo masses; this is related to the small sample size at those masses and the unbalanced training set in terms of halo size.
+There is a clear artifact in the residuals as a function of stellar mass caused by our sample selection requirement that galaxies be composed of at least 50 star particles.
+When the true stellar mass is very small, it is at the low edge of our training set and thus we are biased towards overpredicting it.
+A practical tool could remedy this by using a wider training set than testing set to provide a buffer, or taking a multi-step approach to handle zero- and low-mass galaxies.  
+
 
 \begin{figure}
     \centering
     \includegraphics[width=0.7\columnwidth]{feature_comparison_mstellar.png}
-    \caption{Predictions for the galaxy stellar mass using the invariant scalars as features, compared to other feature choices: only halo mass, halo summary features, and non-invariant geometric features.}
+    \caption{Predictions for the galaxy stellar mass based on different input feature sets: the invariant scalar features (our fiducial set); the components of the geometric features; a set of standard halo features; and only $\Mfof$, $\Rtwoh$, and $\Vfof$. These are detailed in \S\ref{sec:benchmarks}. The upper left panel is the same as the upper right panel in Figure~\ref{fig:mstellar}; the color bar is the same as in that figure as well. The invariant scalars approach outperforms the standard features in the stellar mass prediction, and significantly outperforms using only the mass and related scaling quantities. It very slightly outperforms the geometric feature set, which is not invariant to rotations.}
     \label{fig:mstellar_compare}
 \end{figure}
 
+We compare the performance our invariant scalars approach to other benchmark feature sets on galaxy stellar mass predictions in Figure~\ref{fig:mstellar_compare}.
+Each panel shows the predicted vs. true stellar mass $\mstellar$ for a different feature set (detailed in \S\ref{sec:benchmarks}).
+The invariant scalar features panel is reproduced from Figure~\ref{fig:mstellar}.
+As expected, the worst-performing feature set is the one using only the basic global properties of the halo, $\Mfof$, $\Rtwoh$, and $\Vfof$ (recall that these are all directly related so this is essentially just a single scale), achieving just under a quarter of a dex in scatter.
+We see some banding the predictions, likely due to the fact that this feature set can produce the mean stellar-to-halo mass relation but not the scatter.
+The standard halo features, which includes the mass scale as well as a handful of shape and dynamical properties, performs better, with error reduced to under 0.2 dex. 
 
-\subsection{Predicting other galaxy properties}
+The geometric features produce still better predictions, suggesting that the detailed structure they encode---in both position and velocity space, and split into radial bins---adds significant information, giving an error 0.168 dex.
+Somewhat surprisingly, we find that the invariant scalar features computed from these geometric features do not produce significantly improved predictions compared to the components of the geometric features.
+The difference between these is that the geometric features are not invariant to rotations, while the scalar features are; both are invariant to translations, velocity boosts, and permutations, given how we construct the geometric features.
+We expect that the invariance to rotations would become more important when using a smaller training set size, whereas the model seems able to learn the rotation invariance from our large and relatively homogenous training set.
+It is also possible that the other symmetries are more dominant; in future work we could construct a benchmark that is not invariant to these symmetries for a clearer comparison.
+
+
+\subsection{Predicting other baryonic properties}
+\label{sec:pred_galprops}
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\columnwidth]{pred_multi.png}
-    \caption{The predicted value of the given galaxy property with our approach, compared to the true value in the matched hydrodynamic simulation. The properties shown are star formation rate, half-mass radius, XXX... . We compare the predictions to those using only the halo summary properties, and using non-invariant geometric features.}
-    \label{fig:gal_props}
+    \includegraphics[width=0.8\columnwidth]{pred_galprops.png}
+    \caption{Distributions and predictions of galaxy properties using our invariant scalars approach and other benchmark feature sets, for the test sample. 
+    Each row shows a different galaxy property: stellar mass $\mstellar$, specific star formation rate $\ssfr$, stellar radius $\rstellar$, specific stellar angular momentum $\jstellar$, $\gminusi$ color, and black hole mass per stellar mass $\mbhpermstellar$. 
+    The left column shows the property as a function of halo mass $\Mfof$. 
+    The second column is the predicted distribution as a function of halo mass, and the third compared to the true property, using the fiducial invariant scalar features.
+    The right is the binned error as a function of halo mass, comparing the scalar features (thick black), geometric feature components (red), standard features (blue), and mass scale features (green); the grey shaded region shows the lower limit from chaos.
+    For most of the galaxy properties, the scalars slightly outperform the other features, but many properties are limited by chaos.
+    }
+    \label{fig:galprops}
 \end{figure}
+
+We show the results of our predictions on other galaxy and baryonic properties in Figure~\ref{fig:galprops}.
+In the left two columns, we show the true and predicted distributions of properties as a function of halo mass $\Mfof$, where the predictions are with our fiducial invariant scalar features.
+We see that we broadly reproduce the shape of the distribution for all of the properties. 
+However, there are significant differences; noteably, nearly all of our predictions fail to reproduce the full scatter of the true distributions, tending towards the mean.
+Generally, the regions of poor prediction indicate that either our features are not informative enough, our model is not performant enough, or there is a fundamental limitation in the amount of information accessible---or some combination of these three.
+
+We investigate the final possibility by comparing the error in our results to the scatter from chaos, as computed from the ``butterfly'' simulations of \cite{Genel2019} (described in \S\ref{sec:galprops}), which represents a limit to the retrievable information.
+This is shown as a function of halo mass in the grey shaded region in the final column, compared to the binned error of our predictions.
+We see that for some properties in some regimes, we are indeed at or near the chaotic limit, where we expect the rest of the information is destroyed by the chaotic effects of evolution.
+This is the case for the $\ssfr$ and $\rstellar$ at low halo masses, for $\gminusi$ color at all masses, and $\mbhpermstellar$ at intermediate masses.
+For these cases, we are able to reproduce the relatively complex shape of the property distribution as a function of halo mass: for instance for the $\ssfr$ we accurately predict the sharp transition from large scatter at very low halo mass to low scatter at intermediate halo mass, and for $\gminusi$ color we predict the non-monotonic shape of the distribution vs. halo mass, including the large colors of the high-mass galaxy population.
+In some bins we are achieving results below the chaotic limit; this may be because this is a somewhat optimistic limit as it is computed from a slightly higher resolution simulation, and also possibly due to small number statistics (generally for the butterfly simulations, and especially for the high mass bins in both).
+
+There are some populations that our predictions fail to reproduce, somewhat separate from the low-scatter issue.
+For instance, we do not predict the very low $\rstellar$ ``fin'' at low halo masses, leading to consistent over-predictions in that bin.
+Our model also struggles to handle very low values, such as in the $\ssfr$ distribution where we replaced the value of galaxies with no star formation with a small limit, as can be seen in the intermediate-to-high mass regime (where galaxies are more likely to be quenched).
+We see that our predictions do not separate out this population, instead predicting a continuous distribution of specific star formation rates at those masses.
+While some of our predictions of baryonic properties are impressive and show that there is significant information in halo shape relevant to galaxy properties, our results broadly align with other recent findings that baryonic properties beyond stellar mass are difficult to predict using halo features \citep{de_santi_mimicking_2021,stiskalek_scatter_2022}.
+
+In the right column of Figure~\ref{fig:galprops}, we show the comparison between our invariant scalars approach with the other benchmark feature sets.
+We find that while the scalars generally outperform the other features, the differences are not particular pronounced for most properties and scales.
+The clearest improvements of the scalars over the standard features are seen in predicting the stellar mass $\mstellar$, as discussed in \S\ref{sec:pred_mstellar}, and the specific stellar angular momentum $\jstellar$; the latter may be thanks to our inclusion of high-order velocity-space features, while the standard features only use the velocity dispersion and spin.
+Similarly to the stellar mass case, we do not see a clear difference between predictions with the scalar features and geometric features, indicating that the model is able to learn the rotational invariance from the data even when the features are not invariant.
 
 
 \subsection{The mass assembly history encoded in the present-day halo shape}
