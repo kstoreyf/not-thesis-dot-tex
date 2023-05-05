@@ -146,21 +146,22 @@ The merger trees are run on halos found with the \textsc{rockstar} \citep{behroo
 
 We consider the most massive progenitor branch of the assembly history of each \dark halo in our sample.
 We compile the mass of the halo's most massive progenitor for each of the TNG snapshots. 
-A natural quantity to try to predict would be the fraction of the $z=0$ halo mass accreted as a function of redshift.
+A natural quantity to try to predict would be the mass of the most massive progenitor halo as a function of redshift; this could be made dimensionless  by considering the fraction of mass accreted by the halo's most massive progenitor compared to its $z=0$ mass.
 However, different halos can be traced back to different redshifts, and this inconsistency causes difficulties at the prediction stage.
-We thus choose to learn the scale factor $a$ (related to the redshift $z$ by $a=1/(1+z)$) at which the halo has accreted a given fraction of its mass, $M_\mathrm{vir}(a)$/$M_\mathrm{vir}(a=1)$, where $M_\mathrm{vir}$ is given by the \field{HalopropMvir} field of the SC-SAM data and $a=1$ is the present day.
-This swapped quantity gets at the same information as the natural quantity but is more stable in predictions.
-We compute this at XXX linearly spaced mass fractions between 0 and 1 (exclusive). 
+We thus choose to learn the scale factor $a$ (related to the redshift $z$ by $a=1/(1+z)$) at which the halo has accreted a given fraction of its mass along the most massive progenitor branch, $M_\mathrm{vir}(a)$/$M_\mathrm{vir}(a=1)$, where $M_\mathrm{vir}$ is given by the \field{HalopropMvir} field (equivalent to the TNG field \field{Group\_M\_TopHat200}) of the SC-SAM data and $a=1$ is the present day.
+(We note that this is a different mass definition than that used throughout this work, but we only consider mass ratios so we expect this will not matter.)
+This swapped quantity, the scale factor $a$ as a function of mass fraction, gets at the same information as the natural quantity but is more stable in predictions.
+We compute this at mass fractions linearly spaced by 0.025 between 0 and 1 (exclusive), giving 39 values. 
 As we only have the history at a finite number of snapshots, we perform a linear interpolation between the mass fractions and scale factors to estimate the scale factor at a given mass fraction.
-If the target mass fraction is outside the bounds of the data (for example, if the initial mass of the halo was a larger mass fraction than our tabulated values), we assign the scale factor to be that at which the mass fraction is closest.  
+If the target mass fraction is outside the bounds of the data (for example, if the initial mass of the halo was a larger mass fraction than our tabulated values), we assign the scale factor to be that at which the mass fraction is closest.
 
 
 
-\subsection{Galaxy properties}
+\subsection{Baryonic properties and uncertainties}
 \label{sec:galprops}
 
 % TODO: add uncertainty info here
-We aim to predict the properties of central galaxies hosted by a given dark matter halo.
+One of the aims of this work is to predict the baryonic properties of central galaxies hosted by a given dark matter halo.
 In this section we detail these properties and the associated choices we make. 
 We choose to predict only scalar properties for this work, as we focus on enforcing \emph{invariance} to physical symmetries, though we could also predict vector and higher order properties and enforce \emph{equivaraince}.
 
@@ -178,6 +179,12 @@ The $\mbh$ value is that given by the TNG field \field{SubhaloBHMass} of the sub
 For galaxies with zero black hole mass, we assign the value to be half of the minimum black hole mass in our sample. 
 We use the $g-i$ color comptuted from synthetic SDSS photometry as provided by the TNG project \citep{nelson_first_2018}; the photometry is in units of AB magnitudes. 
 The distributions of these properties as a function of \dark halo mass are shown in the left column of Figure~\ref{fig:galprops}.
+
+We estimate the uncertainties on these baryonic properties based on the effects of small initial perturbations in cosmological simulations and how these propogate to differences in baryonic properties over time.
+We quantify this using the simulations of \cite{Genel2019}, which are pairs of IllustrisTNG with small random initial particle displacements.
+The $z=0$ galaxies are then matched across the pairs, and the pairwise differences between their properties can be computed; the standard deviations of these pairwise differences represent a lower limit on the retrievable information on the properties.
+We refer to this as the chaotic limit, and use it as a comparison for our baryonic property predictions.
+Specifically, we use the $\epsilon=1$ resolution level simulations which is similar to but slightly worse than the resolution of TNG100-1, so the limit is slightly optimistic (the true lower limit is actually lower than the limit shown).
 
 
 \section{The invariant scalars approach}
@@ -453,7 +460,7 @@ It is also possible that the other symmetries are more dominant; in future work 
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.8\columnwidth]{pred_galprops.png}
+    \includegraphics[width=0.87\columnwidth]{pred_galprops.png}
     \caption{Distributions and predictions of galaxy properties using our invariant scalars approach and other benchmark feature sets, for the test sample. 
     Each row shows a different galaxy property: stellar mass $\mstellar$, specific star formation rate $\ssfr$, stellar radius $\rstellar$, specific stellar angular momentum $\jstellar$, $\gminusi$ color, and black hole mass per stellar mass $\mbhpermstellar$. 
     The left column shows the property as a function of halo mass $\Mfof$. 
@@ -489,29 +496,38 @@ The clearest improvements of the scalars over the standard features are seen in 
 Similarly to the stellar mass case, we do not see a clear difference between predictions with the scalar features and geometric features, indicating that the model is able to learn the rotational invariance from the data even when the features are not invariant.
 
 
-\subsection{The mass assembly history encoded in the present-day halo shape}
+\subsection{Predicting the halo mass assembly history}
 
 
 \begin{figure}
     \centering
-    %\includegraphics[width=0.5\columnwidth]{pred_mah.png}
-    \caption{The predicted mass assembly history of a halo based on the invariant shape scalars. The top panel shows the MAHs of a random selection of halos from the test set, and the predicted scale factor at each mass fraction. The middle panel shows the fractional residuals between the two, and the bottom shows the inner 68th percentile of the predictions for all of our test set, compared to that of the distribution of MAHs used in training. \ksf{rn im plotting test set for latter, make sure to switch to test!}}
+    \includegraphics[width=0.6\columnwidth]{pred_amfrac.png}
+    \caption{The predicted mass assembly history (MAH) of a halo based on the invariant shape scalars, parameterized by the scale factor at which the halo's most massive progenitor accreted a given fraction of its mass. The top panel shows the MAHs of a random selection of halos from the test set (closed circles), and the predicted scale factor at each mass fraction. The middle panel shows the fractional residuals between the two, and the bottom shows the inner 68th percentile of the predictions for all of our test set, compared to that of the distribution of MAHs used in training. \ksf{rn im plotting test set for latter, make sure to switch to test!}}
     \label{fig:mah}
 \end{figure}
 
 
-\subsection{Understanding the relative importance of the halo shape features}
-
-The feature subsets we consider are: only mass features; mass and position features; mass and velocity features; mass, position and velocity features.
-We also investigate limiting to certain orders in $O(x)+O(v)$: 0, 2, and 4.
-Finally, we consider different numbers of bins, as well as excluding cross-bins.
-
-\begin{figure}
+\begin{figure*}
     \centering
-    %\includegraphics{}
-    \caption{The precision on the predictions of the given property when using the denoted subset of invariant scalars.}
-    \label{fig:features}
-\end{figure}
+    \subfloat[\label{fig:pred_amfrac_hi}]{\includegraphics[width=0.45\textwidth]{pred_amfrac_hi.png}}
+    \hspace{2em}
+    \subfloat[\label{fig:pred_amfrac_lo}]{\includegraphics[width=0.45\textwidth]{pred_amfrac_lo.png}}
+    \caption{}
+\end{figure*}
+
+
+% \subsection{Understanding the relative importance of the halo shape features}
+
+% The feature subsets we consider are: only mass features; mass and position features; mass and velocity features; mass, position and velocity features.
+% We also investigate limiting to certain orders in $O(x)+O(v)$: 0, 2, and 4.
+% Finally, we consider different numbers of bins, as well as excluding cross-bins.
+
+% \begin{figure}
+%     \centering
+%     %\includegraphics{}
+%     \caption{The precision on the predictions of the given property when using the denoted subset of invariant scalars.}
+%     \label{fig:features}
+% \end{figure}
 
 
 \section{Discussion}
@@ -528,6 +544,9 @@ Topics/points for discussion section:
     \item Other properties we should predict (position: discuss offsets bw dark and hydro; spin: pseudo-vector)
     \item particles have large time derivative; galaxy has relatively small time derivative! we could show this with our scalars. discuss time dependence.
 \end{itemize}
+
+\section{Summary}
+\label{sec:summary}
 
 
 \section{Chapter Acknowledgements}
