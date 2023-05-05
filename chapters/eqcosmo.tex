@@ -201,6 +201,7 @@ We specifically consider rotation, translation, velocity boosts, rotation, and p
 For each \dark halo, we use a multipole expansion to compress the particle positions and velocities of each halo into a set of ``geometric features'' that describe the phase-space structure of the halo; this is discussed in \S\ref{sec:geometric_features}.
 We then construct scalar contractions of these geometric features, which are scalars, vectors, and tensors; these ``scalar features'' are invariant to transformations of the particles. 
 This step is informed by Einstein summation notation, which only allows invariant scalars to be produced; the details of our scalar feature construction is discussed in \S\ref{sec:scalar_features}.
+Though in practice we limit the scalars we produce to certain orders and radial bins, in principle if we took the limit of infinite orders and extremely fine binning, the scalars would \emph{exactly} describe the particular distribution \emph{up to} the symmetry transformations; the limits we impose are well-behaved approximations on this.
 We can finally use these scalar features as the inputs for our prediction task; in our case we use a Gradient Boosted Tree model (\S\ref{sec:prediction_model}), though we note that the scalars could be used with other model choices.
 
 In contrast to this approach, many standard approaches use a small set of hand-constructed properties of the halos, such as the mass, concentration, and spin.
@@ -448,11 +449,11 @@ As expected, the worst-performing feature set is the one using only the basic gl
 We see some banding the predictions, likely due to the fact that this feature set can produce the mean stellar-to-halo mass relation but not the scatter.
 The standard halo features, which includes the mass scale as well as a handful of shape and dynamical properties, performs better, with error reduced to under 0.2 dex. 
 
-The geometric features produce still better predictions, suggesting that the detailed structure they encode---in both position and velocity space, and split into radial bins---adds significant information, giving an error 0.168 dex.
+The geometric features produce still better predictions, suggesting that the detailed structure they encode---in both position and velocity space, and split into radial bins---adds significant information, giving an error of 0.168 dex.
 Somewhat surprisingly, we find that the invariant scalar features computed from these geometric features do not produce significantly improved predictions compared to the components of the geometric features.
 The difference between these is that the geometric features are not invariant to rotations, while the scalar features are; both are invariant to translations, velocity boosts, and permutations, given how we construct the geometric features.
 We expect that the invariance to rotations would become more important when using a smaller training set size, whereas the model seems able to learn the rotation invariance from our large and relatively homogenous training set.
-It is also possible that the other symmetries are more dominant; in future work we could construct a benchmark that is not invariant to these symmetries for a clearer comparison.
+It is also possible that the other symmetries are more dominant; in future work we could construct other benchmarks that are not invariant to these symmetries for a clearer comparison.
 
 
 \subsection{Predicting other baryonic properties}
@@ -533,17 +534,43 @@ Similarly to the stellar mass case, we do not see a clear difference between pre
 \section{Discussion}
 \label{sec:discussion}
 
-Topics/points for discussion section:
-\begin{itemize}
-    \item Understanding of important features (what do they mean, relationship to currently used features)
-    \item Application of approach to useful tasks (constructing mock catalogs, predicting galaxy properties in larger \& higher res simulations and being able to construct many realizations)
-    \item The inference problem: going from galaxies to DM
-    \item Feature construction choices (e.g. could construct geometric features other ways like with spherical harmonics)
-    \item Future goal to move away from halo framework and work on full particle distribution, starting from e.g. density peaks. Intermediate task is to start from halo centers but include all particles, not just those in FoF group
-    \item Future work to look at impact of larger-scale environment, incorporate it in input features
-    \item Other properties we should predict (position: discuss offsets bw dark and hydro; spin: pseudo-vector)
-    \item particles have large time derivative; galaxy has relatively small time derivative! we could show this with our scalars. discuss time dependence.
-\end{itemize}
+There are many possible extensions of this analysis.
+One natural addition is the incorporation of environmental information, using the particles in the vicinity of the halo but not bound to the FoF group, or in the even larger-scale environment, to construct additional features.
+Previous work has shown that environmental features of DM halos significantly improve predictions of baryonic properties (e.g. \citealt{jo_machine-assisted_2019}); this is directly relevant to the open question of galaxy assembly bias.
+Taking this further, we could apply our approach to the full particle distribution, moving away from the halo model.
+This would require significant development, but would be useful to learn the relationship between DM and galaxies independent of the effects of halo finding choices.
+
+One area of potential further investigation is the importance of individual scalar features.
+There is a large number of scalars and they contain some degenerate information, and it would be useful to pare this down to a smaller feature set that contains (nearly) all of the information.
+We could also investigate which scalar features are most important for predicting each baryonic or halo assembly property.
+The interpretability of the scalars is a key feature, and a detailed feature study may give insights into the halo properties and dynamics that govern galaxy formation and structure formation.
+
+We could also construct scalars from halos at earlier-time snapshots.
+Previous work has shown that using the halo assembly history as features aids stellar mass and other galaxy property predictions (e.g. \citealt{jespersen_learning_2022}); while in this work we have shown that the present-day halo shape encodes significant information on the halo assembly history, we expect that explicitly using these historical features would improve the predictions of $z=0$ baryonic properties in which we are interested.
+Further, we could use scalars constructed from the DM distribution (or halo properties) of early-time snapshots to predict the evolution and late-time DM distribution, essentially emulating the N-body simulations, a problem that has received significant attention \citep{he_learning_2018, jamieson_field_2022}.
+We could even attempt to infer $z=0$ baryonic properties directly from scalars constructed from DM initial conditions, though doing this directly may prove very difficult.
+
+An important extension of this work is to predict not only scalar properties, but also vector and higher-order tensor outputs.
+These analyses would require adapting our approach for \emph{equivariance}, from its current focus on invariance; this involves multiplying our scalars by vectors or pseudovectors, as discussed in detail in \cite{Villar2021a}, as well as potentially constructing additional vector properties (such as the eigenvectors of tensor geometric features).
+As an example, we may be interested in predicting the position and velocity offsets of galaxies relative to their host halos.
+This would require carefully handling the relationship between \dark and \hydro halos.
+We could also predict the galaxy angular momentum, a pseudovector; this is expected to be correlated with the halo angular momentum (e.g. \citealt{jiang_is_2019}), which our scalars nearly directly encode.
+
+Our method could be built out into a practical tool for mock galaxy catalog construction.
+Fast, reliable methods for generating many large mock catalogs will be critical for the analysis of upcoming galaxy surveys.
+To do this, we would need to fully handle each element, including: a robust way to deal with zero-mass galaxies and other baryonic properties with zero value; a treatment of satellite galaxies; developing an approach to constructing many realizations of mock catalogs for a given simulation; and testing the cosmological summary statistics of the predicted galaxy distribution.
+
+Our general approach of characterizing the dark matter field with symmetry-preserving scalars is applicable to many other problems and tasks.
+For instance, one could use them to map between lower- and higher-resolution simulations, the so-called super-resolution problem.
+One could investigate the inverse problem of mapping the DM field based on the galaxy distribution, relevant to weak lensing studies.
+The scalars could also be used as invariant summary statistics for the galaxy distribution, useful for cosmological inference.
+
+Another avenue of investigation is the dynamics of the scalars themselves.
+As these are built from geometric quantities encoding spatial and velocity information, the scalars have well-behaved dynamical properties.
+These could be used to understand DM halo assembly and structure formation more broadly.
+They could even be used to mimic full N-body simulations.
+
+
 
 \section{Summary}
 \label{sec:summary}
