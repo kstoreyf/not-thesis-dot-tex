@@ -31,7 +31,7 @@
 
 %% Replace the title, name, advisor name, graduation date and dedication below
 %% with your own. Graduation months must be January, May or September.
-\newcommand{\thesistitle}{Data Science Methods for Large-Scale Structure Cosmology}
+\newcommand{\thesistitle}{Tools for Cosmology with Galaxy Clustering}
 \newcommand{\thesisauthor}{Kate Storey-Fisher}
 \newcommand{\thesisadvisor}{Professor David W. Hogg}
 \newcommand{\thesisdept}{Physics}
@@ -92,15 +92,26 @@
 
 %% Chapter headings, captions
 \usepackage{fix-cm}
-\RequirePackage[raggedright,sc]{titlesec}
+%\RequirePackage[raggedright,sc]{titlesec}
+\RequirePackage[raggedright,rm]{titlesec}
+\titleformat{\section}
+  {\LARGE}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\large}{\thesubsection}{1em}{}
 \definecolor{gray75}{gray}{0.75}
 \newcommand{\hsp}{\hspace{20pt}}
 
-\titleformat{\chapter}[hang]
-{\Huge\sc}
-{\textcolor{black}{\thechapter}\hsp\textcolor{gray75}{|}\hsp}
-{0pt}{\Huge\sc\raggedright}
+% small caps formatting
+% \titleformat{\chapter}[hang]
+% {\Huge\sc}
+% {\textcolor{black}{\thechapter}\hsp\textcolor{gray75}{|}\hsp}
+% {0pt}{\Huge\sc\raggedright}
 % [\textcolor{gray75}{|}\hsp\textcolor{SchoolColor}{\thechapter}]
+
+\titleformat{\chapter}[hang]
+{\Huge}
+{\textcolor{black}{\thechapter}\hsp\textcolor{gray75}{|}\hsp}
+{0pt}{\Huge\raggedright}
 
 
 %% The following makes chapters and sections, but not subsections,
@@ -245,24 +256,24 @@
 
 
 %%%%%%%%%%%%%% Acknowledgements %%%%%%%%%%%%
-%% Comment out the following lines if you do not want to acknowledge
-%% anyone's help...
-\chapter*{Acknowledgements}
-\addcontentsline{toc}{chapter}{Acknowledgments}
+% %% Comment out the following lines if you do not want to acknowledge
+% %% anyone's help...
+% \chapter*{Acknowledgements}
+% \addcontentsline{toc}{chapter}{Acknowledgments}
 
-% \input{acknowledge}
-\lipsum[1-2]
+% % \input{acknowledge}
+% \lipsum[1-2]
 
-\newpage
+% \newpage
 
 
-%%%% Abstract %%%%%%%%%%%%%%%%%%
-\chapter*{Abstract}
-\addcontentsline{toc}{chapter}{Abstract}
+% %%%% Abstract %%%%%%%%%%%%%%%%%%
+% \chapter*{Abstract}
+% \addcontentsline{toc}{chapter}{Abstract}
 
-\input{abstract}
+% \input{abstract}
 
-\newpage
+% \newpage
 
 
 %%%% Table of Contents %%%%%%%%%%%%
@@ -299,41 +310,37 @@
 % Body of Thesis
 % ----------------------------------------
 
-\chapter{Introduction}
-% this makes abstracts section 0 (need before each chapter)
-\setcounter{section}{-1}
-\label{chp-introduction}
-\input{chapters/introduction.tex}
+% \chapter{Introduction}
+% % this makes abstracts section 0 (need before each chapter)
+% \setcounter{section}{-1}
+% \label{chp-introduction}
+% \input{chapters/introduction.tex}
 
-\chapter{Two-point statistics without bins: A continuous-function generalization of the correlation function estimator for large-scale structure}
-\setcounter{section}{-1}
-\label{chp-cfe}
-%\input{chapters/cfe.tex}
+% \chapter{Two-point statistics without bins: A continuous-function generalization of the correlation function estimator for large-scale structure}
+% \setcounter{section}{-1}
+% \label{chp-cfe}
+% %\input{chapters/cfe.tex}
 
-\chapter{Emulation of beyond-standard galaxy clustering statistics to improve cosmological constraints}
-\setcounter{section}{-1}
-\label{chp-aemulus}
-%\input{chapters/aemulus.tex}
+% \chapter{Emulation of beyond-standard galaxy clustering statistics to improve cosmological constraints}
+% \setcounter{section}{-1}
+% \label{chp-aemulus}
+% %\input{chapters/aemulus.tex}
 
-\chapter{Characterizing Dark Matter Halos using Exact Physical Symmetries}
+\chapter{Characterizing Dark Matter Halos with Exact Physical Symmetries}
 \setcounter{section}{-1}
 \label{chp-eqcosmo}
 \input{chapters/eqcosmo.tex}
 
-\chapter{QUaia, the \emph{Gaia}–unWISE Quasar Catalog: An All-Sky Spectroscopic Quasar Sample}
-\setcounter{section}{-1}
-\label{chp-quaia}
-%\input{chapters/quaia.tex}
+% \chapter{QUaia, the \emph{Gaia}–unWISE Quasar Catalog: An All-Sky Spectroscopic Quasar Sample}
+% \setcounter{section}{-1}
+% \label{chp-quaia}
+% %\input{chapters/quaia.tex}
 
-\chapter{Anomaly detection in Hyper Suprime-Cam galaxy images with generative adversarial networks}
-\setcounter{section}{-1}
-\label{chp-anomalies}
-%\input{chapters/anomalies.tex}
+% \chapter{Anomaly detection in Hyper Suprime-Cam galaxy images with generative adversarial networks}
+% \setcounter{section}{-1}
+% \label{chp-anomalies}
+% %\input{chapters/anomalies.tex}
 
-\chapter{Conclusion}
-\setcounter{section}{-1}
-\label{chp-conclusion}
-% \input{conclusion}
 
 
 %% If your thesis has different "Parts", use commands such as the following:
@@ -350,9 +357,9 @@
 %%%%% Appendices start %%%%%%%%%%%%%%%%
 %% Comment out the following if your thesis has no appendix
 
-\appendix
+% \appendix
 
-\chapter{Appendix}
+% \chapter{Appendix}
 
 % \input{appendix}
 %\lipsum

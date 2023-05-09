@@ -93,15 +93,22 @@
 
 %% Chapter headings, captions
 \usepackage{fix-cm}
-\RequirePackage[raggedright,sc]{titlesec}
+%\RequirePackage[raggedright,sc]{titlesec}
+\RequirePackage[raggedright]{titlesec}
 \definecolor{gray75}{gray}{0.75}
 \newcommand{\hsp}{\hspace{20pt}}
 
-\titleformat{\chapter}[hang]
-{\Huge\sc}
-{\textcolor{SchoolColor}{\thechapter}\hsp\textcolor{gray75}{|}\hsp}
-{0pt}{\Huge\sc\raggedright}
+% sc
+% \titleformat{\chapter}[hang]
+% {\Huge\sc}
+% {\textcolor{SchoolColor}{\thechapter}\hsp\textcolor{gray75}{|}\hsp}
+% {0pt}{\Huge\sc\raggedright}
 % [\textcolor{gray75}{|}\hsp\textcolor{SchoolColor}{\thechapter}]
+
+\titleformat{\chapter}[hang]
+{\Huge}
+{\textcolor{SchoolColor}{\thechapter}\hsp\textcolor{gray75}{|}\hsp}
+{0pt}{\Huge\raggedright}
 
 
 %% The following makes chapters and sections, but not subsections,
