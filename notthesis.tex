@@ -31,7 +31,7 @@
 
 %% Replace the title, name, advisor name, graduation date and dedication below
 %% with your own. Graduation months must be January, May or September.
-\newcommand{\thesistitle}{Tools for Cosmology with Galaxy Clustering}
+\newcommand{\thesistitle}{Tools for Large-Scale Structure\\ and Galaxy Formation}
 \newcommand{\thesisauthor}{Kate Storey-Fisher}
 \newcommand{\thesisadvisor}{Professor David W. Hogg}
 \newcommand{\thesisdept}{Physics}
@@ -201,7 +201,7 @@
 \begin{center}
   {\Large
     \begin{doublespace}
-      {\textcolor{black}{\textsc{\thesistitle}}}
+      {\textcolor{black}{\huge\textsc{\thesistitle}}}
     \end{doublespace}
   }
   \vspace{.7in}
@@ -256,24 +256,24 @@
 
 
 %%%%%%%%%%%%%% Acknowledgements %%%%%%%%%%%%
-% %% Comment out the following lines if you do not want to acknowledge
-% %% anyone's help...
-% \chapter*{Acknowledgements}
-% \addcontentsline{toc}{chapter}{Acknowledgments}
+%% Comment out the following lines if you do not want to acknowledge
+%% anyone's help...
+\chapter*{Acknowledgements}
+\addcontentsline{toc}{chapter}{Acknowledgments}
 
-% % \input{acknowledge}
-% \lipsum[1-2]
+\input{acknowledgements}
+\lipsum[1-2]
 
-% \newpage
+\newpage
 
 
 % %%%% Abstract %%%%%%%%%%%%%%%%%%
-% \chapter*{Abstract}
-% \addcontentsline{toc}{chapter}{Abstract}
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
 
-% \input{abstract}
+\input{abstract}
 
-% \newpage
+\newpage
 
 
 %%%% Table of Contents %%%%%%%%%%%%
@@ -310,48 +310,41 @@
 % Body of Thesis
 % ----------------------------------------
 
-% \chapter{Introduction}
-% % this makes abstracts section 0 (need before each chapter)
-% \setcounter{section}{-1}
-% \label{chp-introduction}
-% \input{chapters/introduction.tex}
+% Start chapters at 0 (Introduction is chapter 0)
+\setcounter{chapter}{-1}
 
-% \chapter{Two-point statistics without bins: A continuous-function generalization of the correlation function estimator for large-scale structure}
-% \setcounter{section}{-1}
-% \label{chp-cfe}
-% %\input{chapters/cfe.tex}
+\chapter{Introduction}
+% this makes abstracts section 0 (need before each chapter)
+\setcounter{section}{-1}
+\label{chp-introduction}
+\input{chapters/introduction.tex}
 
-% \chapter{Emulation of beyond-standard galaxy clustering statistics to improve cosmological constraints}
-% \setcounter{section}{-1}
-% \label{chp-aemulus}
-% %\input{chapters/aemulus.tex}
+\chapter{Emulation of beyond-standard galaxy clustering statistics to improve cosmological constraints}
+\setcounter{section}{-1}
+\label{chp-aemulus}
+%\input{chapters/aemulus.tex}
+
+\chapter{Two-point statistics without bins: A continuous-function generalization of the correlation function estimator for large-scale structure}
+\setcounter{section}{-1}
+\label{chp-cfe}
+%\input{chapters/cfe.tex}
 
 \chapter{Characterizing Dark Matter Halos with Exact Physical Symmetries}
 \setcounter{section}{-1}
 \label{chp-eqcosmo}
-\input{chapters/eqcosmo.tex}
+%\input{chapters/eqcosmo.tex}
 
-% \chapter{QUaia, the \emph{Gaia}–unWISE Quasar Catalog: An All-Sky Spectroscopic Quasar Sample}
-% \setcounter{section}{-1}
-% \label{chp-quaia}
-% %\input{chapters/quaia.tex}
+\chapter{QUaia, the \emph{Gaia}–unWISE Quasar Catalog: An All-Sky Spectroscopic Quasar Sample}
+\setcounter{section}{-1}
+\label{chp-quaia}
+%\input{chapters/quaia.tex}
 
-% \chapter{Anomaly detection in Hyper Suprime-Cam galaxy images with generative adversarial networks}
-% \setcounter{section}{-1}
-% \label{chp-anomalies}
-% %\input{chapters/anomalies.tex}
+\chapter{Anomaly detection in Hyper Suprime-Cam galaxy images with generative adversarial networks}
+\setcounter{section}{-1}
+\label{chp-anomalies}
+%\input{chapters/anomalies.tex}
 
 
-
-%% If your thesis has different "Parts", use commands such as the following:
-%\part{First Part\label{part:one}}%
-% \input{chap1}
-%\input{chap2} % further chapters -- change file names to meaningful things...
-%\input{chap3}
-%\part{Second Part\label{part:two}}%
-%\input{chap4}
-%\input{chap5}
-%\input{chap6}
 
 
 %%%%% Appendices start %%%%%%%%%%%%%%%%
@@ -370,9 +363,6 @@
 
 
 %%%% Input bibliography file %%%%%%%%%%%%%%%
-%% For computer science dissertations, I'd recommend using the bibly package
-%% to automatically create the .bib file from your citations:
-%% https://github.com/michael-emmi/bibly
 
 \cleardoublepage
 \phantomsection
@@ -382,18 +372,7 @@
 \addcontentsline{toc}{chapter}{Bibliography}
 
 \bibliography{references}
-%\bibliography{refstest}
 
-% The following is just for the sample template,
-% I'd recommend deleting this and using the \bibliography command above
-% \begin{thebibliography}{99}
-% \bibitem[Lamport, 1994]{lamport94}
-%   Leslie Lamport,
-%   \textit{\LaTeX: a document preparation system},
-%   Addison Wesley, Massachusetts,
-%   2nd edition,
-%   1994.
-% \end{thebibliography}
 
 
 \end{document}
