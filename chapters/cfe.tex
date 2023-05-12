@@ -100,7 +100,7 @@ A larger number of bins results in a larger error that propagates to the estimat
 This can be balanced by using a large number of mock galaxy catalogs, but these can be exceedingly expensive to generate.
 Covariance matrix estimation is currently the limiting step in many LSS analyses.
 For galaxy clustering, on the order of 1000 mock catalogs tailored to the survey needed to achieve the desired precision on the parameters \citep{Percival2014}.
-\new{Weak lensing analyses especially suffer from this issue, due to the very high-dimensional data vectors (for a review see \citealt{Mandelbaum2018a}).}
+\new{Weak lensing analyses especially suffer from this issue given their very high-dimensional data vectors (for a review see \citealt{Mandelbaum2018a}).}
 As survey size increases and we work towards higher precision, the requirements on the covariance matrix will get even more stringent; the connection of this limiting step with bin choice merits scrutiny of binning in \cf analyses.
 
 Estimators of the \cf have been studied extensively (e.g., \citealt{PeeblesHauser1974}; \citealt{DavisPeebles1983}; \citealt{Hamilton1993}).
@@ -266,7 +266,7 @@ The $\TT{RR}$ tensor becomes diagonal as the bins are orthogonal, with its diago
 \new{Then the amplitudes $\bld{\hat a}$ are exactly the \cf estimate given by \LS, and evaluating $\bld{\hat{\xi}}$ on a fine grid of pair separations results in a continuous step-function representation of the \LS estimate.}
 
 \new{The fact that \est reduces to \LS motivates the understanding of our estimator as related to the limit of infinitesimal bins.
-In the standard framework, it is impossible to work in this limit due to the extreme variance properties, but our approach resolves this by returning to the space of finite basis functions.
+In the standard framework, it is impossible to work in this limit because of the resulting extreme variance properties, but our approach resolves this by returning to the space of finite basis functions.
 \Est effectively computes \LS in bins of infinitesimal width, and then rotates and stretches these bins into the space of a chosen set of basis functions.
 The binned pair counts can then be re-summed into the form of the basis functions.
 The estimator can perform such a rotation as it has the property of affine invariance, meaning it is invariant to rotations or stretches of the basis functions; we show this in Appendix~\ref{sec:affine}.
@@ -476,7 +476,7 @@ In standard practice, the fitting function used to determine the value of $\alph
 where $B$ is a constant that allows for a large-scale bias, and $a_1$, $a_2$, and $a_3$ are nuisance parameters to account for the broadband shape.
 A $\chi^2$ fit is performed at intervals of $\Delta \alpha$, with $B$, $a_1$, $a_2$, and $a_3$ as free parameters. 
 The resulting value for $\alpha$ is used to derive the actual values of the distance scales of interest.
-\new{Typically, analyses have to correct for the broadening of the BAO peak due to nonlinear growth \citep{Eisenstein2007}; approaches include computing the model with a damping parameter, or performing density-field reconstruction before applying the estimator.
+\new{Typically, analyses have to correct for the broadening of the BAO peak caused by nonlinear growth \citep{Eisenstein2007}; approaches include computing the model with a damping parameter, or performing density-field reconstruction before applying the estimator.
 As we use lognormal mocks, we do not need to perform this step, but a realistic analysis must either used a damped model for the basis functions or reconstruct the density field.}
 
 The form of the standard fitting function is well-suited to our estimator, as it is a few-parameter model with a linear combination of terms.
@@ -733,8 +733,8 @@ Much of this work focuses on the correlation integral $C(r)$, which measures the
 Estimators for $C(r)$ involve various ways of correcting for the survey boundary, such as local weights to correct for points near survey edges, and corrections based on the set covariance of the window function.
 These typically do not require binning, as they are measuring an average of quantities local to each point, and can be computed at any value of $r$.
 These $C(r)$ estimators are directly related to estimators for the \cf; the $DR$ and $RR$ pair counts are in fact Monte Carlo versions of the geometric $C(r)$ corrections mentioned \citep{Kerscher1999}.
-However, the required shift to finite bins when estimating the two-point correlation function results in increased variance due to shot noise, and even the best estimator studied (\LS) is only unbiased in the limit of zero bin width for unclustered data.
-As we rely the two-point correlation function for our standard cosmological analyses due to its theoretical interpretability, the unbinned correlation integral estimators do not represent viable alternatives to current \cf estimators.
+However, the required shift to finite bins when estimating the two-point correlation function results in increased variance from shot noise, and even the best estimator studied (\LS) is only unbiased in the limit of zero bin width for unclustered data.
+As we rely on the two-point correlation function for our standard cosmological analyses because of its theoretical interpretability, the unbinned correlation integral estimators do not represent viable alternatives to current \cf estimators.
 While \est shares the avoidance of binning of these $C(r)$ estimators, it is not related in a more fundamental manner, instead generalizing directly from the the binned \LS estimator.}
 
 Kernel density estimation (KDE) is a class of methods for estimating a probability density function from a set of data.

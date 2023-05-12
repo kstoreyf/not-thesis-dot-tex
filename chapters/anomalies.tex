@@ -118,7 +118,7 @@ We see the sample contains many compact objects, most of which are faraway galax
 The red compact sources may be high-redshift galaxies, but some of them may also be stars; low-temperature dwarfs look similar in the survey, and are not simple to filter out.
 We also see some more extended galaxies, including some with clear structure including bulges and spiral arms. 
 
-We first preprocess the images to avoid issues due to the raw data range spanning multiple orders of magnitude.
+We first preprocess the images to avoid issues resulting from the raw data range spanning multiple orders of magnitude.
 We convert the flux values to RGB values using the method of \citealt{Lupton2004}, which rescales the data using the inverse hyperbolic sine function (asinh).
 We use a stretch value of 0.5 and a softening parameter of 15.
 This produces values from 0 to 255 for each pixel in each band, and we then normalize these image by image to between 0 and 1.
@@ -186,7 +186,7 @@ A random sample of images generated with this WGAN, starting from latent space v
 We can see that the WGAN is able to generate realistic images for less extended objects, including neighboring objects and noise properties.
 It also captures the color distribution of the population well, and reproduces the general noise properties.
 However, it is unable to reconstruct the finer structure of more extended objects, such as spiral arms and distinct bulges; instead it generates diffuse-looking objects that do not always represent realistic galaxies.
-That said, the fact that the WGAN does not learn to generate these more structured images is in line with our application of the WGAN to anomaly detection, as this limitation is precisely due to the fact that these images are less well-represented in the data.
+That said, the fact that the WGAN does not learn to generate these more structured images is in line with our application of the WGAN to anomaly detection, as this limitation is precisely because of the fact that these images are less well-represented in the data.
 We quantify the ability of the WGAN to represent the training objects and the connection to anomaly detection in the next section.
 
 \subsection{Anomaly Score Assignment}
@@ -308,7 +308,7 @@ We use the CAE anomaly score as a benchmark, as it is an established approach th
 \end{figure*}
 
 We compute anomaly scores for each of the $\sim$940,000 objects in our sample, using both a generator score $\s{gen}$ and a discriminator score $\s{disc}$ as described in Section~\ref{sec:sanom_assignment}.
-These raw scores have very different ranges due to their definitions based on image pixel differences or feature value differences, so to compare them we show the scores by their number of standard deviations from the mean. 
+These raw scores have very different ranges as their definitions are based on image pixel differences or feature value differences, so to compare them we show the scores by their number of standard deviations from the mean. 
 
 These distributions are shown in the left panel of Figure \ref{fig:dist}.
 Recall that higher anomaly scores indicate more anomalous objects, while lower scores indicate objects that are more well-modeled by the WGAN.
@@ -319,7 +319,7 @@ The right panel of Figure \ref{fig:dist} shows $\s{disc}$ vs.  $\s{gen}$ for eac
 As expected, we see that most objects have relatively similar generator and discriminator scores, indicating that the generator and discriminator generally agree on the degree of anomaly of the image.
 That said, the distribution has significant scatter, so the pixel-residuals and feature-residuals may be picking up on different indications of anomalousness.
 At high scores, there is a skew towards higher discriminator scores: anomalous objects are more likely to have a high discriminator score compared to generator score.
-However, this only applies to very high-scoring objects above $\sim5\sigma$, and is likely a result of how we compute the raw scores{\emdash}there is a maximum to the generator residual due to the pixel values, while discriminator scores are essentially unbounded{\emdash}so we do not subscribe great significance to this.
+However, this only applies to very high-scoring objects above $\sim5\sigma$, and is likely a result of how we compute the raw scores{\emdash}there is a maximum to the generator residual because they are directly related to the pixel values, while discriminator scores are essentially unbounded{\emdash}so we do not subscribe great significance to this.
 These distributions also reflect the fact that the scores are not Gaussian distributed, but rather have a long one-sided tail towards high anomaly scores.
 
 \new{As a comparison, we also compute the CAE anomaly scores for each of the images as described in Section~\ref{sec:cae_bench}.
@@ -329,14 +329,14 @@ The CAE scores are lower on average than the generator scores, meaning the recon
 The right panel shows the correspondence between the generator and CAE scores for each image, and we see that the CAE scores are typically lower.
 These points are color-coded by the total WGAN score; we see that there is also not much of a correlation between CAE score and WGAN score, meaning that the discriminator component of the WGAN score corresponds more with the generator score than the CAE score.}
 
-\new{Although the CAE scores tend to be lower than the WGAN scores, we hypothesize that this is largely due to noise properties.
+\new{Although the CAE scores tend to be lower than the WGAN scores, we hypothesize that this is largely a result of noise properties.
 Looking at Figures~\ref{fig:recon} and \ref{fig:recon_ae}, the CAE reconstructions are much smoother and less noisy than the WGAN reconstructions.
 The residuals for the CAE then contain the noise of the real image.
 On the other hand, the WGAN reconstructions attempt to generate images with similar noise properties as the original, as the WGAN has learned the typical noise level of the training data.
 However, it will not place the noise in exactly the same pixels as in the real image (given that we are limited in the optimization step to find the best reconstruction of the image in the WGAN's latent space).
 The residuals for the WGAN then contain roughly double the noise values as those for the CAE, as they include the noise of the original and the reconstruction. 
 This contributes significantly to the generator score, pushing the score distribution to higher values compared to the CAE scores.
-If this difference is mainly due to noise, then it is not very relevant to anomaly detection; the differences in scores within each definition will be more meaningful.
+If this difference is mainly a result of noise, then it is not very relevant to anomaly detection; the differences in scores within each definition will be more meaningful.
 We investigate this in the next section by looking at high-anomaly samples based on each score definition.
 We also note that in some cases the CAE does seem to produce a better reconstruction than the WGAN, but we show in the next section that even so, the WGAN discriminator score is a more useful metric for identifying interesting anomalies.}
 
@@ -367,12 +367,12 @@ We can see that the generator score selects mostly noisy images that the other d
 The discriminator score definition, on the other hand, would capture a decent number interesting objects that are missed by both the generator and CAE definitions (bottom panels of Figure~\ref{fig:score_effect_disc}).
 \new{The high-scoring CAE images that the other definitions miss (bottom panels of Figure~\ref{fig:score_effect_ae}) are, once again, mainly noise and otherwise uninteresting images.}
 
-This analysis suggests that the generator score, which is based on the pixel-residual, is more attuned to selecting anomalous images due to noise or other image corruption issues, which tend to affect most of the pixels in the image \new{and lead to larger absolute differences between the real and reconstructed images}.
+This analysis suggests that the generator score, which is based on the pixel-residual, is more attuned to selecting images that are anomalous by virtue of noise or other image corruption issues, which tend to affect most of the pixels in the image \new{and lead to larger absolute differences between the real and reconstructed images}.
 On the other hand, the discriminator selects images that are anomalous in feature-space, which is more flexible in selecting various types of anomalies including those that are more localized in pixel space.
 This results in a set of images that have more potential to be scientifically interesting.
 \new{We also investigate using the combined score for selecting this high-anomaly sample, and find that it effectively results in a mix of the generator and discriminator high-scoring samples; as we showed in Figure~\ref{fig:score_effect} that the generator score selects very few interesting objects missed by the discriminator score, we choose to not incorporate the generator score at all and just use the discriminator score.}
 
-\new{We hypothesize that the WGAN is better suited to anomaly detection compared to the CAE due to several factors.
+\new{We hypothesize that the WGAN is better suited to anomaly detection compared to the CAE because of several factors.
 The first is that the WGAN is specifically intended to learn the true distribution of the input data.
 Thus we should be able to better identify the objects that are outliers of that distribution.
 On the other hand, the CAE is much simpler, just trained to compress and reproduce the images in a lower dimension.
@@ -406,7 +406,7 @@ We use the effective radius $R_\mathrm{eff}$ of the exponential component from t
 It indicates the intrinsic extendedness of an object after taking PSF convolution into account. 
 Among the different size measurements provided in HSC database, it is the most stable and robust measure of size.
 Objects with $R_\mathrm{eff}<1''$ are very compact, while those with $R_\mathrm{eff}>5''$ are quite extended (recall that the sizes of cutouts are $15 \times 15$ arcsec).
-Among the objects with $R_\mathrm{eff}>5''$, we notice a population of problematic objects that do not appear to be that extended and also have faint $r$- and $g$-band magnitude; we believe that these are due to bad deblending processes.
+Among the objects with $R_\mathrm{eff}>5''$, we notice a population of problematic objects that do not appear to be that extended and also have faint $r$- and $g$-band magnitude; we believe that these are the result of bad deblending processes.
 From the figure, we see that most of the objects in the full sample are compact, with a median of $R_\mathrm{eff}\sim0.5''$. 
 In comparison, the generator and discriminator $3\sigma$ anomaly samples contain a majority of extended objects; the discriminator-selected sample has a median $R_\mathrm{eff}\sim2.5''$.
 This shows that the WGAN tends to find high-$R_\mathrm{eff}$ objects to be more anomalous, as these high values encompass both bad deblends and actual extended galaxies.
@@ -422,9 +422,9 @@ Here 0 means circular and 1 means highly elliptical.
 We note that this is for both extended and compact objects, and ellipticity may be less meaningful for the latter.
 In the full sample, objects skew towards small ellipticity.
 While the full population has a higher fraction of objects in the $0.05 < e < 0.3$ bin, the anomaly samples show an excess of very low ellipticity objects at $e < 0.05$.
-\new{Interestingly, the CAE sample has the highest excess, perhaps due to having a higher proportion of compact objects.}
+\new{Interestingly, the CAE sample has the highest excess, perhaps because it has a higher proportion of compact objects.}
 The anomaly samples also tend to pick up more highly elliptical ($e>0.9$) objects. 
-Such high ellipticity is rarely physical; it is often due to poor fits on corrupted images.
+Such high ellipticity is rarely physical; it is often a result of poor fits on corrupted images.
 
 We look at the blendedness of the objects, which describes the contamination of one object by the light from other close objects. 
 It is computed from the $i$-band flux fits, as described in \citep{Bosch2019}.
@@ -433,15 +433,15 @@ A very small number of objects are assigned unphysical negative blendedness scor
 We see that in the full sample, for the vast majority of objects, their photometry is not affected by image blends.
 For the anomaly samples, most images also have low blendedness values, showing that the anomaly detector is finding interesting isolated objects and not just identifying blends.
 That said, the anomaly samples do also show a significantly higher fraction of highly blended objects compared to the full sample.
-This is expected due to the low representation of blended objects in the data, as well as the correlation between objects with larger angular size and higher blendedness.
+This is expected as a result of the low representation of blended objects in the data, as well as the correlation between objects with larger angular size and higher blendedness.
 The grey line at $10^{-0.375}$ shows the cutoff suggested for eliminating blends \citep{Mandelbaum2018}; 4.6\% of all of the objects in our full sample are above this threshold, while 32\% of the objects in the high discriminator score sample are above it.
 Interestingly, the discriminator selects for more of the highly blended objects than the generator \new{and CAE}, suggesting that many of these are actual overlapping objects and not just artifacts, as we know that the discriminator flags fewer artifacts as anomalous compared to the \new{other scores}.
 
 The ratio between the aperture flux and CModel flux $\log_{10} (i_{\rm Aper}/i_{\rm CModel})$ is another interesting diagnosis of photometry. 
-It has been used as an empirical indicator for problematic objects due to bad deblending processes.
+It has been used as an empirical indicator for objects that are problematic because of bad deblending processes.
 Figure \ref{fig:hsc_hist} only shows the $i$-band, but the distribution is very similar for the other bands.
 The aperture flux is computed in a small $2''$ aperture on images convolved with kernels matched to a common FWHM-1.2 arcsec PSF across all five bands, to homogenize the flux measurements across the bands; the CModel flux takes into account the emission from the entire image. 
-Thus a low ratio means that the object is very large, or that there is a strong color gradient; it may also indicate that there is an issue with the CModel fit, for instance due to poor deblending.
+Thus a low ratio means that the object is very large, or that there is a strong color gradient; it may also indicate that there is an issue with the CModel fit, for instance because of poor deblending.
 We see that most objects in the full sample have a ratio near one, with a skew towards smaller ratios as expected from the flux definitions.
 The $3\sigma$ anomaly samples show a markedly different distribution, with many objects having very small ratios.
 This makes sense as we have seen that our anomaly detector selects for both extended objects and deblending errors.
@@ -459,7 +459,7 @@ We see little difference in the distributions for the \new{discriminator and gen
 We also note that there is a strong correlation between objects near bright stars and their anomaly score.
 For our initial selection we performed a basic cut on objects near foreground stars, but this still left significant potentially contaminated regions.
 Applying a more aggressive bright star mask, we see that 44.6\% of objects in our discriminator-defined high-anomaly sample fall within the mask, compared to only 8.5\% of objects in the full sample (this newer mask can be found at \url{https://hsc-release.mtk.nao.ac.jp/doc/index.php/bright-star-masks-2}).
-For increased purity, we could apply this mask, though we would risk losing some potentially interesting anomalies; in fact, these regions are often excluded due to the amount of artifacts, but a filter based on anomaly score could make this data usable.
+For increased purity, we could apply this mask, though we would risk losing some potentially interesting anomalies; in fact, these regions are often excluded because of the high amount of artifacts, but a filter based on anomaly score could make this data usable.
 For this work we do not apply this mask but note that it may be useful depending on the downstream application.
 \new{Additionally, future HSC data releases that are in preperation will have more sophisticated data reduction and filtering, and will allow anomaly detectors to better learn interesting anomalies.}
 
@@ -550,17 +550,17 @@ Figure~\ref{fig:recons_magenta} shows images from the central region of the UMAP
 The residuals show large empty regions where the WGAN succeeded in reproducing the extended emission, with noise and background or foreground sources around the edges.
 The nearness of these images in UMAP-space demonstrates that our approach successfully isolating the anomalous features and clustering based on these.
 The images in Figure~\ref{fig:recons_blue} correspond to the edge of a high-scoring arm of the UMAP.
-They all exhibit a strong blue-green color: some of these are due to noise, but others are bright blue sources that may be extreme star-forming regions.
+They all exhibit a strong blue-green color: some of these are just noise, but others are bright blue sources that may be extreme star-forming regions.
 We can see that the WGAN has difficulty reconstructing these complicated structures, and while it captures some of the blue color the reconstructions are dominated by diffuse yellow emission, which is more represented in the data.
 We note that the attempted reconstructions are quite similar to each other, likely because there is only a small region of the WGAN's latent space that can produce images resembling these as they are far from typical training set images.
 In addition to characterizing types of interesting anomalies, the UMAP is useful for separating out optical artifacts.
-Figure~\ref{fig:recons_red} shows objects in a cluster far from the rest of the distribution, which contain red streaks aligned in the same direction, possibly due to satellites or other corruptions.
+Figure~\ref{fig:recons_red} shows objects in a cluster far from the rest of the distribution, which contain red streaks aligned in the same direction, possibly caused by satellites or other corruptions.
 The WGAN struggles to reconstruct these; it attempts to line up multiple compact sources to approximate the line, as it was trained on majority compact sources, so the residuals all display similar features corresponding to gaps in the line.
-The images in Figure~\ref{fig:recons_green}, from the cluster at the bottom of the UMAP, have bright green features due to corruption from nearby bright stars or passing satellites.
+The images in Figure~\ref{fig:recons_green}, from the cluster at the bottom of the UMAP, have bright green features caused by corruption from nearby bright stars or passing satellites.
 The WGAN reproduced the central object well but was unable to reconstruct the green features, as most of the data set does not contain these.
 
 These sets of galaxies with distinct anomalous features demonstrate how our WGAN-based approach, combined with the CAE-enabled UMAP distribution, provides a useful way of characterizing anomalies.
-We are able to disentangle anomalies that scored highly due to noise or saturation, such as those in panels (d) and (e), from those with a high score due to unusual galaxy morphology or color, such as in panels (b) and (c).
+We are able to disentangle anomalies that scored highly because of noise or saturation, such as those in panels (d) and (e), from those with a high score because of unusual galaxy morphology or color, such as in panels (b) and (c).
 This indicates that our approach could be used to robustly filter out bad images at the pipeline level, in addition to identifying scientifically interesting anomalies in post-processing.
 We built a custom visualization tool to interactively explore the UMAP space in more detail, based on a similar tool by \cite{Reis2021}; it can be accessed at \url{https://weirdgalaxi.es}.
 We used this tool to perform a search for scientifically interesting anomalies; the results of this search are described in Section~\ref{sec:interesting}.
@@ -600,7 +600,7 @@ In fact, some of these objects have already been identified and followed up in t
 We also find several extended galaxies with discrete intensely purple regions, shown in Figure~\ref{fig:anom_purple}.
 This indicates strong emission in the $i$-band (red), which is from the H$\alpha$ line, as well as the $g$-band (blue), which could be H$\beta$ or [OIII] 4959 and 5007 lines; thus in certain redshift ranges, the purple regions would suggest star formation activity.
 Figure~\ref{fig:anom_mergers} shows potential galaxy mergers, including one possible triple merger. 
-We also detect many galaxies with tidal features due to gravitational interactions; a sample of these are shown in Figure~\ref{fig:anom_tidal}.
+We also detect many galaxies with tidal features from gravitational interactions; a sample of these are shown in Figure~\ref{fig:anom_tidal}.
 Finally, Figure~\ref{fig:anom_other} shows other anomalous images with potential scientific interest, including arcs of extended emission, a strangely shaped cluster of discrete sources, and bright compact blue and white objects in extended sources.
 This last sample demonstrates the potential of our approach to identify ``unknown unknowns,'' which a more targeted anomaly detection method would likely have missed.
 
@@ -702,7 +702,7 @@ We show both the individual components and the combined flux positions; we also 
 For comparison, we show a sample of galaxies from the Sloan Digital Sky Survey (SDSS, \citealt{York2000}) with $0.02<z<0.05$ (close to our galaxy's redshift of $z=0.03221$), only selecting objects with S/N > 3 for all the four emission lines in the BPT diagram, and $b/a > 0.5$ to filter out edge-on galaxies.
 Both components of our source are solidly in the star-forming region, in both methods of classification; this rules out the possibility of an AGN.
 The fact that lower-wavelength component has smaller line ratios compared to the higher-wavelength component aligns with metallicity comparison above.
-However, we note that these have large error bars due to degeneracies in the double Gaussian fit, so the difference in metallicity may not be significant.
+However, we note that these have large error bars related to degeneracies in the double Gaussian fit, so the difference in metallicity may not be significant.
 The combined-flux emission ratios place the object at the star-forming edge of the SDSS sample, though it is not an extreme outlier.
 The lower-wavelength component does fall outside the bulk of the distribution of SDSS galaxies.
 
@@ -735,10 +735,10 @@ Data that are not well represented in the WGAN's latent space are identified as 
 We quantify the degree of anomaly by setting the WGAN to find the closest representation of each object in its latent space and reconstruct the image.
 We then assign scores based on the residuals between the original and the reconstruction, both the pixel-wise residual with the generator and a feature residual with the penultimate layer of the WGAN discriminator.
 
-We found that the discriminator is more adept at identifying interesting anomalous images, while the generator tends to identify images that are anomalous due to noise or other optical artifacts.
+We found that the discriminator is more adept at identifying interesting anomalous images, while the generator tends to identify images that are anomalous because of noise or other optical artifacts.
 \new{We compare the WGAN-based scores to a simpler anomaly detection method using a convolutional autoencoder (CAE).
 We find that, while the CAE reconstructions have smaller residuals from the original images than the WGAN reconstructions, they are less indicative of interesting anomalies compared to the WGAN discriminator score.
-This is likely due to the CAE producing smooth, noiseless reconstructions, and the WGAN discriminator's ability to model the true data distribution.}
+This is likely because the CAE produces smooth, noiseless reconstructions, while the WGAN discriminator can model the true data distribution.}
 We thus select a high-anomaly sample based on the WGAN discriminator scores to investigate in more detail, with a $\s{disc}>3\sigma$ cut resulting in 13,477 objects. 
 
 One of the main difficulties with anomaly detection is determining which anomalies are scientifically interesting.
@@ -748,7 +748,7 @@ We use the CAE to reduce the dimensionality of the residual images, and use thes
 Using our approach, we identify numerous interesting anomalies with scientific potential, including galaxy mergers and galaxies with extreme star-forming regions.
 \new{Of the 45 interesting anomalies we show from the WGAN discriminator score sample, only 2 would have been found with the CAE anomaly scores.}
 We perform follow-up observations on some of these objects, and detail our findings on one of these.
-The object is a compact blue source in a region of extended emission, which we find to likely be a metal-poor star-forming dwarf galaxy with unusual asymmetric emission lines, which we conclude is due to a spatially offset, extremely blue HII region.
+The object is a compact blue source in a region of extended emission; we find that this is likely to be a metal-poor star-forming dwarf galaxy with unusual asymmetric emission lines, which we conclude are produced by a spatially offset, extremely blue HII region.
 This confirmed the scientific interest of an object detected with our approach, and demonstrates the potential for a synergy between machine-assisted anomaly detection methods and detailed observational follow-up.
 
 We have publicly released a catalog of our full data set with our WGAN-assigned anomaly scores, together with our custom visualization tool for further exploring this data.

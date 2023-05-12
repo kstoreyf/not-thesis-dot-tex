@@ -45,7 +45,7 @@ Relatedly, \cite{mendoza_multicam_2023} demonstrated using a generalization of a
 
 There has been significant effort to try to understand more deeply the connection between halo and galaxy properties using cosmological simulations.
 \cite{delgado_modeling_2021} use a random forest regressor to identify key secondary halo properties for modelling the galaxy--halo connection using IllustrisTNG; they find small dependencies on environmental overdensity and shear.
-\cite{stiskalek_scatter_2022} also explore how secondary halo properties affect the galaxy--halo connection, specifically analyzing the scatter in the stellar-to-halo mass relation in IllustrisTNG using a neural network ensemble and finding that half of the scatter is due to properties beyond halo mass, but not captured by standard halo properties.
+\cite{stiskalek_scatter_2022} also explore how secondary halo properties affect the galaxy--halo connection, specifically analyzing the scatter in the stellar-to-halo mass relation in IllustrisTNG using a neural network ensemble and finding that only half of the scatter can be explained by halo mass, and the rest is not captured by standard halo properties.
 Similarly, \cite{matthee_origin_2017} find using the EAGLE simulations that a large fraction of the scatter cannot be explained by halo concentration, spin, triaxiliality, substructure, and environment. 
 
 Other works use the dark matter density field as inputs to predict baryonic distributions, rather than halo features.
@@ -292,7 +292,7 @@ These are pseudotensors, and thus require special handling when constructing the
 
 This procedure results in 7 geometric features per bin; for our 3 fiducial bins, this is 21 features per halo.
 The geometric features already respect most of the symmetries we are interested in.
-They enforce \emph{translation symmetry} due to the choice to center the particle positions at a fiducial point, and \emph{velocity boost symmetry} due to the choice to shift the particle velocities based on the center-of-mass velocity.  
+They enforce \emph{translation symmetry} as a result of the choice to center the particle positions at a fiducial point, and \emph{velocity boost symmetry} as a result of the choice to shift the particle velocities based on the center-of-mass velocity.  
 They also enforce \emph{permutation symmetry} by our sums over all the particles in each bin.
 
 
@@ -453,7 +453,6 @@ We compare the performance our invariant scalars approach to other benchmark fea
 Each panel shows the predicted vs. true stellar mass $\mstellar$ for a different feature set (detailed in \S\ref{sec:features}).
 The invariant scalar features panel is reproduced from Figure~\ref{fig:mstellar}.
 As expected, the worst-performing feature set is the one using only the basic global properties of the halo, $\Mfof$, $\Rtwoh$, and $\Vfof$ (recall that these are all directly related so this is essentially just a single scale), achieving just under a quarter of a dex in scatter.
-We see some banding the predictions, likely due to the fact that this feature set can produce the mean stellar-to-halo mass relation but not the scatter.
 The standard halo features, which includes the mass scale as well as a handful of shape and dynamical properties, performs better, with error reduced to under 0.2 dex. 
 
 The geometric features produce still better predictions, suggesting that the detailed structure they encode{\emdash}in both position and velocity space, and split into radial bins{\emdash}adds significant information, giving an error of 0.168 dex.
@@ -490,7 +489,7 @@ This is shown as a function of halo mass in the grey shaded region in the final 
 We see that for some properties in some regimes, we are indeed at or near the chaotic limit, where we expect the rest of the information is destroyed by the chaotic effects of evolution.
 This is the case for the $\ssfr$ and $\rstellar$ at low halo masses, for $\gminusi$ color at all masses, and $\mbhpermstellar$ at intermediate masses.
 For these cases, we are able to reproduce the relatively complex shape of the property distribution as a function of halo mass: for instance for the $\ssfr$ we accurately predict the sharp transition from large scatter at very low halo mass to low scatter at intermediate halo mass, and for $\gminusi$ color we predict the non-monotonic shape of the distribution vs. halo mass, including the large colors of the high-mass galaxy population.
-In some bins we are achieving results below the chaotic limit; this may be because this is a somewhat optimistic limit as it is computed from a slightly higher resolution simulation, and also possibly due to small number statistics (generally for the butterfly simulations, and especially for the high mass bins in both).
+In some bins we are achieving results below the chaotic limit; this may be because this is a somewhat optimistic limit as it is computed from a slightly higher resolution simulation, and also possibly a result of small number statistics (generally for the butterfly simulations, and especially for the high mass bins in both).
 
 There are some populations that our predictions fail to reproduce, somewhat separate from the low-scatter issue.
 For instance, we do not predict the very low $\rstellar$ ``fin'' at low halo masses, leading to consistent over-predictions in that bin.
@@ -540,8 +539,8 @@ But even at very low mass fractions, we see that we are able to predict the scal
 
 We also show the overall predictions for the other benchmark feature sets in the bottom panel.
 We see that using only the mass, radius, and velocity features, the predictions of the mass assembly history are only marginally better than sample variance.
-This is somewhat surprising due to the clear trend with halo mass; we speculate that as the sample variance shown is dominated by low-mass halos, it is not the clearest metric for comparison.
-We also find that the variance within bins of halo mass is nearly as large as the overall sample variance, so the mass trend may be difficult for the model to capture due to this large scatter.
+This is somewhat surprising given the clear trend with halo mass; we speculate that as the sample variance shown is dominated by low-mass halos, it is not the clearest metric for comparison.
+We also find that the variance within bins of halo mass is nearly as large as the overall sample variance, possibly making the mass trend difficult for the model to capture.
 The standard halo features perform similarly to the scalars at low mass fractions, capturing significant information over sample variance, but above a mass fraction of $M/M_{a=1} \approx 0.5$, the scalar features outperform them.
 This suggests that the scalars capture more detailed information related to recent halo mass accretion that can be described by the simpler standard features.
 The geometric features perform similarly to the scalar features, suggesting that enforcing rotation invariance is not a dominant factor in the predictions, as in the baryonic property case; again, this may be because this is a simple enough symmetry that the neural network is able to handle it internally, but further investigation is merited.
@@ -553,7 +552,7 @@ For a mass fraction of $M/M_{a=1} = 0.8$ (left panel), the scalars result in pre
 This indicates that the halo phase-space structure encoded our scalars contains significant information about the formation history of the DM halo.
 We also perform significantly better compared to standard halo catalog features, which do incorporate some shape and velocity information, but not in as fine detail as the scalars.
 The difference is most pronounced at intermediate halo masses; at low mass the two sets perform similarly, but the catalog features show higher error trending towards larger halo masses, which the scalars achieve increasingly smaller errors.
-This suggests that the small selection of global halo properties is not sufficient to capture the merger history for larger halos, which may be more complex due to more mergers and substructure, while the high-order phase-space description of the scalars can encode this complexity.
+This suggests that the small selection of global halo properties is not sufficient to capture the merger history for larger halos, which may be more complex as a result of their higher numbers of mergers and more detailed substructure, while the high-order phase-space description of the scalars can encode this complexity.
 The components of the geometric features give similar results to the scalars, as discussed above.
 For a mass fraction of $M/M_{a=1} = 0.6$ (middle panel), we find the results with the feature sets show a similar trend, with the differences between them slightly less pronounced, and little dependence on halo mass.
 This improvement of the scalars over the other features continues to decrease as we push to even smaller mass fractions ($M/M_{a=1} = 0.4$, right panel), though even there the scalars (as well as standard halo features) performs significantly better than just the mass, radius, and velocity scale features.

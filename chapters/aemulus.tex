@@ -63,7 +63,7 @@ Improving the constraining power from clustering analyses is important for deter
 
 Current cosmological analyses focus on a small set of two-point statistics of galaxy clustering which are well-understood theoretically.
 While these statistics are highly informative, it has been shown that there is significant additional information in other non-standard observables.
-For instance, \cite{Tinker2006, Tinker2008} demonstrated that the void probability function and underdensity probability function contribute complementary information to two-point statistics due to their sensitivity to the environmental dependence of halo occupation.
+For instance, \cite{Tinker2006, Tinker2008} demonstrated that the void probability function and underdensity probability function contribute complementary information to two-point statistics thanks to their sensitivity to the environmental dependence of halo occupation.
 Other work has demonstrated the constraining power in these and other related counts-in-cells statistics \citep{WalshTinker2019, Wang2019, Beltz-Mohrmann2020}.
 
 The marked correlation function \citep{Sheth2004} has also been shown to contain information complementary to that in standard statistics.
@@ -75,7 +75,7 @@ Emulation has recently been explored as a method for making highly accurate pred
 The idea is to first construct a sparse training set of high-resolution $N$-body simulations that span the allowable parameter space.
 Then a model can be trained to make fast predictions of the output of the simulations, or summary statistics of the output, given the input parameters.
 This can finally be used in inference to fully explore the parameter space, essentially interpolating in high dimensions over the regions between input simulations.
-Machine learning models are often used for this purpose due to the need to model such a high-dimensional space and produce quick predictions.
+Machine learning models are often used for this purpose because of the need to model such a high-dimensional space and produce quick predictions.
 
 Cosmological emulators typically aim to predict summary statistics of the matter and galaxy distributions.
 Two-point statistics, namely the power spectrum and its real-space counterpart the correlation function, are the key observables used to constrain cosmological models.
@@ -438,7 +438,7 @@ The GP requires an estimation of the uncertainty on the training set.
 As the training and test sets are from the same simulation suite, but the test set contains multiple realizations of the same cosmology, we use the test set to estimate the training set uncertainty.
 We use the diagonal elements of $\cov{test}$ as the variances $\sigma_n^2$ in Equation~\eqref{eq:gp_pred}.
 
-We perform a smoothing on the total covariance matrix, here $\cov{perf}$, to avoid inference issues due to the initially noisy matrix.
+We perform a smoothing on the total covariance matrix, here $\cov{perf}$, to avoid inference issues caused by the initially noisy matrix.
 Our procedure follows that of \cite{Lange2022}, and has been shown by \cite{Mandelbaum2013} to give essentially the same results as applying the Hartlap correction to unbias the inverse covariance matrix \citep{Hartlap2007}.
 We first compute the correlation matrices, with elements given by $C_{ij}/\sqrt{C_{ii}C_{jj}}$, where $C_{ij}$ are the elements of the covariance matrix.
 The diagonal elements of the correlation matrix must be equal to 1, as each element is perfectly correlated with itself, and the surrounding elements are typically much smaller, so we start by replacing the diagonal elements with the mean of its four neighbors.
@@ -493,8 +493,8 @@ This scaled uncertainty takes into account the increased precision provided by c
 Our emulators achieve very good accuracy across most observables and scales.
 For $\wprp$, we obtain $\simo2\%$ error on scales up to 10 $\hMpc$, and $2$--$5\%$ error up to 50 $\hMpc$.
 For $\cfm$, we achieve $\simo2\%$ error on scales between $1$--$10 \, \hMpc$, and up to $5\%$ outside that range.
-$\cfq$ has the lowest performance due to high noise levels, with $\simo5\%$ error from $1$--$5 \, \hMpc$ and $10$--$20\%$ error at other scales.
-For $\upf$, we see extremely small errors of $<0.5\%$ below $20 \, \hMpc$ scales, due to the low variation of the statistic there; up to $35 \, \hMpc$, we still achieve $\simo5\%$ error.
+$\cfq$ has the lowest performance because of high noise levels, with $\simo5\%$ error from $1$--$5 \, \hMpc$ and $10$--$20\%$ error at other scales.
+For $\upf$, we see extremely small errors of $<0.5\%$ below $20 \, \hMpc$ scales, as a result of the low variation of the statistic there; up to $35 \, \hMpc$, we still achieve $\simo5\%$ error.
 Finally for $\mcf$, we achieve $1$--$2.5\%$ error on scales up to 10 $\hMpc$, and $<1\%$ error at larger scales.
 
 At most scales, we see that our emulator error is comparable to the raw sample variance of the \aemulus simulations.
@@ -565,7 +565,7 @@ In Figure~\ref{fig:recovery_single}, we show the inverse uncertainty $1/\sigma$ 
 Note that larger bars indicate tighter constraints.
 We compare this to the uncertainty obtained when just using the prior.
 We see that all of the statistics on their own provide additional constraining power over the prior, for all parameters: $\wprp$ provides the most information for $\om$, $\sig$, and $\gf$, and $\cfm$ constrains $\gfs$ the most strongly.
-The amount of information from $\wprp$ is significantly higher than found by other analyses (e.g. \citealt{Lange2022}); we find that this is largely due to our choice to integrate out to only $40\,\hMpc$ along the line of sight, which preserves information in RSDs.
+The amount of information from $\wprp$ is significantly higher than found by other analyses (e.g. \citealt{Lange2022}); we find that this is largely a result of our choice to integrate out to only $40\,\hMpc$ along the line of sight, which preserves information in RSDs.
 We test integrating out to $80\,\hMpc$ and find much less information content in $\wprp$ alone, though it still contains some.
 For the beyond-standard statistics, it is noteworthy that $\upf$ and $\mcf$ do provide information on their own, particularly $\upf$ for $\om$ and $\mcf$ for $\gf$. 
 
@@ -582,7 +582,7 @@ These are significant increases given the current precision of cosmological meas
 \subfloat[\label{fig:cdf_single}]{\includegraphics[width=0.46\textwidth]{cdf_single}}
 \hspace{0.06\textwidth}
 \subfloat[\label{fig:cdf_addin_wpmaxscale6}] {\includegraphics[width=0.46\textwidth]{cdf_addin_wpmaxscale6}}
-\caption{Cumulative distribution functions (CDFs) of the differences between the true parameter value and the median of MCMC chain samples, divided by the uncertainty $\sigma$. Panel (a) shows CDFs for each of the observables on their own, and panel (b) adding in the observables successively; panel (b) excludes the two largest-scale $\wprp$ bins from all combinations, due to a bias discussed in the text. The dashed line shows the CDF of a unit normal distribution for comparison.}
+\caption{Cumulative distribution functions (CDFs) of the differences between the true parameter value and the median of MCMC chain samples, divided by the uncertainty $\sigma$. Panel (a) shows CDFs for each of the observables on their own, and panel (b) adding in the observables successively; panel (b) excludes the two largest-scale $\wprp$ bins from all combinations, because of a bias discussed in the text. The dashed line shows the CDF of a unit normal distribution for comparison.}
 \label{fig:cdf}
 \end{figure*}
 
@@ -595,7 +595,7 @@ This is small but surprising, as it is such a standard statistic.
 
 We investigate this issue by excluding successively larger scales of $\wprp$ from our analysis, as large-scale clustering should be the most affected by $\om$.
 We find removing the two largest-scale bins, above 12.5 $\hMpc$ (with logarithmic averages of 17.7 and 35.4 $\hMpc$) results in an unbiased CDF of recovered $\om$ values.
-To see if the issue could be due to small-number statistics, we run a larger set of recovery tests with $\wprp$ as the sole observable (including all bins), using the full 700-model test suite (each of the 7 cosmologies populated with the same 100 HOD models).
+To see if the issue could be attributed to small-number statistics, we run a larger set of recovery tests with $\wprp$ as the sole observable (including all bins), using the full 700-model test suite (each of the 7 cosmologies populated with the same 100 HOD models).
 We compute the CDF of these 700 results and see that the same bias towards low $\om$ values persists.
 With this larger sample, the histogram is less noisy, and the bias is small but clearly visible in the histogram as well.
 One possibility is that there are degeneracies with other cosmological or HOD parameters that contribute to $\wprp$ favoring lower $\om$ values, but this is difficult to disentangle.
@@ -655,7 +655,7 @@ Including $\wprp$ does add some constraining power at small scales, particularly
 Finally, adding in $\upf$ and $\mcf$ accesses a significant amount of additional information at smaller scales, particularly for $\om$ and $\sig$.
 
 Notably, the significant additional constraining power adding in $\wprp$ to $\cfm + \cfq$ is different than the findings of \cite{Lange2022}, who found that it only marginally improved constraints.
-Given that the effect of $\wprp$ is strongest for $\gf$ and $\gfs$ in our analysis, and \cite{Lange2022} do not include this velocity field rescaling parameter, it seems that the increase in constraining power we find is due to the sensitivity of $\wprp$ to velocity information.
+Given that the effect of $\wprp$ is strongest for $\gf$ and $\gfs$ in our analysis, and \cite{Lange2022} do not include this velocity field rescaling parameter, it seems that the increase in constraining power we find is a result of the sensitivity of $\wprp$ to velocity information.
 Indeed, we only integrate out to $\pi_\mathrm{max}=40\,\hMpc$, while \cite{Lange2022} uses a value of $\pi_\mathrm{max}=80\,\hMpc$.
 We perform a test using this larger value, and find as expected that in this case $\wprp$ does not add much more constraining power to either $\gf$ or $\gfs$.
 Thus we conclude that our choice of $\pi_\mathrm{max}$ preserves significant velocity information that allows $\wprp$ to constrain the growth of structure parameter through its dependence on the halo velocity field.
