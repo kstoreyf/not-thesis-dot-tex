@@ -459,7 +459,7 @@ We base our BAO analysis on the method of the BOSS DR10 and 11 analysis \citep{A
 We estimate the spherically averaged 3-dimensional correlation function, $\hat{\xi}(r)$, where $r$ is the separation between pairs.
 (BAO analyses are typically done in redshift space, estimating $\hat{\xi}(s)$, where $s$ is the redshift-space separation between pairs, but here we are using a periodic box in which we know the true galaxy positions, so we just use the real-space distance $r$.)
 In order to extract information about the baryon acoustic feature from galaxy clustering, we must choose a fiducial cosmological model to convert redshifts to distances.
-If we choose an incorrect model, the scales in the power spectrum will be dilated, so the oscillation wavelength---and thus the BAO peak position---will be shifted.
+If we choose an incorrect model, the scales in the power spectrum will be dilated, so the oscillation wavelength{\emdash}and thus the BAO peak position{\emdash}will be shifted.
 We can model this shift as a scale dilation parameter, $\alpha$, which is a function of the relevant distance scales in the true and fiducial cosmologies, defined as
 \begin{equation} \label{eq:alpha}
 \alpha = \Bigg( \frac{D_\mathrm{A}(z)}{D_\mathrm{A}^{\text{mod}}(z)} \Bigg)^{2/3} \Bigg( \frac{H^{\text{mod}}(z)}{H(z)} \Bigg)^{1/3} \Bigg( \frac{r_\mathrm{s}^{\text{mod}}}{r_\mathrm{s}} \Bigg) ~,
@@ -499,7 +499,7 @@ The adopted $k_i$ values are noted in Appendix~\ref{sec:baoiter}.
 \end{figure}
 
 To use the estimator for a BAO measurement, we input these five terms as the five basis functions of our estimator.
-The estimator outputs an amplitude vector $\bld{\hat a}$ as described in Section~\ref{sec:est}, which describes the contribution of each basis function---precisely the values of the free parameters, scaled by $k_i$.
+The estimator outputs an amplitude vector $\bld{\hat a}$ as described in Section~\ref{sec:est}, which describes the contribution of each basis function{\emdash}precisely the values of the free parameters, scaled by $k_i$.
 From the value of $C$, we can determine our estimate of the scale dilation parameter, $\hat{\alpha}$, as $\hat{\alpha} = \alpha_\mathrm{guess} + C\,k_0$, based on the definition of finite derivatives. 
 With this formulation, a value of $C=0$ indicates that the current $\alpha_\mathrm{guess}$ gives the best fit to the data (given the chosen cosmological model), while nonzero values give the magnitude and direction of the necessary change in the scale dilation parameter to optimally fit the data.
 In practice, we apply an iterative procedure to converge at our best estimate $\hat{\alpha}$; this procedure and other implementation details are described in Appendix~\ref{sec:baoiter}.

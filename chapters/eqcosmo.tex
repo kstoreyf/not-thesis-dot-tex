@@ -75,7 +75,7 @@ Recent work has applied explicitly equivariant neural network architectures and 
 
 In this work, we propose an equivariant approach to characterizing the dark matter distribution that enforces the known symmetries of cosmological simulations. 
 We use the method of \emph{invariant scalars} introduced by \cite{Villar2021a}, which offers a lightweight approach to representing invariant and equivariant functions using a collection of scalar quantities.
-The core idea is that geometric objects---such as vectors of particle positions and velocities---can be \emph{contracted} to form scalars that are invariant to transformations, namely translations, rotations, velocity boosts, and permutations.
+The core idea is that geometric objects{\emdash}such as vectors of particle positions and velocities{\emdash}can be \emph{contracted} to form scalars that are invariant to transformations, namely translations, rotations, velocity boosts, and permutations.
 
 Recent work has shown that this ``scalars'' approach improves performance on prediction tasks.
 \cite{yao_simple_2021} demonstrated the approach on a toy dynamical system and showed that it outperformed state-of-the-art approaches in both speed and accuracy.
@@ -204,7 +204,7 @@ Specifically, we use the $\epsilon=1$ resolution level simulations which is simi
 
 Our method for characterizing DM halos is based on the ``scalars'' approach of \cite{Villar2021a}.
 The core idea is that functions invariant or equivariant to certain transformations can be expressed in terms of a set of scalars, constructed from the input quantities.  
-This is motivated by the fact that the physical laws that govern the evolution of the universe---and thus cosmological simulations---obey exact classical symmetries.
+This is motivated by the fact that the physical laws that govern the evolution of the universe{\emdash}and thus cosmological simulations{\emdash}obey exact classical symmetries.
 We outline our approach here to apply the scalars approach to DM halo characterization and prediction tasks, and go into further detail in the rest of this section.
 
 Our goal is to characterize DM halos in a way that captures detailed phase-space structure while enforcing invariance to transformations.
@@ -456,7 +456,7 @@ As expected, the worst-performing feature set is the one using only the basic gl
 We see some banding the predictions, likely due to the fact that this feature set can produce the mean stellar-to-halo mass relation but not the scatter.
 The standard halo features, which includes the mass scale as well as a handful of shape and dynamical properties, performs better, with error reduced to under 0.2 dex. 
 
-The geometric features produce still better predictions, suggesting that the detailed structure they encode---in both position and velocity space, and split into radial bins---adds significant information, giving an error of 0.168 dex.
+The geometric features produce still better predictions, suggesting that the detailed structure they encode{\emdash}in both position and velocity space, and split into radial bins{\emdash}adds significant information, giving an error of 0.168 dex.
 Somewhat surprisingly, we find that the invariant scalar features computed from these geometric features do not produce significantly improved predictions compared to the components of the geometric features.
 The difference between these is that the geometric features are not invariant to rotations, while the scalar features are; both are invariant to translations, velocity boosts, and permutations, given how we construct the geometric features.
 We expect that the invariance to rotations would become more important when using a smaller training set size, whereas the model seems able to learn the rotation invariance from our large and relatively homogenous training set.
@@ -483,7 +483,7 @@ We show the results of our predictions on other galaxy and baryonic properties i
 In the left two columns, we show the true and predicted distributions of properties as a function of halo mass $\Mfof$, where the predictions are with our fiducial invariant scalar features.
 We see that we broadly reproduce the shape of the distribution for all of the properties. 
 However, there are significant differences; noteably, nearly all of our predictions fail to reproduce the full scatter of the true distributions, tending towards the mean.
-Generally, the regions of poor prediction indicate that either our features are not informative enough, our model is not performant enough, or there is a fundamental limitation in the amount of information accessible---or some combination of these three.
+Generally, the regions of poor prediction indicate that either our features are not informative enough, our model is not performant enough, or there is a fundamental limitation in the amount of information accessible{\emdash}or some combination of these three.
 
 We investigate the final possibility by comparing the error in our results to the scatter from chaos, as computed from the ``butterfly'' simulations of \cite{Genel2019} (described in \S\ref{sec:galprops}), which represents a limit to the retrievable information.
 This is shown as a function of halo mass in the grey shaded region in the final column, compared to the binned error of our predictions.

@@ -319,7 +319,7 @@ The right panel of Figure \ref{fig:dist} shows $\s{disc}$ vs.  $\s{gen}$ for eac
 As expected, we see that most objects have relatively similar generator and discriminator scores, indicating that the generator and discriminator generally agree on the degree of anomaly of the image.
 That said, the distribution has significant scatter, so the pixel-residuals and feature-residuals may be picking up on different indications of anomalousness.
 At high scores, there is a skew towards higher discriminator scores: anomalous objects are more likely to have a high discriminator score compared to generator score.
-However, this only applies to very high-scoring objects above $\sim5\sigma$, and is likely a result of how we compute the raw scores---there is a maximum to the generator residual due to the pixel values, while discriminator scores are essentially unbounded---so we do not subscribe great significance to this.
+However, this only applies to very high-scoring objects above $\sim5\sigma$, and is likely a result of how we compute the raw scores{\emdash}there is a maximum to the generator residual due to the pixel values, while discriminator scores are essentially unbounded{\emdash}so we do not subscribe great significance to this.
 These distributions also reflect the fact that the scores are not Gaussian distributed, but rather have a long one-sided tail towards high anomaly scores.
 
 \new{As a comparison, we also compute the CAE anomaly scores for each of the images as described in Section~\ref{sec:cae_bench}.
