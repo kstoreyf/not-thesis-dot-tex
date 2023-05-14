@@ -70,14 +70,14 @@ In this work, we train a GAN to identify anomalous objects in a subsample of gal
 We then characterize the anomalous images with a new convolutional autoencoder-based approach, and identify a set of scientifically interesting anomalies.
 \new{We also compare the GAN-detected anomalies to those found with a simple CAE approach.}
 This paper is organized as follows.
-In Section~\ref{sec:data}, we detail the galaxy image data set used in our application.
+In Section~\ref{sec:data_anomalies}, we detail the galaxy image data set used in our application.
 We describe our WGAN model, approach to anomaly score assignment, technique for characterization, \new{and CAE model} in Section~\ref{sec:model}.
-In Section~\ref{sec:results} we discuss our results and show anomalous galaxies identified with our framework.
+In Section~\ref{sec:results_anomalies} we discuss our results and show anomalous galaxies identified with our framework.
 We present a summary and our conclusions in Section~\ref{sec:conclusions}.
 \new{A follow-up spectroscopic analysis of one of our GAN-detected anomalies is described in Appendix~\ref{sec:bluedot}.}
 
 \section{Data}
-\label{sec:data}
+\label{sec:data_anomalies}
 
 \subsection{Hyper Suprime-Cam Survey}
 
@@ -286,7 +286,7 @@ We use the CAE anomaly score as a benchmark, as it is an established approach th
 
 
 \section{Results}
-\label{sec:results}
+\label{sec:results_anomalies}
 
 \subsection{Anomaly Score Distribution}
 \label{sec:sanom_dist}

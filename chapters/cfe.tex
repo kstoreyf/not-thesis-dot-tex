@@ -139,7 +139,7 @@ This \documentname is organized as follows.
 In Section~\ref{sec:motiv}, we motivate our estimator and explain its formulation, \new{and derive the connection to least-squares fitting}.
 We demonstrate its application on a simulated dataset, including a toy BAO analysis, in Section~\ref{sec:experiments}.
 In Section~\ref{sec:discuss}, we discuss the implications, limitations, and other possible extensions and applications of the estimator. 
-\new{We summarize in Section~\ref{sec:summary}.}
+\new{We summarize in Section~\ref{sec:summary_cfe}.}
 
 \section{Motivation and Formulation} 
 \label{sec:motiv}
@@ -250,7 +250,7 @@ As we will see in the next section,} the linear combination of vectors projects 
 
 We emphasize that $\GG{\ell \ell'}$ in \eqt{eq:xi_proj} does not represent a real pair of galaxies, but instead allows us to evaluate the \cf at any set of separations or other properties.
 We can think of it as the data for an imaginary pair of galaxies $\ell$ and $\ell'$ that have a separation $r$ at which we want to evaluate $\bld{\hat{\xi}}$, and we would compute $\bld{\hat{\xi}}$ for such a pair at every separation in which we are interested.
-As the formulation of \est is extremely general, we could choose basis functions that depend on other galaxy properties (see Section~\ref{sec:applications}); then, we would also choose each $\GG{\ell \ell'}$ pair to have values of these properties at which we want to evaluate $\bld{\hat{\xi}}$.
+As the formulation of \est is extremely general, we could choose basis functions that depend on other galaxy properties (see Section~\ref{sec:applications_cfe}); then, we would also choose each $\GG{\ell \ell'}$ pair to have values of these properties at which we want to evaluate $\bld{\hat{\xi}}$.
 In the experiments in this \documentname, however, we will only take into account the separation between pairs, so we will write $\hat{\xi}(r)$.
 
 \Est reduces to the \LS estimator when we choose $\ff$ to be a set of tophat functions in pair separation.
@@ -694,7 +694,7 @@ We use the values $k_0=0.1$, $k_1=10.0$, $k_2=0.1$, and $k_3=0.001$, though we c
 
 \subsection{Estimator Usage and Limitations}
 
-In this \documentname we have performed a few example applications of \est (for others see Section~\ref{sec:applications}); these demonstrate the problems solved and opportunities created with the estimator.
+In this \documentname we have performed a few example applications of \est (for others see Section~\ref{sec:applications_cfe}); these demonstrate the problems solved and opportunities created with the estimator.
 In removing the need for binning, the estimator can produce a much more \textit{representative} correlation function; a mixture of tophats is a very poor representation of the \cf. 
 We almost always expect some sort of continuity in the functions we work with; nature does not bin.
 
@@ -764,7 +764,7 @@ However, \est can generalize this concept even further.
 Rather than still producing a two-point function that is only a function of separation, weighted by the marks, our estimator can elevate the marking properties to another continuous axis.
 That is, it can estimate a multi-dimensional correlation function as a function of both separation and the given property.
 This provides a more flexible way to look at the dependence of the \cf on the property, and has similar applicability to breaking parameter degeneracies.
-We elaborate on the use cases for incorporating further tracer information into the choice of bases functions in Section~\ref{sec:applications}.
+We elaborate on the use cases for incorporating further tracer information into the choice of bases functions in Section~\ref{sec:applications_cfe}.
 
 \subsection{Beyond the Landy--Szalay Estimator}
 \label{sec:beyondls}
@@ -872,7 +872,7 @@ This might be particularly important for non-localized basis functions such as t
 Any covariance estimate will have to estimate these covariances well, but of course this is also true for the tophat basis where the covariances are nontrivial.
 
 \subsection{Further Applications}
-\label{sec:applications}
+\label{sec:applications_cfe}
 
 The formulation of \est opens up many possibilities for extracting information from the correlation function.
 The most straightforward applications are standard basis functions or linearizable astrophysical models, as we have shown for the standard BAO fitting function (Section~\ref{sec:bao}).
@@ -920,7 +920,7 @@ While these effects would be highly degenerate with systematics, our estimator c
 
 
 \section{Summary}
-\label{sec:summary}
+\label{sec:summary_cfe}
 
 In this \documentname, we have presented a new approach to estimating the two-point correlation function for large-scale structure analyses, \est, without the need for binning.
 It generalizes the standard \cf estimator in a manner inspired by least-squares fitting: it projects the data onto a set of user-chosen basis functions, and applies a normalization based on a random catalog.
