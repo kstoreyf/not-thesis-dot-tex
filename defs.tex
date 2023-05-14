@@ -222,6 +222,20 @@
 \usepackage{datatool}
 \DTLsetseparator{ = } %spaces on side matter!
 
+\DTLloaddb[noheader, keys={thekey,thevalue}]{quantities}{data/data_quaia/quantities.txt}
+\DTLnewdbonloadfalse % allows appending data
+\DTLloaddb[noheader, keys={thekey,thevalue}]{quantities}{data/data_quaia/quantities_comparison.txt}
+
+\newcommand{\val}[1]{% 
+    % \DTLgetvalueforkey{<cmd>}{<key>}{<db name>}{<ref key>}{<value>}
+    % This (globally) sets cmd (a control sequence) to the value of the key specified by <key> (note that this <key> is our value!)
+    % in the first row of the database called <db name> which contains the key <ref key> which has the value <value>.
+    \DTLgetvalueforkey{\scratchmacro}{thevalue}{quantities}{thekey}{#1}%
+    % This checks if hcmdi is null where hcmdi is a control sequence, if it is, then htrue parti is done, otherwise hfalse parti is done.
+    % end with xspace
+    \DTLifnull{\scratchmacro}{UUU}{\scratchmacro}\xspace
+}
+
 % mathy labels 
 \newcommand{\Dz}{\Delta z}
 \newcommand{\dz}{\Dz/(1+z)}

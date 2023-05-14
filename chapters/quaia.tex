@@ -1,28 +1,7 @@
+This chapter is in preparation to be submitted to the astronomical literature, and will have author list Kate Storey-Fisher, David W. Hogg, Hans-Walter Rix, Anna-Christina Eilers, and Giulio Fabbian.
+
+
 \graphicspath{{figures/figures_quaia/}}
-
-% % latex things
-% \newcommand\minput[1]{%
-%   \input{#1}%
-%   \ifhmode\ifnum\lastnodetype=11 \unskip\fi\fi}
-
-%\sloppy\sloppypar\frenchspacing
-
-% Loads external quantities
-% via https://tex.stackexchange.com/questions/321346/how-to-read-a-variable-from-a-file-in-latex
-% and https://tex.stackexchange.com/questions/609934/datatools-dtlfetch-returns-last-found-value-instead-undefined-value-if-entry
-\DTLloaddb[noheader, keys={thekey,thevalue}]{quantities}{data/data_quaia/quantities.txt}
-\DTLnewdbonloadfalse % allows appending data
-\DTLloaddb[noheader, keys={thekey,thevalue}]{quantities}{data/data_quaia/quantities_comparison.txt}
-
-\newcommand{\val}[1]{% 
-    % \DTLgetvalueforkey{<cmd>}{<key>}{<db name>}{<ref key>}{<value>}
-    % This (globally) sets cmd (a control sequence) to the value of the key specified by <key> (note that this <key> is our value!)
-    % in the first row of the database called <db name> which contains the key <ref key> which has the value <value>.
-    \DTLgetvalueforkey{\scratchmacro}{thevalue}{quantities}{thekey}{#1}%
-    % This checks if hcmdi is null where hcmdi is a control sequence, if it is, then htrue parti is done, otherwise hfalse parti is done.
-    % end with xspace
-    \DTLifnull{\scratchmacro}{UUU}{\scratchmacro}\xspace
-}
 
 
 \section{Chapter Abstract}
@@ -276,7 +255,7 @@ These are shown as the black lines in all panels of Figure~\ref{fig:color_color}
 These cuts, as well as the proper motion cuts described above, exclude ${\sim}\val{p_cut_gsup_gclean}\%$ of the superset, resulting in \val{N_gclean} quasars in our ''decontaminated'' sample.
 We apply an additional magnitude cut of $G<\Ghi$ to reduce edge effects in our redshift estimation; this constitutes our deep sample, with \val{N_gcathi} sources.
 We refer to this as the \catalog (\cat) in the rest of this work.
-However, the catalog becomes less clean and reliable as we push to deeper magnitudes---due to less precise measurements and stronger systematics, notably the \Gaia scanning pattern---so we produce a version of the catalog with $G<\Glo$ to ensure a cleaner sample.
+The catalog becomes less clean and reliable as we push to deeper magnitudes---due to less precise measurements and stronger systematics, notably the \Gaia scanning pattern---so we produce a version of the catalog with $G<\Glo$ to ensure a cleaner sample.
 This brighter catalog has \val{N_gcatlo} sources, and we report most of our results on this sample throughout the rest of this work.
 
 
@@ -288,8 +267,7 @@ This brighter catalog has \val{N_gcatlo} sources, and we report most of our resu
     \subfloat[\label{fig:zgaia_zsdss}]{\includegraphics[width=0.45\textwidth]{redshift_zgaia_vs_zdss_Ghi.png}}
     \hspace{5ex}
     \subfloat[\label{fig:zspz_zsdss}] {\includegraphics[width=0.45\textwidth]{redshift_zspz_vs_zdss_Ghi.png}}
-    \caption{TODO FIX}
-    %\caption{(a) \Gaia redshift estimate $\zgaia$ vs. \SDSS (''true'') redshift $\zsdss$ for a test set of sources in our quasar catalog \cat with $G<\Ghi$. (b) Our estimated spectro-photometric (SPZ) redshifts $\zspz$ vs. $\zsdss$ for the same sample. The $\zspz$ redshifts, which are based on a \knn model, significantly decrease both the bias and scatter, as well as catastrophic outliers and unreasonably high redshift estimates. The one-to-one line (perfect accuracy) is shown in grey; note that the color bar is on a log scale, and that a majority of the sources in both cases lie along this line.}
+    \caption{(a) \Gaia redshift estimate $\zgaia$ vs. \SDSS (''true'') redshift $\zsdss$ for a test set of sources in our quasar catalog \cat with $G<\protect\Ghi$. (b) Our estimated spectro-photometric (SPZ) redshifts $\zspz$ vs. $\zsdss$ for the same sample. The $\zspz$ redshifts, which are based on a \knn model, significantly decrease both the bias and scatter, as well as catastrophic outliers and unreasonably high redshift estimates. The one-to-one line (perfect accuracy) is shown in grey; note that the color bar is on a log scale, and that a majority of the sources in both cases lie along this line.}
     \label{fig:zsdss_comp}
 \end{figure*}
 
@@ -319,8 +297,7 @@ Finally, we apply the model to the full \cat and output \knn redshift estimates,
 \begin{figure}
     \centering
     \includegraphics[width=0.55\columnwidth]{redshift_error_cumulative_Glo.png}
-    \caption{TODO FIX}
-    %\caption{The cumulative distribution of redshift errors for \cat test set sources with $G<\Glo$, considering \SDSS spectroscopic redshifts $\zsdss$ as ground truth, for estimates directly from our \knn model (grey), the original $\zgaia$ redshifts (purple), and our final $\zspz$ estimates (black) based on a combination of the other two. Our SPZ redshifts have far fewer outliers and similar precision compared to the \Gaia estimates.}
+    \caption{The cumulative distribution of redshift errors for \cat test set sources with $G<\protect\Glo$, considering \SDSS spectroscopic redshifts $\zsdss$ as ground truth, for estimates directly from our \knn model (grey), the original $\zgaia$ redshifts (purple), and our final $\zspz$ estimates (black) based on a combination of the other two. Our SPZ redshifts have far fewer outliers and similar precision compared to the \Gaia estimates.}
     \label{fig:z_error_cumulative}
 \end{figure}
 
@@ -344,8 +321,7 @@ We still have some catastrophic outliers due to line aliasing, but with our SPZ 
 \begin{figure}
     \centering
     \includegraphics[width=0.55\columnwidth]{redshift_outliers_vs_Gmax.png}
-    \caption{TODO FIX}
-    %\caption{The fraction of outlying redshifts with $|\dz| > (\val{dzlo}, \val{dzmid}, \val{dzhi})$, as a function of $G$ magnitude, for our redshift estimation test set. The SPZ redshifts are shown in black, and the \Gaia redshifts in purple. The fraction of outliers increases steeply with increasing $G$ for $G>19.5$ for both $\zspz$ and $\zgaia$, though the fraction of catastrophic outliers for $\zspz$ is significantly lower (and the dependence less steep) compared to $\zgaia$.}
+    \caption{The fraction of outlying redshifts with $|\dz| > (\protect\val{dzlo}, \protect\val{dzmid}, \protect\val{dzhi})$, as a function of $G$ magnitude, for our redshift estimation test set. The SPZ redshifts are shown in black, and the \Gaia redshifts in purple. The fraction of outliers increases steeply with increasing $G$ for $G>19.5$ for both $\zspz$ and $\zgaia$, though the fraction of catastrophic outliers for $\zspz$ is significantly lower (and the dependence less steep) compared to $\zgaia$.}
     \label{fig:z_G_dep}
 \end{figure}
 
@@ -441,8 +417,7 @@ This fit must be done for each version of the catalog as it depends on the parti
     \subfloat[\label{fig:gcatlo_2d}]{\includegraphics[width=0.8\textwidth]{gcatlo_2d.png}}
     
     \subfloat[\label{fig:gcathi_2d}]{\includegraphics[width=0.8\textwidth]{gcathi_2d.png}}
-    \caption{TODO FIX}
-    %\caption{Sky distribution of our \catalog, in Galactic coordinates and displayed using a Mollweide projection. Panel (a) shows sources with $G<\Glo$, the cleaner version with more reliable redshifts, and (b) shows the catalog down to its magnitude limit of $G<\Ghi$.}
+    \caption{Sky distribution of our \catalog, in Galactic coordinates and displayed using a Mollweide projection. Panel (a) shows sources with $G<\protect\Glo$, the cleaner version with more reliable redshifts, and (b) shows the catalog down to its magnitude limit of $G<\protect\Ghi$.}
     \label{fig:gcat_2d}
 \end{figure*}
 
@@ -478,8 +453,7 @@ The \catalog spans a much larger volume than \SDSS, and also has a cleaner selec
 \begin{figure*}
     \centering
     \includegraphics[width=0.9\textwidth]{redshift_dists_Glo.png}
-    \caption{TODO FIX}
-    %\caption{Redshift distribution of the $G<\Glo$ \catalog for our spectro-photometric redshift estimates $\zspz$ (black), normalized to the total number of objects. For comparison we also show the normalized distributions of the \Gaia redshift estimates $\zgaia$ for the same \cat sources (purple); $\zgaia$ for the sources in the full \Gaia quasar candidate sample (grey); $\zgaia$ for the \Gaia DR3 ''purer'' subsample (green); and the \SDSS redshifts $\zsdss$ for the \SDSS DR16Q quasar sample (blue). All distributions are shown for $G<\Glo$ subsamples for clear comparison. The median redshift of each distribution is shown by the diamond and vertical line in the respective color.} 
+    \caption{Redshift distribution of the $G<\protect\Glo$ \catalog for our spectro-photometric redshift estimates $\zspz$ (black), normalized to the total number of objects. For comparison we also show the normalized distributions of the \Gaia redshift estimates $\zgaia$ for the same \cat sources (purple); $\zgaia$ for the sources in the full \Gaia quasar candidate sample (grey); $\zgaia$ for the \Gaia DR3 ''purer'' subsample (green); and the \SDSS redshifts $\zsdss$ for the \SDSS DR16Q quasar sample (blue). All distributions are shown for $G<\protect\Glo$ subsamples for clear comparison. The median redshift of each distribution is shown by the diamond and vertical line in the respective color.} 
     \label{fig:z_dists}
 \end{figure*}
 
@@ -514,8 +488,7 @@ We also note that the \SDSS DR16 quasars do not extend as bright as \cat, and th
     \subfloat[\label{fig:selection_function_map}]{\includegraphics[width=0.75\columnwidth]{selection_function_Glo.png}}
     \vspace{0.1ex}
     \subfloat[\label{fig:selection_function_residuals}]{\includegraphics[width=0.75\columnwidth]{residuals_Glo.png}}
-    \caption{TODO FIX}
-    %\caption{(a) The selection function map for the $G<\Glo$ \catalog, based on a Gaussian process model of the dust, stellar distribution, and $M_{10}$. (b) The fractional residuals between a random catalog down-sampled by the modeled selection function and the true $G<\Glo$ \catalog.}
+    \caption{(a) The selection function map for the $G<\protect\Glo$ \catalog, based on a Gaussian process model of the dust, stellar distribution, and $M_{10}$. (b) The fractional residuals between a random catalog down-sampled by the modeled selection function and the true $G<\protect\Glo$ \catalog.}
     \label{fig:selection_function}
 \end{figure}
 
@@ -541,8 +514,7 @@ The selection function map for the $G<\Ghi$ catalog (not shown) is also provided
     \subfloat[\label{fig:2d_sdss}]{\includegraphics[width=0.45\textwidth]{sdss_Ghi_2d.png}}
     \hspace{5ex}
     \subfloat[\label{fig:2d_wiseps}]{\includegraphics[width=0.45\textwidth]{wiseps_Ghi_2d.png}}
-    \caption{TODO FIX}
-    %\caption{Other current quasar catalogs for comparison with our \catalog. All are shown for sources with $G<\Ghi$ or the equivalent converted from another band, in galactic coordinates and displayed using a Mollweide projection. The catalogs are: (a) the \Gaia DR3 'purer' sample, (b) the Milliquas catalog, (c) the \SDSS DR16Q sample, and (d) the WISE-PS1-STRM catalog. Note that the color bars have different scales in each panel.}
+    \caption{Other current quasar catalogs for comparison with our \catalog. All are shown for sources with $G<\protect\Ghi$ or the equivalent converted from another band, in galactic coordinates and displayed using a Mollweide projection. The catalogs are: (a) the \Gaia DR3 'purer' sample, (b) the Milliquas catalog, (c) the \SDSS DR16Q sample, and (d) the WISE-PS1-STRM catalog. Note that the color bars have different scales in each panel.}
     \label{fig:2d_comp}
 \end{figure*}
 
