@@ -1,0 +1,24 @@
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+column name & symbol & units & description & example entry value \\
+\hline
+\texttt{source\_id} &  &  & \emph{Gaia} DR3 source identifier & 6459630980096 \\
+\texttt{unwise\_objid} &  &  & unWISE DR1 source identifier & 0453p000o0014479 \\
+\texttt{redshift\_spz} & $z_\mathrm{SPZ}$ &  & spectro-photometric redshift estimate & 0.416867 \\
+\texttt{redshift\_spz\_err} & $\sigma_{z\mathrm{SPZ}}$ &  & uncertainty on spectro-photometric redshift estimate & 0.062063 \\
+\texttt{ra} &  & deg & right ascension & 44.910498 \\
+\texttt{dec} &  & deg & declination & 0.189649 \\
+\texttt{l} &  & deg & galactic longitude & 176.659434 \\
+\texttt{b} &  & deg & galactic latitude & -48.835164 \\
+\texttt{phot\_g\_mean\_mag} & $G$ & mag & \emph{Gaia} $G$-band mean magnitude & 20.173105 \\
+\texttt{phot\_bp\_mean\_mag} & $BP$ & mag & \emph{Gaia} integrated $BP$ mean magnitude & 20.200150 \\
+\texttt{phot\_rp\_mean\_mag} & $RP$ & mag & \emph{Gaia} integrated $RP$ mean magnitude & 18.871586 \\
+\texttt{mag\_w1\_vg} & $W1$ & mag & unWISE $W1$ magnitude & 14.774343 \\
+\texttt{mag\_w2\_vg} & $W2$ & mag & unWISE $W2$ magnitude & 13.923867 \\
+\texttt{pm} & $\mu$ & mas / yr & proper motion & 0.383797 \\
+\texttt{pmra} & $\mu_{\alpha*}$ & mas / yr & proper motion in right ascension direction & 0.217806 \\
+\texttt{pmdec} & $\mu_{\delta}$ & mas / yr & proper motion in declination direction & -0.316007 \\
+\texttt{pmra\_error} & $\sigma_{\mu\alpha*}$ & mas / yr & standard error of proper motion in right ascension direction & 0.679419 \\
+\texttt{pmdec\_error} & $\sigma_{\mu\delta}$ & mas / yr & standard error of proper motion in declination direction & 0.608799 \\
+\hline
+\end{tabular}

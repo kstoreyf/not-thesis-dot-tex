@@ -1,7 +1,7 @@
 \graphicspath{{figures/figures_intro/}}
 
 
-\section{The Cosmological Model}
+\section{Large-Scale Structure and the Standard Cosmological Model}
 
 The universe is impressively well-described by a relatively simple cosmological model.
 This model, known as $\Lambda$CDM, posits that the vast majority of the matter in the universe is composed of cold dark matter (CDM), matter whose main interaction is gravitational, and that the accelerating expansion of the universe can be described by a cosmological constant $\Lambda$.
@@ -11,36 +11,86 @@ In the standard picture of cosmology, the universe began with the Big Bang, quic
 The evolution of matter under gravity causes overdensities 
 
 
+This overdensity field $\delta(\rvec)$ as a function of comoving scale $\bld{r}$ can be defined as
+\begin{equation}
+    \delta(\rvec) = \frac{\rho(\rvec) - \bar{\rho}}{\bar{\rho}}
+\end{equation}
+where $\rho(\rvec)$ is the density field and $\bar{\rho}$ is the mean density.
+The density field can be quantified with $N$-point statistics (e.g. \citealt{peebles_large-scale_1980}).
+The two-point function $\xi(r)$ is extremely informative and is the key statistic for large-scale structures studies:
+\begin{equation}
+    \label{eq:xi}
+    \xi(\rvec) = \langle \delta(\x) \delta(\x + \rvec) \rangle ~,
+\end{equation}
+the expectation value of the correlations between the overdensity field at comoving positions $\x$ and $\x+\rvec$.
+The two-point function is assumed to be spherically symmetric so is often given as $\xi(r)$.
+Two-point clustering can also be described in Fourier space by the power spectrum $P(k)$, the Fourier transform of $\xi(r)$; in principle these carry equivalent information, but in practice they have different limitations and subtleties.
+In the rest of this dissertation we focus on real-space analyses.
+
 There is substantial evidence for the $\Lambda$CDM model.
 
 
 While $\Lambda$CDM is consistent with many of our observations, there remain open questions and inconsistencies that hint at a more complex model or a deeper underlying explanation.
 
 
+The large-scale distribution of matter in the universe is a core element of the standard model of cosmology.
+As most of the matter is in the form of dark matter, which has remained undetectable by direct methods, we infer its distribution through luminous tracers.
+The connection between the dark matter field and one of these key tracers, galaxies, is discussed in the next section.
 
 
 \section{The Connection between Dark Matter and Galaxies}
 
-As dark matter is invisible{\emdash}and has remained undetectable{\emdash}we infer its distribution through luminous tracers.
-Galaxies are key tracers: baryonic matter collects in dense regions of dark matter and, over cosmic time, evolves into the galaxies we observe today.
+Baryonic matter collects in dense regions of dark matter and, over cosmic time, evolves into the galaxies we observe today.
+However, galaxies are not direct tracers of the underlying matter field; rather, they are \emph{biased} tracers with a different spatial distribution than the dark matter \citep{kaiser_spatial_1984}.
+While the relationship between the galaxy overdensity field $\delta_g$ and DM overdensity field $\delta$ could be some general function, it is well-described by a linear bias parameter $b$,
+\begin{equation}
+    \delta_g = b \delta ~.
+\end{equation}
+Relating this to the correlation function with \eqref{eq:xi}, 
+\begin{equation}
+    \xi_g^2 = b \xi^2
+\end{equation}
+where $\xi_g$ is the correlation function of galaxies.
+Different types of galaxies exhibit somewhat different clustering properties and thus values for $b$, but these are typically in the range $1<b<2$.
 
-To use the distribution of galaxies to infer the underlying large-scale structure, we must model the connection between galaxies and dark matter, which is related to the intricacies of galaxy formation.
+The standard cosmological model describes a picture in which small overdensities of matter grow over time, forming gravitionally bound regions of dark matter known as \emph{halos} (e.g. \citealt{bryan_statistical_1998}) which continue to grow and merge with each other.
+Galaxies grow inside with their halos, forming stars and accreting matter from mergers, and galactic processes affect their dark matter environment through \emph{feedback}. 
+The properties of baryons and the complicated physics of galaxy formation impact the relationship between dark matter and galaxies.
+To use the distribution of galaxies to infer the underlying large-scale structure---as well as to understand galaxy formation---we must model the connection between galaxies and dark matter.
 
-A description that has proven broadly successful is the \emph{halo model}, which ...
+\begin{figure*}
+    \centering
+    \includegraphics[width=0.8\textwidth]{galhalo.jpg}
+    \caption{A visualization of the galaxy--halo connection and a range of modeling approaches. The top panel shows the dark matter distribution in a slice of a cosmological simulation, and the corresponding galaxy population modeled using abundance matching. The bottom panel outlines approaches ranging from physical models to empirical models for modeling the relationship between dark matter and galaxies. \emph{Figure 1 of \cite{wechsler_connection_2018}.}}
+    \label{fig:galhalo}
+\end{figure*}
 
-The standard halo model only considers the halo mass as the determining factor in the occupation of galaxies.
-Analyses have shown that it is critical to take into account the dependency of galaxy occupation on other, secondary halo properties, a phenomenon known as \emph{assembly bias}.
+This relationship is visualized in Figure~\ref{fig:galhalo}, showing the DM distribution of a cosmological simulation paired with its galaxy population using an empirically calibrated model.
+The figure also outlines a range of models from the literature for describing this connection, from empirical to physical models.
+Here I describe the models at each end of this range, as these are the ones utilized in this dissertation, but each model on this spectrum has important uses.
+
+A description of the galaxy--halo connection that has proven broadly successful is \emph{halo occupation distribution} (HOD) modeling (e.g. \citealt{peacock_halo_2000,Seljak2000,BerlindWeinberg2002}). 
+The HOD model posits the conditional distribution of the number of galaxies $N$ occupying a halo, typically conditioned on halo mass $M$: $P(N|M)$.
+This model has only a handful of parameters while remaining flexible enough to fit observed galaxy samples well (e.g. \citealt{Zheng2005,reddick_connection_2013}).
+However, this ``vanilla'' HOD is not sufficient.
+Analyses have shown that the clustering of halos depends on halo properties beyond mass, including formation time and concentration, an effect is known as \emph{halo assembly bias} \citep{wechsler_concentrations_2002, Wechsler2006,mao_beyond_2018}.
+This may propagate to the clustering of galaxies, dubbed \emph{galaxy assembly bias}, and must be taken into account in HOD modeling (e.g. \citealt{Tinker2008,hearin_introducing_2016}).
+An HOD model with environment-dependent assembly bias is used in the cosmological inference approach presented in Chapter~\ref{chp:aemulus}.
+
+
+
+
 
 
 
 \section{Redshift Surveys}
 
-\begin{figure*}[htp!]
+\begin{figure*}
     \centering
     \includegraphics[width=0.6\textwidth]{cfa_survey}
-    \caption{A sample of galaxies from the CfA redshift survey. Galaxies in the North Galactic Cap with $M<-18.5$ and velocity $3000<v<6000$ km s$\inv$ are shown in an equal-area sky projection. Filamentary structures, clusters, and voids can be seen visually. \emph{Figure 2b. from \cite{davis_survey_1982}.}}
+    \caption{A sample of galaxies from the CfA redshift survey. Galaxies in the North Galactic Cap with $M<-18.5$ and velocity $3000<v<6000$ km s$\inv$ are shown in an equal-area sky projection. Filamentary structures, clusters, and voids can be seen visually. \emph{Figure 2b. of \cite{davis_survey_1982}.}}
     \label{fig:cfa_survey}
-    \end{figure*}
+\end{figure*}
 
 Over past several decades, we have built up immense 3-dimensional maps of the universe through observations of millions of galaxies.
 These involve initial targeting using wide-field imaging, followed by spectroscopic observations to measure galaxy \emph{redshifts}.
@@ -53,12 +103,25 @@ Figure~\ref{fig:cfa_survey} shows a sample of galaxies from the CfA survey, abou
 Modern redshift surveys have now observed orders of magnitude more galaxies and used their distributions to obtain some of the most stringent constraints on cosmological parameters.
 The 2dF Galaxy Redshift survey \citep{Colless2001} observed $\simo$250,000, add the Sloan Digital Sky Survey (SDSS, \citealt{York2000}) observed nearly one million galaxy redshifts.
 Galaxy power spectrum analyses of these surveys achieved measurements of the matter density ${\om}$ with a precision of $\simo$10\% \citep{cole_2df_2005, tegmark_cosmological_2006}.
-Combining the results of baryon acoustic oscillation and redshift-space distortion analyses, SDSS has measured the parameter to $\sig$ to $\simo$3.5\%; a joint analysis with other cosmological measurements, including the cosmic microwave background, supernovae, and weak lensing, results in $simo$1\% precision.
+Combining the results of baryon acoustic oscillations and redshift-space distortion analyses, SDSS has measured the parameter to $\sig$ to $\simo$3.5\%; a joint analysis with other cosmological measurements, including the cosmic microwave background, supernovae, and weak lensing, results in $\simo$1\% precision.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\textwidth]{desi_survey.jpg}
+    \caption{A sample of galaxies from the DESI survey, around 40 years after the CfA survey of Figure~\ref{fig:desi_survey}. Around 400,000 galaxies are shown, out to $z \sim 0.9$ (3 $\hGpc$). DESI will observe nearly an order of magnitude more redshifts than this over the course of the survey. \emph{D. Schlegel/Berkeley Lab using data from DESI. Acknowledgment: M. Zamani (NSF's NOIRLab).}}
+    \label{fig:desi_survey}
+\end{figure}
+
+Efforts are ongoing to map even more galaxies to increase the constraining power of large-scale structure.
+The Dark Energy Spectroscopic Instrument (DESI, \citealt{Aghamousa2016}) has already cataloged nearly ten million redshifts and will observe multiple times that over the rest of the mission.
+A slice through a sample of the galaxies DESI has already observed is shown in Figure~\ref{fig:desi_survey}; the filamentary structure hinted at in the CfA survey is now clear across the sky.
+Future surveys are planned to measure yet more galaxy redshifts, including the Subaru Prime Focus Spectrograph \citep{takada_extragalactic_2014}, Euclid \citep{Laureijs2011}, and the Nancy Grace Roman Space Telescope \citep{Green2012}.
 
 While galaxies are the dominant tracer observed for large-scale structure surveys given their multitude, other types of sources also provide valuable information.
-Quasars, which are extremely luminous emission from active galactic nuclei{\emdash}accreting supermassive black holes{\emdash}at the centers of galaxies, are even more highly biased tracers of matter than galaxies.
+Quasars, which are extremely luminous emission from active galactic nuclei{\emdash}accreting supermassive black holes{\emdash}at the centers of galaxies, are even more highly biased tracers of matter than galaxies, with $b \sim 2.5$ at $z \sim 1.5$ \citep{laurent_clustering_2017-3}.
 Redshift surveys of quasars are the largest-volume maps of the universe we have, as we can observe quasars at immense distances thanks to their high luminosity.
-Millions of quasars have been observed, with hundreds of thousands having spectroscopic redshifts.
+Millions of quasars have been observed, with hundreds of thousands having spectroscopic redshifts, and more are being cataloged by current mission.
+One such mission, \emph{Gaia}, and the opportunities it presents for large-scale structure science with quasars is discussed further in Chapter~\ref{chp:quaia}.
 
 
 
@@ -74,9 +137,8 @@ The most important statistic is the \emph{two-point correlation function} (\cf),
     \delta P = n[1+\xi(r)]\delta V ~,
 \end{equation}
 where $n$ is the mean galaxy number density.
-Below scales of $r \sim 10 \hMpc$, the \cf roughly follows a power law, $\xi(r) \sim (r/r_0)^p$, where $r_0$ is a characteristic scale (found to be $r_0 \sim 5 \hMpc$) and $p$ is the power law index, measured to be $p \sim 1.8$.
-The \cf can be estimated from galaxy samples with estimators that take into account the finite, irregular window function of the survey, using estimators such as that proposed by \citep{DavisPeebles1983} or \citep{LandySzalay1993}; these are discussed in much more detail in Chapter~\ref{chp:cfe}.
-Two-point clustering can also be described in Fourier space by the power spectrum $P(k)$, the Fourier transform of $\xi(r)$, though here we focus on real-space analyses.
+Below scales of $r \sim 10 \hMpc$, the \cf roughly follows a power law, $\xi(r) \sim (r/r_0)^{-\gamma}$, where $r_0$ is a characteristic scale (found to be $r_0 \sim 5 \hMpc$) and $\gamma$ is the power law index, measured to be $\gamma \sim 1.8$.
+The \cf can be estimated from galaxy samples with estimators that take into account the finite, irregular window function of the survey, using estimators such as that proposed by \cite{DavisPeebles1983} or \cite{LandySzalay1993}; these are discussed in much more detail in Chapter~\ref{chp:cfe}.
 
 We can compare the measured \cf to a model prediction to find the model parameters that most closely describe the data.
 
