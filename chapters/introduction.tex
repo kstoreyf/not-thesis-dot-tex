@@ -54,7 +54,7 @@ where $\xi_g$ is the correlation function of galaxies.
 Different types of galaxies exhibit somewhat different clustering properties and thus values for $b$, but these are typically in the range $1<b<2$.
 
 The standard cosmological model describes a picture in which small overdensities of matter grow over time, forming gravitionally bound regions of dark matter known as \emph{halos} (e.g. \citealt{bryan_statistical_1998}) which continue to grow and merge with each other.
-Galaxies grow inside with their halos, forming stars and accreting matter from mergers, and galactic processes affect their dark matter environment through \emph{feedback}. 
+Galaxies grow inside with their halos, forming stars and accreting matter from mergers, and galactic processes affect their dark matter environment through \emph{feedback}.
 The properties of baryons and the complicated physics of galaxy formation impact the relationship between dark matter and galaxies.
 To use the distribution of galaxies to infer the underlying large-scale structure---as well as to understand galaxy formation---we must model the connection between galaxies and dark matter.
 
@@ -67,6 +67,7 @@ To use the distribution of galaxies to infer the underlying large-scale structur
 
 This relationship is visualized in Figure~\ref{fig:galhalo}, showing the DM distribution of a cosmological simulation paired with its galaxy population using an empirically calibrated model.
 The figure also outlines a range of models from the literature for describing this connection, from empirical to physical models.
+A comprehensive review can be found in \cite{WechslerTinker2018}.
 Here I describe the models at each end of this range, as these are the ones utilized in this dissertation, but each model on this spectrum has important uses.
 
 A description of the galaxy--halo connection that has proven broadly successful is \emph{halo occupation distribution} (HOD) modeling (e.g. \citealt{peacock_halo_2000,Seljak2000,BerlindWeinberg2002}). 
@@ -75,10 +76,14 @@ This model has only a handful of parameters while remaining flexible enough to f
 However, this ``vanilla'' HOD is not sufficient.
 Analyses have shown that the clustering of halos depends on halo properties beyond mass, including formation time and concentration, an effect is known as \emph{halo assembly bias} \citep{wechsler_concentrations_2002, Wechsler2006,mao_beyond_2018}.
 This may propagate to the clustering of galaxies, dubbed \emph{galaxy assembly bias}, and must be taken into account in HOD modeling (e.g. \citealt{Tinker2008,hearin_introducing_2016}).
-An HOD model with environment-dependent assembly bias is used in the cosmological inference approach presented in Chapter~\ref{chp:aemulus}.
+An HOD model with environment-dependent assembly bias is used in the cosmological inference approach presented in Chapter~\ref{chp:aemulus}, in which the parameters of the HOD are marginalized over.
 
-
-
+On the other end of the spectrum, cosmological hydrodynamic simulations aim to model the relationship between dark matter and galaxies based on deeper physical underpinnings (e.g. \citealt{springel_gadget_2001, genel_introducing_2014,dave_simba_2019}).
+These co-evolve dark matter and baryons under gravity and hydrodynamics in cosmological volumes (typically $\simo 25 < L \simo 300$); given the large dynamic range of relevant physical scales, galaxies cannot be fully simulated but instead rely on ``subgrid models'' that are empirically calibrated.
+With these models, simulations can include stellar winds, feedback from active galactic nuclei, gas cooling, and supernovae feedback, among other processes; a detailed review can be found in \cite{somerville_physical_2015}.
+These galactic processes can both impact the dark matter environment as well as display degeneracies with cosmological effects (see e.g. \citealt{villaescusa-navarro_camels_2021}), making robust modeling of them crucial to understanding galaxy clustering.
+In their current state, hydrodynamic simulations make too many assumptions to be applicable to cosmological inference, but they are useful in their own right to explore{\emdash}given the input assumptions{\emdash}how dark matter properties are related to galaxy properties.
+This is explored in Chapter~\ref{chp:eqcosmo} in the IllustrisTNG simulation \citep{springel_first_2018,nelson_first_2018,pillepich_first_2018,naiman_first_2018,marinacci_first_2018}. 
 
 
 
@@ -125,11 +130,11 @@ One such mission, \emph{Gaia}, and the opportunities it presents for large-scale
 
 
 
-\section{Cosmological Inference}
+\section{Cosmological Inference from Galaxy Clustering}
 
 The distribution of galaxies is extremely high-dimensional and complex, such that the actual positions of individual galaxies are impossible to model directly.
 Luckily, these are largely irrelevant to the underlying cosmology that we care about; rather, the cosmological model makes strong predictions about the \emph{statistical} properties of the large-scale structure.
-By computing the statistics of the galaxy distribution, we can compare our observations to models and infer the cosmological model parameters, as well as learn where our models are insufficient to describe the data.
+By computing the statistics or quantifications of the galaxy distribution, we can compare our observations to models and infer the cosmological model parameters, as well as learn where our models are insufficient to describe the data.
 
 Standard cosmological inference from galaxy clustering relies on low-order statistics of the galaxy distribution. 
 The most important statistic is the \emph{two-point correlation function} (\cf), denoted $\xi(r)$, which is defined as the excess probability $\delta P$ of finding a galaxy in a volume element $\delta V$ a given separation $r$ apart from another galaxy compared to a random distribution:
@@ -139,8 +144,13 @@ The most important statistic is the \emph{two-point correlation function} (\cf),
 where $n$ is the mean galaxy number density.
 Below scales of $r \sim 10 \hMpc$, the \cf roughly follows a power law, $\xi(r) \sim (r/r_0)^{-\gamma}$, where $r_0$ is a characteristic scale (found to be $r_0 \sim 5 \hMpc$) and $\gamma$ is the power law index, measured to be $\gamma \sim 1.8$.
 The \cf can be estimated from galaxy samples with estimators that take into account the finite, irregular window function of the survey, using estimators such as that proposed by \cite{DavisPeebles1983} or \cite{LandySzalay1993}; these are discussed in much more detail in Chapter~\ref{chp:cfe}.
+Thee measured \cf can then be compared to a model prediction to find the model parameters that most closely describe the data.
 
-We can compare the measured \cf to a model prediction to find the model parameters that most closely describe the data.
+Likelihood-based inference methods require the construction of a covariance matrix.
+The approach that has now become standard for large-scale structure analyses is to use many \emph{mock catalogs} of the expected galaxy distribution, requiring on the order of 1000 mocks to get a reasonable estimate \citep{Anderson2012,Kitaura2016,Beutler2017}.
+Generating these mocks requires populating $N$-body simulations with one of the galaxy--halo connection models described above, or related approximate methods.
+
+As for the 
 
 
 
