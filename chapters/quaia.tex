@@ -509,54 +509,54 @@ The selection function map for the $G<\Ghi$ catalog (not shown) is also provided
 
     \subfloat[\label{fig:2d_gpurer_Ghi}]{\includegraphics[width=0.45\textwidth]{gpurer_Ghi_2d.png}}
     \hspace{5ex}
+    \subfloat[\label{fig:2d_eboss}]{\includegraphics[width=0.45\textwidth]{eboss_Ghi_2d.png}}
+    
+    \subfloat[\label{fig:2d_wiseps}]{\includegraphics[width=0.45\textwidth]{wiseps_Ghi_2d.png}}
+    \hspace{5ex}
     \subfloat[\label{fig:2d_milliquas}]{\includegraphics[width=0.45\textwidth]{milliquas_Ghi_2d.png}}
 
-    \subfloat[\label{fig:2d_sdss}]{\includegraphics[width=0.45\textwidth]{sdss_Ghi_2d.png}}
-    \hspace{5ex}
-    \subfloat[\label{fig:2d_wiseps}]{\includegraphics[width=0.45\textwidth]{wiseps_Ghi_2d.png}}
-    \caption{Other current quasar catalogs for comparison with our \catalog. All are shown for sources with $G<\protect\Ghi$ or the equivalent converted from another band, in galactic coordinates and displayed using a Mollweide projection. The catalogs are: (a) the \Gaia DR3 'purer' sample, (b) the Milliquas catalog, (c) the \SDSS DR16Q sample, and (d) the WISE-PS1-STRM catalog. Note that the color bars have different scales in each panel.}
+    \caption{Other current quasar catalogs for comparison with our \catalog. All are shown for sources with $G<\protect\Ghi$ or the equivalent converted from another band, in galactic coordinates and displayed using a Mollweide projection. The catalogs are: (a) the \Gaia DR3 'purer' sample, (b) the eBOSS sample, (c) the WISE-PS1-STRM catalog, and (d) the Milliquas catalog. Note that the color bars have different scales in each panel.}
     \label{fig:2d_comp}
 \end{figure*}
 
 We compare the \catalog to other existing quasar catalogs: 
 Projections of these catalogs are shown in Figure~\ref{fig:2d_comp}. 
-We show the \Gaia purer sample (Figure~\ref{fig:2d_gpurer_Ghi}); Milliquas, a meta-catalog compiling confirmed quasars from the literature (Figure~\ref{fig:2d_milliquas}); \SDSS, the current best spectroscopic sample (Figure~\ref{fig:2d_sdss}); and a cross-matched catalog of WISE and Pan-STARRS (WISE-PS1), the current best large-area photometric redshift quasar sample (Figure~\ref{fig:2d_wiseps}).
+We show the \Gaia purer sample (Figure~\ref{fig:2d_gpurer_Ghi}); eBOSS, the current best spectroscopic sample (Figure~\ref{fig:2d_eboss}); a cross-matched catalog of WISE and Pan-STARRS (WISE-PS1), a current leading large-area photometric redshift quasar sample (Figure~\ref{fig:2d_wiseps}); and  Milliquas, a meta-catalog compiling confirmed quasars from the literature (Figure~\ref{fig:2d_milliquas});.
 
 The \Gaia purer sample is described in \S\ref{sec:data_gaia}; here we include only sources with QSOC redshift estimates ($\zgaia$).
-The Milliquas catalog was compiled by \cite{flesch_million_2021}; a significant portion of the sources are from \SDSS and \textsl{AllWISE}.
-The \SDSS catalog is the one detailed in \S\ref{sec:data_sdss_quasars}.
+The eBOSS catalog is detailed in \cite{ross_completed_2020}; we have included both eBOSS and legacy SDSS quasars and applied the clustering cuts of requiring sectors to have $>0.5$ completeness and redshift success rate, and removed source with \texttt{ZWARNING}!=0.
 The WISE-PS1 sample was constructed by \cite{beck_wise-ps1-strm_2022}, based on the Source Types and Redshifts with Machine learning (STRM) algorithm by \cite{beck_ps1-strm_2020}.
 The quasar catalog with updated photometric redshifts is presented by \cite{kunsagi-mate_photometric_2022}; here we include only those quasars with redshifts labeled ''reliable'', which is $\val{p_reliable_wiseps}\%$ of the sample.
+The Milliquas catalog was compiled by \cite{flesch_million_2021}; a significant portion of the sources are from \SDSS and \textsl{AllWISE}.
 For each of these samples, we have shown quasars brighter than a limiting magnitude of $G\sim\Ghi$; for the non-\Gaia catalogs we convert to $G$ from the survey's $r$-band magnitude using the conversion in equation (2) of \cite{proft_exploration_2015}, which is based on the \SDSS $r'$ band.
 While this should give a reasonable estimate for the \SDSS sample (using $r_\text{SDSS}$) and the WISE-PS1 sample (using $r_\text{PS1}$ which is very similar to $r_\text{SDSS}$), it may not be as reliable for Milliquas which catalogs ''red'' magnitudes from various sources, as well as for sources with $z>3$ which were not included in the \cite{proft_exploration_2015} fit.
 
 \begin{table*}
+    \caption{A comparison between \cat and other existing quasar catalogs. All catalogs have been limited to $G<\protect\Ghi$ or the rough equivalent converted from another band, and exclude areas with high dust extinction ($A_v > \protect\val{Avhi}$). We show the number of sources $N$, the fraction of sky area covered $f_\mathrm{sky}$, the mean number density per square degree $\bar{n}$, the spanning volume between $0.8<z<2.2$ $V_\mathrm{span}$, the effective volume $V_\mathrm{eff}$, and the median redshift $z_\mathrm{med}$.}
     \centering
-    \caption{A comparison between quasar catalogs, showing the number of sources N, the fraction of sky covered $f_\mathrm{sky}$, the effective volume $V_\mathrm{eff}$, the number density $\bar{n}$, the median redshift $z_\mathrm{med}$, and the fraction of sources with a redshift error less than 0.2 and 0.01.}
-    \begin{tabular}{| c | c | c | c | c | c | c | c |}
-    \hline
-     & N & $f_\mathrm{sky}$ & $V_\mathrm{eff}$ & $\bar{n}$ & $z_\mathrm{med}$ & $f(|\dz|<0.01)$ & $f(|\dz|<0.2)$ \\ 
-     \hline
-     \Gaia cosmo & & & & & & & \\  
-     \hline
-     \Gaia purer & & & & & & & \\
-     \hline
-     Milliquas & & & & & & & \\
-     \hline
-     \SDSS & & & & & & & \\
-     \hline
-     WISE-PS1 & & & & & & & \\
-     \hline
-    \end{tabular}
-    \label{tab:catalog_comp}
+    \input{data/data_quaia/comparison_table.txt}
+    \label{tab:comparison}
 \end{table*}
 
-A summary of the catalogs is shown in Table~\ref{tab:catalog_comp}, for the $G<\sim$\Ghi subsamples.
-Compared to the \Gaia purer sample, the \catalog has a smaller number of objects and a significantly higher fraction of good redshifts.
-The Milliquas catalog contains \val{N_mill} sources, fewer than \cat, and is very heterogeneous across the sky, so we don't include coverage and number density information; the redshifts are also heterogeneous, but we show statistics to give an idea. 
-\cat is similar in number to the \SDSS sample, but covers a factor of XXX more sky area.
-The photometric catalog WISE-PS1 covers about 3/4 of the sky (limited by Pan-STARRS); the \Gaia DR3 quasar sample is the only survey that covers the entire sky and has reliable redshift information.
-\cat contains the largest number of sources with $G<\Ghi$ of any of these catalogs, though WISE-PS1 comes very close, and the other catalogs do go deeper, with varying levels of reliability at those faint magnitudes.
+A summary of the catalogs is shown in Table~\ref{tab:comparison}, for the $G<\sim$\Ghi subsamples.
+(We exclude Milliquas from this comparison as it is so heterogeneous.)
+For these quantifications we also include only areas that have $A_v < \val{Avhi}$, which is \val{area_gcathi} of the sky, as well as at least one quasar in a healpixel.
+For the sky fraction $f_\mathrm{sky}$, we see that \cat and \Gaia purer are limited only by the dusty regions, and cover over 30\% more area than WISE-PS1 (which is limited by Pan-STARRS), and nearly $6\times$ that of eBOSS.
+Compared to the \Gaia purer sample, the \catalog has a slightly smaller number of sources, but due to its redshift distribution gives a slightly higher effective volume.
+The on-sky number density is similar for all of the catalogs, with WISE-PS slightly higher as it has a similar number of objects to the \Gaia catalogs but over a smaller area.
+
+For the volume comparison, we compute two different volumes. 
+The first is a simple ``spanning'' volume, $V_\mathrm{span}$, which is just the comoving volume in the sky area of the survey (as given by $f_\mathrm{sky}$ of the full sky area) in a redshift range $0.8<z<2.2$, a typical redshift rangle for clustering analyses (taken from the range of the eBOSS ``clustering'' sample).
+Thus it compares in the same way as the survey areas, but gives an idea of the physical volume the catalogs span.
+The second is the effective volume $V_\mathrm{eff}$, which depends on the number density as a function of redshift and the power spectrum value $P(k)$, integrated over the physical volume.
+We use the same $P(k)$ for all catalogs, $4 \times 10^4 (\hMpc)^3$, based on the value for the eBOSS quasars at around $k \sim 0.01$ \citep{mueller_clustering_2021}.
+We see that the effective volume of \cat is surpassed only slightly by WISE-PS1, and is over $6 \times$ that of eBOSS. 
+
+The catalogs all have a similar median redshift, around $1.4 < z < 1.6$.
+% $\val{p_acc_zspz_dzhi_Glo}\%$
+However, they have significantly different redshift precision.
+As 
+
 The WISE-PS1 sources have photometric redshifts which are substantially worse than our \Gaia catalog: only XXX\% of the WISE-PS1 sources have $|\dz|<0.2$ (with respect to \SDSS), compared to XXX\% of \Gaia sources.
 
 We also note that the ongoing DESI survey \citep{Aghamousa2016} will observe a high density of quasars over a large sky area \citep{yeche_preliminary_2020}, which will be competitive with and complementary to this \Gaia--\unWISE catalog.

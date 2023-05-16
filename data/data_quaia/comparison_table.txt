@@ -1,0 +1,10 @@
+\begin{tabular}{|l|l|l|l|l|l|l|}
+\hline
+ & $N$ & $f_\text{sky}$ & $\bar{n}$ [deg$^{-2}$] & $V_\text{span} \: [(h^{-1}\,\text{Gpc})^3]$ & $V_\text{eff} \: [(h^{-1}\,\text{Gpc})^3]$ & $z_\text{med}$ \\
+\hline
+\textbf{QUaia ($G < 20.5$)} & \textbf{1,209,832} & \textbf{0.71} & \textbf{41.50} & \textbf{138.46} & \textbf{7.01} & \textbf{1.48} \\
+\emph{{Gaia}} DR3 'Purer' & 1,261,883 & 0.71 & 43.29 & 138.44 & 6.43 & 1.61 \\
+eBOSS & 190,194 & 0.14 & 34.03 & 26.55 & 1.01 & 1.49 \\
+WISE-PS1 & 1,106,010 & 0.54 & 49.81 & 105.45 & 7.21 & 1.40 \\
+\hline
+\end{tabular}
