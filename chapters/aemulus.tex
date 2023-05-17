@@ -361,10 +361,10 @@ and $k_\mathrm{M3/2}$ is a special case of the general Mat\'ern kernel with $\nu
 where $l$ is a characteristic length scale, and $c$ is a constant.
 
 We train the GP on our set of training catalogs to find the kernel hyperparameters that maximize the log marginal likelihood,
-\begin{multline}
-    \mathrm{log}\,p(\bm{y}|X) = -\frac{1}{2} \bm{y}\T (K + \sigma_n^2\,I)\inv\bm{y} \\
+\begin{equation}
+    \mathrm{log}\,p(\bm{y}|X) = -\frac{1}{2} \bm{y}\T (K + \sigma_n^2\,I)\inv\bm{y}
     - \frac{1}{2} \, \mathrm{log}|K + \sigma_n^2\,I| - \frac{n}{2} \, \mathrm{log}2\pi ~.
-\end{multline} 
+\end{equation} 
 We can then use these hyperparameters to evaluate the kernels in Equation~\eqref{eq:gp_pred}, and use it to predict the target value for our test set inputs.
 
 We train a separate GP model for each bin of each observable.
@@ -731,8 +731,8 @@ This will address both of the issues we found when performing this test, and ens
 \begin{figure*}[p!]\ContinuedFloat
 \centering
 \subfloat[\label{fig:contour_addin_allhodab}]{\includegraphics[width=0.8\textwidth]{contour_addin_allhodab}}
-\label{fig:contours_full}
 \caption{Continued from previous page.}
+\label{fig:contours_full}
 \end{figure*}
 
 We show contour plots of all the recovered parameters for a single cosmology+HOD test model in Figure~\ref{fig:contours_full}, when successively adding in our observables.
