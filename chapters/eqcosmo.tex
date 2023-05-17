@@ -1,19 +1,19 @@
-This chapter is based on work in collaboration with David W. Hogg, Shy Genel, Soledad Villar, Soichiro Hattori, Austen Gabrielpillai, and Yongseok Jo.
+This chapter is based on work performed in collaboration with David W. Hogg, Shy Genel, Soledad Villar, Soichiro Hattori, Austen Gabrielpillai, and Yongseok Jo.
 
 \graphicspath{{figures/figures_eqcosmo/}}
 
 
 \section{Chapter Abstract}
-The laws of physics obey exact symmetry properties.
-The method of invariant scalars is a lightweight and physically motivated way to encode these symmetries in analysis methods, by compressing inputs into scalars that are invariant to rotations, translations, velocity boosts, and permutations (particle labeling).
+The laws of physics obey exact symmetries.
+The method of invariant scalars is a lightweight and physically motivated way to encode these symmetries in analysis methods, by compressing inputs into scalars that are invariant to rotations, translations, velocity boosts, and permutations (particle re-labeling).
 We apply this approach to characterize dark matter (DM) overdensities (halos) in cosmological simulations, and use it to explore the relationship between DM and baryonic properties as well as halo mass assembly.
 These relationships are critical for understanding the galaxy--halo connection and inferring cosmological parameters from large-scale structure.
-Using IllustrisTNG simulation data, we build a training set consisting of halos in the DM-only simulation and their corresponding central galaxies in the matched hydrodynamical simulation. 
+Using IllustrisTNG simulation data, we build a training set consisting of halos in the DM-only simulation and their corresponding central galaxies in the matched hydrodynamical simulation at $z=0$. 
 For each DM halo, we construct a large set of invariant scalars based on contractions of geometric phase-space (position and velocity) properties of the DM particle distribution.
 With these scalars as input features, we use a gradient boosting regression model to predict galaxy properties and halos formation histories.
 We show that for most targets our approach significantly outperforms the use of standard halo summary properties as the features, and performs slightly better than geometric properties that do not encode rotation invariance.
 We find the most significant improvements in predicting galaxy stellar mass, specific stellar angular momentum, and the late-time formation history.
-The invariance properties and high-order phase-space information of DM halos encoded by our scalar features impose informative constraints and provide interpretable results.
+The invariance properties and high-order phase-space information of DM halos encoded by our scalar features impose informative constraints and provide potentially interpretable results.
 Our results are relevant to improving mock galaxy catalogs, giving insights into galaxy formation, and emulating cosmological simulations.
 
 
@@ -22,62 +22,67 @@ Our results are relevant to improving mock galaxy catalogs, giving insights into
 Overdense regions of dark matter (DM) in the universe collapse to form DM ``halos'', which merge and grow to form the underlying structure of the cosmic web (e.g. \citealt{davis_evolution_1985,bond_how_1996,boylan-kolchin_resolving_2009}). 
 These DM halos play host to the galaxies that populate our universe, and DM evolution and galaxy formation are deeply intertwined. 
 The merger history of halos affects how their galaxies develop, and galactic feedback can in turn affect the growth of structure.
-This relationship, known as the galaxy--halo connection \citep{WechslerTinker2018}, is core to both galaxy formation and large-scale structure studies.
+The relationship between galaxies and dark matter structure, known as the galaxy--halo connection \citep{WechslerTinker2018}, is core to both galaxy formation and large-scale structure studies.
 
 The morphology (shape) of halos is related to both cosmological evolution and galaxy formation.
 The complex process of gravitational collapse imprints asphericities on halo shapes.
 These are often approximated as triaxial (e.g. \citealt{angrick_triaxial_2010}), though recent work has shown that more complicated models are required \citep{bonnet_morphology_2022}.
-Triaxial halos appear elliptical in projection, and these ellipticities have been measured using weak lensing surveys (e.g. \citealt{robison_shape_2022,schrabback_tightening_2021}); modeling halo shape is key for disentangling the effect of intrinsic alignments in cosmological weak lensing analyses.
-Halo shapes have been explored in detail in cosmological simulations; the connection between halo ellipticity and halo formation-related properties was demonstrated and modeled in the MultiDark simulation \citep{lau_correlations_2021}, and detailed analyses of the distribution of halo shapes and their errors have been conducted, such as their dependence on the simulation resolution \citep{schneider_shapes_2012} and density gradient \citep{fischer_sensitivity_2023}.The morphology of halos is known to be affected by galactic feedback, which has been quantified in simulations and is found to be correlated with halo mass and the stellar mass fraction (e.g. \citealt{chua_impact_2022}).
+Triaxial halos would appear elliptical in projection, and under the assumption of triaxiality ellipticities can be measured using weak lensing surveys (e.g. \citealt{robison_shape_2022,schrabback_tightening_2021}); modeling halo shape is key for disentangling the effect of intrinsic alignments in cosmological weak lensing analyses.
+Halo shapes have been explored in detail in cosmological simulations; the connection between halo ellipticity and halo formation-related properties was demonstrated and modeled in the MultiDark simulation \citep{lau_correlations_2021}, and detailed analyses of the distribution of halo shapes and their errors have been conducted, such as their dependence on the simulation resolution \citep{schneider_shapes_2012} and density gradient \citep{fischer_sensitivity_2023}.
+The morphology of halos is known to be affected by galactic feedback, which has been quantified in simulations and is found to be correlated with halo mass and the stellar mass fraction (e.g. \citealt{chua_impact_2022}).
 
 Cosmological hydrodynamic simulations have become extremely powerful tools to model the formation of halos and galaxies (e.g. \citealt{springel_gadget_2001, genel_introducing_2014,dave_simba_2019}).
-However, they are very computationally expensive, consuming millions of CPU-hours; even their DM-only counterparts are relatively expensive.
+However, they are very computationally (and thus environmentally) costly, consuming millions of CPU-hours; even their DM-only counterparts are relatively expensive.
 Recently, there have been efforts to \emph{emulate} these cosmological simulations with faster tools, such as machine learning (ML) techniques.
 These offer the opportunity to both help us understand the key physical processes affecting structure galaxy formation, as well as construct the large number of mock galaxy catalogs needed to analyze current galaxy surveys. 
 
 There is a growing body of work on learning the relationship between dark matter and galaxy properties using ML-based approaches.
 Many of these use a small set of properties of identified DM halos as input features, and focus on predicting the galaxy stellar mass as well as other baryonic properties.
-\cite{jo_machine-assisted_2019} show that using extremely randomized trees (ERTs) and including a two-stage learning approach and environmental property features produce accurate galaxy property predictions in the IllustrisTNG simulation.
-\cite{lovell_machine_2021} use ERTs to learn the relationship between halos in the EAGLE simulation and galaxies in the zoom C-EAGLE simulations of galaxy clusters.
-\cite{de_santi_mimicking_2021} compare the performance of different ML models on predicting galaxy properties from IllustrisTNG, and find success in predicting the stellar mass and reproducing galaxy power spectra; \cite{rodrigues_high-fidelity_2023} extends this analysis using joint probability distributions, achieving improved performance on clustering statistic recovery.
+These ``standard halo features'' can include properties related to halo mass, or proxies such as circular velocity; halo structure properties such as concentration; velocity-space information such as spin; and others.
+These are often computed at $z=0$, where we typically want to predict galaxy properties, and some correlate with the halo assembly history (which is expected to inform galaxy properties, as discussed below); sometimes historical halo properties are included directly as features.
+\cite{jo_machine-assisted_2019} show that using extremely randomized trees (ERTs) and including a two-stage learning approach and environmental property features produce accurate galaxy property predictions in the IllustrisTNG simulation \citep{springel_first_2018,nelson_first_2018,pillepich_first_2018,naiman_first_2018,marinacci_first_2018}.
+\cite{lovell_machine_2021} use ERTs to learn the relationship between halos in the EAGLE simulation and galaxies in the zoom C-EAGLE simulations of galaxy clusters \citep{crain_eagle_2015}.
+\cite{de_santi_mimicking_2021} compare the performance of different ML models on predicting galaxy properties from IllustrisTNG, and find success in predicting the stellar mass and reproducing galaxy power spectra; \cite{rodrigues_high-fidelity_2023} extends this analysis using joint probability distributions, showing that joint prediction of galaxy properties improves predictions.
 Recent works have found that halo properties related to the formation history are important for predicting galaxy properties: \cite{jespersen_learning_2022} use graph neural networks on DM halo merger trees of halos in IllustrisTNG to predict galaxy properties computed from semi-analytic models, and \cite{icaza-lizaola_sparse_2022} use sparse regression methods on a small selection of halo formation properties to predict stellar mass from EAGLE.
 Relatedly, \cite{mendoza_multicam_2023} demonstrated using a generalization of abundance matching that the entire mass assembly history impacts halo properties, more so than the few historical summary properties typically used.
 
-There has been significant effort to try to understand more deeply the connection between halo and galaxy properties using cosmological simulations.
+There have been serious attempts to try to understand more deeply the connection between halo and galaxy properties using cosmological simulations.
 \cite{delgado_modeling_2021} use a random forest regressor to identify key secondary halo properties for modelling the galaxy--halo connection using IllustrisTNG; they find small dependencies on environmental overdensity and shear.
-\cite{stiskalek_scatter_2022} also explore how secondary halo properties affect the galaxy--halo connection, specifically analyzing the scatter in the stellar-to-halo mass relation in IllustrisTNG using a neural network ensemble and finding that only half of the scatter can be explained by halo mass, and the rest is not captured by standard halo properties.
-Similarly, \cite{matthee_origin_2017} find using the EAGLE simulations that a large fraction of the scatter cannot be explained by halo concentration, spin, triaxiliality, substructure, and environment. 
+\cite{stiskalek_scatter_2022} explore how secondary halo properties affect the galaxy--halo connection, specifically analyzing the scatter in the stellar-to-halo mass relation in IllustrisTNG using a neural network ensemble.
+They find that only half of the scatter can be explained by halo mass, and the rest is not captured by standard halo properties.
+Similarly, \cite{matthee_origin_2017} find, using the EAGLE simulations, that a large fraction of the scatter cannot be explained by halo concentration, spin, triaxiliality, substructure, and environment. 
 
-Other works use the dark matter density field as inputs to predict baryonic distributions, rather than halo features.
+Other investigations use the dark matter density field as inputs to predict baryonic distributions, rather than halo features.
 This approach operates on inputs closer to the raw data, but presents its own challenges such as the high sparsity in the stellar mass distribution.
 \cite{yip_dark_2019} implement a cascade of convolutional neural networks (CNNs) to predict the 3D galaxy distribution from a voxelization of the IllustrisTNG DM-only simulation.
 Along a similar vein, \cite{kasmanoff_dm2gal_2020} predict the stellar mass in voxels centered on subhalos using CNNs in IllustrisTNG.
 
 Another line of inquiry seeks to use ML to emulate and understand structure formation in the dark sector.
 Many works have explored using neural networks to map the initial displacement field of a particle grid as to the final displacement field, targeting a full or approximate N-body simulation \citep{he_learning_2018,jamieson_field_2022}.
-Others aim to map the final displacements from a very inexpensive N-body simulation substitute to a more realistic output \citep{piras_fast_2023}. 
+Others aim to map the final displacements from a very inexpensive N-body simulation substitute to a more expensive, physically informed simulation \citep{piras_fast_2023}. 
 To develop a deeper understanding of structure formation, \cite{lucie-smith_insights_2022} use gradient-boosted trees to predict late-time mass profiles of DM halos based on input initial conditions and elucidate the relevant scales at play; \cite{lucie-smith_explaining_2023} further explored how the assembly history of halos affects their density profiles.
 \cite{etezad-razavi_unravelling_2023} investigate the role of the velocity field on DM halo masses using CNNs.
 
-While ML techniques are extremely powerful at making predictions, they are generally agnostic to the underlying physical processes they model.
-One key aspect of physical laws is \emph{symmetries}: we expect that our results will change in exact ways, or not change at all, under certain transformations.
+While ML techniques are extremely powerful at making predictions, they are generally agnostic to the underlying physical processes they describe.
+One key aspect of physical laws is their fealty to \emph{symmetries}: we expect that our results will change in exact ways, or not change at all, under certain transformations.
 Some ML models are naturally \emph{equivariant} to certain symmetries, such as convolutional neural networks to translations and graph neural networks to permutations.
 Recently, additional ML approaches that enforce physical symmetries have been developed.
 CNNs have been extended to incorporate rotational symmetries \citep{cohen2019gauge,wang2021incorporating,ocampo_scalable_2023}.
 Most relevant to our focus on simulated dark matter halos,neural networks that operate on point clouds have been developed that enforce rotation, translation, and permutation equivariance using a variety of approaches.
-These include irreducible representations \citep{thomas2018tensor}, self-attention mechanisms \citep{fuchs2020se}, and convolutions \citep{kondor2018covariant,zhang2019rotation}, as well as extensions of graph neural networks \cite{Satorras2021}.
+These include irreducible representations \citep{thomas2018tensor}, self-attention mechanisms \citep{fuchs2020se}, and convolutions \citep{kondor2018covariant,zhang2019rotation}, as well as extensions of graph neural networks \citep{Satorras2021}.
 
-Approaches to learning the galaxy--halo connection that are based on a set of halo properties are often naturally obey obey the relevant symmetries; for instance, mass and concentration are invariant to rotations, translations, and permutations of the DM halo particles.
-On the other hand, ML models operating directly on the dark matter density field do not typically respect all of these symmetries.
+Approaches to learning the galaxy--halo connection that are based on a set of halo properties are often naturally obey the relevant symmetries; for instance, mass and concentration are invariant to rotations, translations, and permutations of the DM halo particles.
+However, these are limited to a very small set of hand-picked invariant features.
+On the other hand, ML models operating directly on the dark matter density field capture detailed information, but do not typically respect all of these symmetries.
 Recent work has applied explicitly equivariant neural network architectures and approaches to structure formation and the galaxy--halo connection in cosmological simulations.
 \cite{dai_learning_2020} use Lagrangian Deep Learning to reproduce both dark matter evolution and hydrodynamical outputs, based on an initial linear density field; this approach respects translational and rotational symmetries.
 \cite{thiele_predicting_2022} use permutation- and rotation-invariant DeepSets to predict the thermal Sunyaev-Zel'dovich field in galaxy clusters in IllustrisTNG.
 
-In this work, we propose an equivariant approach to characterizing the dark matter distribution that enforces the known symmetries of cosmological simulations. 
+In this work, we propose an equivariant approach to characterizing the dark matter distribution that enforces the known symmetries of the physics underlying cosmological simulations. 
 We use the method of \emph{invariant scalars} introduced by \cite{Villar2021a}, which offers a lightweight approach to representing invariant and equivariant functions using a collection of scalar quantities.
-The core idea is that geometric objects{\emdash}such as vectors of particle positions and velocities{\emdash}can be \emph{contracted} to form scalars that are invariant to transformations, namely translations, rotations, velocity boosts, and permutations.
+The core idea is that geometric objects{\emdash}such as vectors of particle positions and velocities{\emdash}can be summed and \emph{contracted} to form scalars that are invariant to transformations, namely translations, rotations, velocity boosts, and permutations.
 
-Recent work has shown that this ``scalars'' approach improves performance on prediction tasks.
+Recent work has shown that this ``scalars'' approach improves performance on prediction tasks in physics problems.
 \cite{yao_simple_2021} demonstrated the approach on a toy dynamical system and showed that it outperformed state-of-the-art approaches in both speed and accuracy.
 It has recently been applied to large-scale structure problems: \cite{villanueva-domingo_learning_2022} used scalars in combination with graph neural networks applied to simulated galaxy catalogs to perform cosmological inference.
 \cite{thiele_predicting_2022} constructed invariant scalars from input dark matter particles as well as galaxy cluster-scale features as inputs to their DeepSet architecture.
@@ -85,9 +90,9 @@ It has recently been applied to large-scale structure problems: \cite{villanueva
 We apply the invariant scalars approach to the particle distribution of DM halos in the IllustrisTNG DM-only simulation.
 To obtain a uniform set of features across halos while preserving detailed structure, we first compress the DM halo particles into geometric multipole moments in radial bins, and then combine these into invariant scalar features.
 We construct these to be dimensionless so they are direct measures of halo shape.
-This provides a characterization of DM halos that encodes interpretable, high-order phase-space structure while preserving physical symmetries.
+This provides a characterization of DM halos that encodes interpretable, quasi-resolution-invariant high-order phase-space structure while preserving physical symmetries.
 To learn the mapping from DM halos to baryonic properties, we construct a set of matched DM halos in the DM-only simulation to central galaxies in the TNG hydrodynamical simulation.
-We use XGBoost, a gradient boosted tree ensemble model, with the scalars as inputs to predict galaxy properties, and compare this scalars approach to benchmark feature sets. 
+We use XGBoost \citep{chen_xgboost_2016}, a gradient boosted tree ensemble model, with the scalars as inputs to predict galaxy properties, and compare this scalars approach to benchmark feature sets. 
 We also demonstrate that these features allow for accurate predictions of the mass assembly history of the DM halos.
 
 In this work, we use the following notation: 
@@ -95,7 +100,7 @@ Scalars are denoted by lowercase variables, vectors by lowercase bold variables,
 
 This paper is outlined as follows.
 In \S\ref{sec:sim_sample}, we introduce the simulation used and our halo and galaxy sample selection. 
-We discuss our approach to constructing invariant scalars from dark matter halo particle distributions in \S\ref{sec:scalars_approach} 
+We discuss our approach to constructing invariant scalars from dark matter halo particle distributions in \S\ref{sec:scalars_approach}.
 In \S\ref{sec:features_model}, we detail the fiducial scalar feature set and other benchmark feature sets we use as inputs, and describe the prediction model.
 In \S\ref{sec:results}, we present the results of predicting the mass assembly history and galaxy properties from DM halo features, and in \S\ref{sec:discussion}, we interpret these results and discuss their implications and applications.
 We summarize our results and conclusions in \S\ref{sec:summary_eqcosmo}.
@@ -109,7 +114,7 @@ We summarize our results and conclusions in \S\ref{sec:summary_eqcosmo}.
 
 The IllustrisTNG simulations are cosmological magnetohydrodynamical simulations that co-evolve dark matter and baryons to model galaxy formation \citep{springel_first_2018,nelson_first_2018,pillepich_first_2018,naiman_first_2018,marinacci_first_2018}.\footnote{Data products from the TNG Project are publicly accessible at \url{https://www.tng-project.org/}.}
 The simulations are run starting from initial conditions at $z=127$ with cosmological parameters from \cite{ade_planck_2016} $\Omega_m = \Omega_{dm} + \Omega_b = 0.3089$, $\Omega_b = 0.0486$, $\Omega_\Lambda = 0.6911$, Hubble constant $H_0 = 100$ $h$ km s$\inv$ Mpc$\inv$ with $h = 0.6774$, $\sigma_8 = 0.8159$, and $n_s = 0.9667$.
-They model baryonic processes including ionizing background radiation, star formation and stellar feedback, stellar evolution and chemical enrichment, pressurization of the interstellar medium from supernovae, and the growth of and feedback from supermassive black holes.   
+They include baryonic processes such as ionizing background radiation, star formation and stellar feedback, stellar evolution and chemical enrichment, pressurization of the interstellar medium from supernovae, and the growth of and feedback from supermassive black holes.   
 We use the TNG-100-1 simulation, which has a size of $L = (75 \hMpc)^3$, $1820^3$ DM particles and the same number of gas cells, and mass resolutions of $m_\text{DM} = 7.5 \times 10^6 \Msun$ and $m_\text{gas} = 1.4 \times 10^6 \Msun$.
 The simuluation also evolves star/wind and black hole particles.
 It has a matched DM-only simulation run with the same initial conditions, TNG-100-1-Dark, with mass resolution of $8.9 \times 10^6 \Msun$.
@@ -118,21 +123,21 @@ For most of this work, unless otherwise stated, we use the $z=0$ snapshot.
 
 We use the DM halo catalogs provided by the TNG project as the starting point for our sample.
 Halos are defined by a Friends-of-Friends (FoF) algorithm on DM particles, with a linking length of 0.2 times the mean inter-particle separation; other types of particles are assigned to the same halo as their nearest DM particle.
-Subhalos within halos are found using the Subfind algorithm, which identifies gravitationally bound structures across all particle types.
+Subhalos within halos are found using the Subfind algorithm \citep{springel_populating_2001}, which identifies gravitationally bound structures across all particle types.
 
 
 \subsection{Halo and galaxy sample selection}
 \label{sec:select}
 
 One of our goals with this project is to propose a characterization of DM halos that is useful for predicting the properties of the galaxies they host, as well as their assembly history.
-Given this, we operate on the halos in the \dark (DM-only) simulations, with the idea of learning the results of the hydrodynamic galaxy formation model.
+Given this, we operate on the halos in the \dark (DM-only) simulations, with the idea of learning the results of the matched hydrodynamic galaxy formation model.
 To that end, we construct a sample of paired DM halos in the \dark simulation and galaxies in the \hydro (full hydrodynamical) simulation. 
 We consider only central galaxies in this work; the approach could be straightforwardly extended to satellite galaxies.
 
 We first make a cut on the \dark halos, choosing only halos with a mass $\Mfof > 10^{10.25} \, \hMsun$, where $\Mfof$ is the mass of all the particles that are part of the FoF group within $\Rtwoh$, and $\Rtwoh$ is the radius enclosing a mass of 200 times the mean density of the simulation.
 We use this mass definition, as opposed to the typical $\Mtwoh$ which includes all particles both part of and not part of the FoF group, as our approach will operate only on the FoF particles and this keeps the mass definitons consistent; however, this is just for technical reasons, and only differs at the few percent level.
 We require that the halos have at least one subhalo.
-We use the matched subhalo catalogs provided by the TNG Project, which match subhalos in the dark simulation to subhalos in the paired hydrodynamical simulation; we call these subhalo pairs ``twins''.
+We use the matched subhalo catalogs provided by the TNG Project \citep{rodriguez-gomez_merger_2015}, which match subhalos in the dark simulation to subhalos in the paired hydrodynamical simulation; we call these subhalo pairs ``twins''.
 The matching is done with the ``LHaloTree'' algorithm, which selects the halo in the other simulation with the largest number of DM particles in common, and requires that both simulations agree, resulting in bijective matches.
 We discard halos that do not have a \hydro match.
 For every \dark halo, we take its most massive \dark subhalo.
@@ -146,22 +151,22 @@ We discard all \dark halos for which the twin \hydro subhalo has fewer than 50 s
 We discard all pairs for which the mass $\Mtwoh$ of the DM halo and the matched hydro halo differ by a factor of 3 or more; we assume that this indicates a bad match, and only occurs for a very small fraction of halos.
 We also require that the SC-SAM has been applied to the halos, as we use the halo assembly histories computed by the SC-SAM (discussed further in \S\ref{sec:mah}); this removes a few percent of the halos.
 These selections result in 31,305 \dark halos and matched \hydro galaxies.
-We use 70\% as a training set, 15\% as a validation set, and 15\% as a test set.
+We use 70\% as a training set, 15\% as a validation set, and 15\% as a test set, divided at random.
 
 
 \subsection{Halo mass assembly history}
 \label{sec:mah}
 
 We aim to predict the mass assembly history of the \dark halos based only on their present-day ($z=0$) properties.
-This is informative as it captures the dynamical history of the halo, which affects the formation of the galaxies it hosts.
-We use the merger histories computed by \citep{gabrielpillai_galaxy_2021} as part of a comparative analysis between TNG and the Santa Cruz semi-analytic model (SC-SAM, \citealt{somerville_semi-analytic_1999,somerville_semi-analytic_2008, somerville_star_2015}); the SAM is based on these merger trees.\footnote{The merger history and other SC-SAM data is publicly accessible at \url{https://github.com/aust427/illustris_sam}.}
+We expect this history to be informative as it captures the dynamical history of the halo, which affects the formation of the galaxies it hosts.
+We use the merger histories computed by \cite{gabrielpillai_galaxy_2021} as part of a comparative analysis between TNG and the Santa Cruz semi-analytic model (SC-SAM, \citealt{somerville_semi-analytic_1999,somerville_semi-analytic_2008, somerville_star_2015}); the SAM is based on these merger trees.\footnote{The merger history and other SC-SAM data is publicly accessible at \url{https://github.com/aust427/illustris_sam}.}
 The merger trees are run on halos found with the \textsc{rockstar} \citep{behroozi_rockstar_2013} code and built with \textsc{consistent trees} \citep{behroozi_gravitationally_2012}, and a bijective matching is performed between the \textsc{rockstar} and TNG Subfind halos.
 
 We consider the most massive progenitor branch of the assembly history of each \dark halo in our sample.
 We compile the mass of the halo's most massive progenitor for each of the TNG snapshots. 
 A natural quantity to try to predict would be the mass of the most massive progenitor halo as a function of redshift; this could be made dimensionless  by considering the fraction of mass accreted by the halo's most massive progenitor compared to its $z=0$ mass.
 However, different halos can be traced back to different redshifts, and this inconsistency causes difficulties at the prediction stage.
-We thus choose to learn the scale factor $a$ (related to the redshift $z$ by $a=1/(1+z)$) at which the halo has accreted a given fraction of its mass along the most massive progenitor branch, $M_\mathrm{vir}(a)$/$M_\mathrm{vir}(a=1)$, where $M_\mathrm{vir}$ is given by the \field{HalopropMvir} field (equivalent to the TNG field \field{Group\_M\_TopHat200}) of the SC-SAM data and $a=1$ is the present day.
+We thus choose to learn the scale factor $a$ (related to the redshift $z$ by $a=1/(1+z)$) at which the halo has accreted a given fraction of its mass along the most massive progenitor branch, $M_\mathrm{vir}(a)$/$M_\mathrm{vir}(a=1)$, where $M_\mathrm{vir}$ is given by the \field{HalopropMvir} field (equivalent to the TNG field \field{Group\_M\_TopHat200}; \citealt{bryan_statistical_1998}) of the SC-SAM data and $a=1$ is the present day.
 (We note that this is a different mass definition than that used throughout this work, but we only consider mass ratios so we expect this will not matter.)
 This swapped quantity, the scale factor $a$ as a function of mass fraction, gets at the same information as the natural quantity but is more stable in predictions.
 We compute this at mass fractions linearly spaced by 0.025 between 0 and 1 (exclusive), giving 39 values. 
@@ -186,15 +191,15 @@ The stellar radius $\rstellar$ is the TNG property \field{SubhaloHalfmassRadType
 The value of $\ssfr$ is based on the star formation rate catalogs provided by the TNG Project \citep{donnari_star-formation_2019,pillepich_first_2019}.
 We use the \field{SFR\_MsunPerYrs\_in\_all\_1000Myrs} field, the star formation rate including all bound star particles of the subahlo, and take the ratio with the stellar mass $\mstellar$; we use units of log(yr$\inv$).
 For the galaxies that have $\ssfr=0$, we assign a small value based on the average gas mass cell and the 1 Gyr timescale ($\text{SFR}_\mathrm{zero} = 10^{-3} \hMsun \text{yr}\inv$).
-We use the $\jstellar$ computed by the approach of \cite{genel_galactic_2015} in the same way as the \field{SpecificAngMom} field in the TNG Project catalog, with units km s$\inv$ kpc. 
+We use the $\jstellar$ computed by the approach of \cite{genel_galactic_2015} in the same way as the \field{SpecificAngMom} field in the TNG Project catalog, with units log(km s$\inv$ kpc). 
 The $\mbh$ value is that given by the TNG field \field{SubhaloBHMass} of the subhalo, in units of log($\hMsun$).
 For galaxies with zero black hole mass, we assign the value to be half of the minimum black hole mass in our sample. 
-We use the $g-i$ color computed from synthetic SDSS photometry as provided by the TNG project \citep{nelson_first_2018}; the photometry is in units of AB magnitudes. 
+We use the $g-i$ color computed from synthetic SDSS photometry as provided by the TNG project \citep{nelson_first_2018}; the photometry is in the AB magnitude system. 
 The distributions of these properties as a function of \dark halo mass are shown in the left column of Figure~\ref{fig:galprops}.
 
 We estimate the uncertainties on these baryonic properties based on the effects of small initial perturbations in cosmological simulations and how these propogate to differences in baryonic properties over time.
 We quantify this using the simulations of \cite{Genel2019}, which are pairs of IllustrisTNG with small random initial particle displacements.
-The $z=0$ galaxies are then matched across the pairs, and the pairwise differences between their properties can be computed; the standard deviations of these pairwise differences represent a lower limit on the retrievable information on the properties.
+The $z=0$ galaxies are matched across the pairs, and the pairwise differences (divided by $\sqrt{2}$; see \citealt{Genel2019}) between their properties can be computed; the standard deviations of these pairwise differences represent a lower limit on the retrievable information on the properties.
 We refer to this as the chaotic limit, and use it as a comparison for our baryonic property predictions.
 Specifically, we use the $\epsilon=1$ resolution level simulations which is similar to but slightly worse than the resolution of TNG100-1, so the limit is slightly optimistic (the true lower limit is actually lower than the limit shown).
 
@@ -210,11 +215,11 @@ We outline our approach here to apply the scalars approach to DM halo characteri
 Our goal is to characterize DM halos in a way that captures detailed phase-space structure while enforcing invariance to transformations.
 (The same approach applies to equivariance, but here we aim to predict scalar properties and thus focus on invariance.)
 We specifically consider rotation, translation, velocity boosts, rotation, and permutation (of the particles).
-For each \dark halo, we use a multipole expansion to compress the particle positions and velocities of each halo into a set of ``geometric features'' that describe the phase-space structure of the halo; this is discussed in \S\ref{sec:geometric_features}.
-We then construct scalar contractions of these geometric features, which are scalars, vectors, and tensors; these ``scalar features'' are invariant to transformations of the particles. 
-This step is informed by Einstein summation notation, which only allows invariant scalars to be produced; the details of our scalar feature construction is discussed in \S\ref{sec:scalar_features}.
-Though in practice we limit the scalars we produce to certain orders and radial bins, in principle if we took the limit of infinite orders and extremely fine binning, the scalars would \emph{exactly} describe the particular distribution \emph{up to} the symmetry transformations; the limits we impose are well-behaved approximations on this.
-We can finally use these scalar features as the inputs for our prediction task; in our case we use a Gradient Boosted Tree model (\S\ref{sec:prediction_model}), though we note that the scalars could be used with other model choices.
+For each \dark halo, we use something akin to a multipole expansion to compress the particle positions and velocities of each halo into a set of ``geometric features'' that describe the phase-space structure of the halo, which are scalars, vectors, and tensors; this is discussed in \S\ref{sec:geometric_features}.
+We then construct scalar contractions of these geometric features; these ``scalar features'' are invariant to transformations of the particles. 
+This step is informed by Einstein summation notation \citep{einstein_grundlage_1916}, which only allows invariant scalars to be produced; the details of our scalar feature construction is discussed in \S\ref{sec:scalar_features}.
+Though in practice we limit the scalars we produce to certain orders and radial bins, in principle if we took the limit of infinite orders and extremely fine binning, the scalars would effectively describe the particular distribution in position and velocity space up to the symmetry transformations; the limits we impose are well-behaved approximations on this.
+We can finally use these scalar features as the inputs for our prediction task; in our case we use a Gradient Boosted Tree model (\S\ref{sec:prediction_model}), though we note that the scalars could be used with any other model choice.
 
 In contrast to this approach, many standard approaches use a small set of hand-constructed properties of the halos, such as the mass, concentration, and spin.
 While these do often obey physical symmetries, this is not enforced; further, the properties are hand-picked and can be non-trivial to compute, and they do not necessarily capture the complexity of the phase-space structure of the halos.
@@ -228,7 +233,7 @@ We also expect the enforced equivariance to make the approach more generalizable
 \label{sec:geometric_features}
 
 \begin{table}
-    \caption{The geometric features we construct from the \dark halo particles, following the multipole expansion of \eqt{eq:geo}. The table gives for each feature its name in multipole moment and more readable notation, its order (rank), and its degree in mass, position, and velocity, and its physical interpretation. All of the geometric features have mass degree of 1 as the are constructed as single sums over masses.}
+    \caption{The geometric features we construct from the \dark halo particles, following the multipole expansion of \eqt{eq:geo}. The table gives for each feature its name in multipole moment and more readable notation, its order (rank), and its degree in mass, position, and velocity, and its physical interpretation. All of the geometric features have mass degree of 1 as they are constructed as single sums over masses.}
     \label{tab:geos}
     \vspace{0.5em}
     \centering
@@ -246,27 +251,20 @@ We also expect the enforced equivariance to make the approach more generalizable
     \end{tabular}
 \end{table}
 
-We first compute a set of \emph{geometric features} from our data from the particle distribution, specifically their masses, positions, and velocities. 
-There are multiple reasons we do this.
-Theoretically we could compute scalars directly from the particles that consitute the halo; in fact, this would be simpler as these are all scalars and vector inputs.
-However, this results in an enormous number of scalars as it would require the inner product of each pair of particles, scaling as the square of the number of particles.
-It also would produce a different number of particles for each halo, which is difficult to handle at the prediction stage.
-Finally, the ordering of the scalars is not clear and the permutation invariance would be brittle at best.
-By first condensing the particles into a uniform set of geometric features, we circumvent all of these issues.
-We note that there are many ways to handle this step, and we have chosen one relatively simple option.
-
-We choose the geometric features to be based on a multipole expansion, computing moments of the data in a set of radial shells. 
+We first compute a set of \emph{geometric features} from the particle distribution of the \dark halos, specifically their masses, positions, and velocities. 
+We choose the geometric features to be based on a generalization of the multipole expansion, computing moments of the data in a set of radial shells. 
 We define the geometric features $g_{\ell p n}$ as: 
 \label{eq:geo}
 \begin{equation}
-    g_{\ell p n} = \sum_i m_i \, W_n(r_i) \, \left( \x_i^{\otimes \ell} \, \otimes \, \vel_i^{\otimes p} \right)
+    g_{\ell p n} = \frac{1}{M \, R^l \, V^p} \, \sum_i m_i \, W_n(r_i) \, \left( \x_i^{\otimes \ell} \, \otimes \, \vel_i^{\otimes p} \right)
 \end{equation}
-where $i$ indexes the particle, $m_i$ is the mass of the $i$th particle, $W_n(r_i)$ is the $n$th window function (defining the radial bins), and $r_i$ is the distance between the position of the $i$th particle and some fiducial point.
+where $i$ indexes the particle, $m_i$ is the total mass of the $i$th particle, $W_n(r_i)$ is the $n$th window function (defining the radial bins), and $r_i$ is the distance between the position of the $i$th particle and some fiducial point.
 % TODO: should switch this position thing in code to be clear, then update here
-We choose this fiducial point, which functions as the halo center, to be the location of the most bound particle in the halo (the particle with the minimum potential energy), as given by the TNG field \field{SubhaloPos} for the halo's central subhalo (for our sample, this is equivalent to \field{GroupPos} of the \dark halo).
+We choose this fiducial point, which functions as the halo center, to be the location of the halo particle with the minimum potential energy, as given by the TNG field \field{SubhaloPos} for the halo's central subhalo (for our sample, this is equivalent to \field{GroupPos} of the \dark halo).
 The quantity $x_i^{\otimes \ell}$ is the $\ell$th moment (outer product $\ell$ times) of the particle position (with respect to the fiducial point).
 For $\ell = 0$, this is 1; for $\ell = 1$, this is the vector position of the particle; and for $\ell = 2$, this is a tensor computed from the outer product of the particle position with itself; and so on.
 The quantity $v_i^{\otimes p}$ is the same but for the velocities, with $p$ indexing the velocity moments, where the velocities are with respect to the center of mass velocity of all the particles in the halo.
+We rescale the geometric feature to make it dimensionless, using a mass scale $M$, radial scale $R$, and velocity scale $V$ according to the degree of the geometric feature in each of these quantities.
 
 The geometric features up to second order in $\ell + p$ are shown in Table~\ref{tab:geos}.
 They all have the same mass degree of 1, as they just include a sum over particle masses.
@@ -277,16 +275,14 @@ In the $n$th window, $g_{00n}$ ($m_n$) is the mass of all the particles in that 
 In the rest of this work, we use these names for readability.
 
 We make the following choices when computing our set of geometric features.
-We compute the geometric features up to second degree in position and velocity combined (as shown in Table~\ref{tab:geos}); this means we don't have objects of higher rank than a rank-2 tensor.
+We compute the geometric features up to second degree in position and velocity combined (as shown in Table~\ref{tab:geos}); this means we don't have objects of higher order than a (rank-2) tensor.
 We use a top-hat window function producing hard-edged bins. 
 Our bins are functions of halos radius, defined by $\Rtwoh$, the radius that encloses a mass of 200 times the mean density of the universe at that time.
 For our fiducial features, we choose three bins within $\Rtwoh$, chosen to represent different regions of the halo: the inner core, the middle region, and the outer halo.
 These are defined by bin edges $[0, 0.1\Rtwoh, 0.4\Rtwoh, \Rtwoh]$, and we index them by $n=[0,1,2]$ in our notation.
+For the rescaling quantities, we use $\Mfof$, $\Rtwoh$, and $\Vfof$ (computed as $\sqrt{G\Mfof/\Rtwoh}$ where $G$ is the gravitational constant).
 
-We rescale the geometric features to make them dimensionless.
-We divide out factors of $\Mfof$, $\Rtwoh$, and $\Vfof$ (computed as $\sqrt{G\Mfof/\Rtwoh}$ where $G$ is the gravitational constant) based on the mass, position, and velocity degree respectively; for example, for $\x$ we divide out one factor of $\Mfof$ and one of $\Rtwoh$.
-
-We also we must specially handle the features $C^{(\x\vel)}_n$, as the ordering of the $\x$ and $\vel$ terms in the product matters.
+We also must specially handle the features $C^{(\x\vel)}_n$, as the ordering of the $\x$ and $\vel$ terms in the product matters.
 In this case, we can construct the symmetric feature $ \CxvS_n = \frac{1}{2} (C^{(\x\vel)}_n + C^{(\vel\x)}_n)$ and the antisymmetric feature $\CxvA_n = \frac{1}{2} (C^{(\x\vel)}_n - C^{(\vel\x)}_n)$.
 These are pseudotensors, and thus require special handling when constructing the scalars, detailed in the next section.
 
@@ -341,11 +337,20 @@ We choose to use the eigenvalues $\lambda_q$ of each tensor, where $q=1$ is the 
 We include cross-terms across different bins $n$ and $n'$, and cross-terms between position and velocity geometric features.
 For the pseudotensors, namely $\CxvA_n$, we can only contract them with other pseudotensors to construct true scalars (contractions of a pseudotensor with a tensor would result in a pseudoscalar).
 The allowed scalar contractions are shown in Table~\ref{tab:scalars}.
-With our 3 fiducial bins, this produces 102 unique scalar features.
+With our three fiducial bins, this produces 102 unique scalar features; note that this is signifcantly more than the number of rows in the table due to the combinatorics of using three bins, as well as the three eigenvalues per tensor.
 In addition to the symmetries already encoded in the geometric features from which the scalars are built, the scalar features also obey \emph{rotation symmetry} by the contractions we perform.
 
 When we make predictions with these scalar features, we additionally include the mass, radius, and velocity quantities we used to rescale the geometric features: $\Mfof$, $\Rtwoh$, and $\Vfof$. 
 This allows us to encode the broad features and the halo shape separately, and understand their relative contributions to prediction tasks.
+
+We note that there are many ways to construct scalar features from a particle distribution.
+We choose this two-step approach of first constructing geometric features and then contracting them into scalars for multiple reasons.
+Theoretically, we could compute scalars directly from the particles that constitute the halo; in fact, this would be simpler as these are all scalars and vector inputs.
+However, this results in an enormous number of scalars as it would require the inner product of each pair of particles, scaling as the square of the number of particles.
+It also would produce a different number of scalars for each halo, which is difficult to handle at the prediction stage (though this could be handled by sub-sampling or over-sampling the particles).
+Finally, the ordering of the scalars is not clear and the permutation invariance would be brittle at best.
+By first condensing the particles into a uniform set of geometric features, we circumvent all of these issues.
+However, other options for scalar feature construction are worth exploring in future investigations.
 
 \begin{figure*}
     \centering
@@ -373,7 +378,8 @@ Our fiducial feature set is the 102 scalar features per halo described in \S\ref
 As a baseline comparison for the predictions with our invariant scalar features, we construct other ``benchmark'' feature sets.
 
 The first set is using only the mass, radius, and velocity: $\Mfof$, $\Rtwoh$, and $\Vfof$. 
-These quantities are all directly related ($\Mfof$ is the bound mass inside $\Rtwoh$, and $\Vfof$ is proportional to the square root of the ratio of $\Mfof$ and $\Rtwoh$), so this feature set captures broad trends with these basic quantities.
+These quantities are all directly related ($\Mfof$ is the bound mass inside $\Rtwoh$, and $\Vfof$ is proportional to the square root of the ratio of $\Mfof$ and $\Rtwoh$).
+Thus this feature set captures broad trends with these basic quantities.
 We take the base-10 log of the mass and radius to reduce the dynamic range.
 
 The second is using standard ``catalog'' features that are used in typical approaches to this and related tasks.
