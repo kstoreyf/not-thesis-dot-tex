@@ -114,10 +114,10 @@ This results in \val{N_gpurer} sources with an estimated purity of 95\%; 1.7 mil
 The sky distribution of this sample is shown in Figure~\ref{fig:gaia_2d_purer}.
 The sample has a low density in the galactic plane, because the selection was trained on the \SDSS quasar sample which does not contain reddened sources (as it is based on a color selection), and overdensities around the Magellanic Clouds, as the sample still contains stellar contaminants.
 
-For our analysis, we start with the full quasar candidate sample, rather than the ''purer'' sample or cutting on other \Gaia pipeline flags, to allow for higher completeness and minimize reproducing biases; we compare our catalog to the \cite{gaia_collab_gaia_2022} purer subsample in \S\ref{sec:comparison}.
+For our analysis, we start with the full quasar candidate sample, rather than the ``purer'' sample or cutting on other \Gaia pipeline flags, to allow for higher completeness and minimize reproducing biases; we compare our catalog to the \cite{gaia_collab_gaia_2022} purer subsample in \S\ref{sec:comparison}.
 We construct a \emph{superset} that contains all of the information needed for catalog construction: we require that sources are in the \Gaia quasar candidates table, have \Gaia $G$, $BP$, and $RP$ measurements, have \unWISE $W1$ and $W2$ observations (described in \S\ref{sec:data_wise}), have \Gaia-estimated QSOC redshifts, and make a maximum $G$-magnitude cut of $G < \Gmax$.
 This magnitude cut was chosen to be slightly deeper than our desired catalog magnitude limit of $G<\Ghi$, in order to provide a buffer for redshift estimation.
-This results in a superset with \val{N_gsup} sources, $\val{p_gsup_gall}\%$ of the \Gaia quasar candidates table.
+This results in a superset with \val{N_gsup} sources.
 We call our final catalog the \catalog (\cat), so we refer to this as the \cat superset.
 
 
@@ -129,7 +129,7 @@ The \unWISE coadds combine data from NEOWISE \citep{mainzer_preliminary_2011} wi
 Compared to the original \textsl{AllWISE} catalog, \unWISE has deeper imaging and improved modeling of crowded fields.
 The \unWISE catalog \citep{schlafly_unwise_2019} contains measurements in the $W1$ (3.4 $\mu$m) and  $W2$ (4.6 $\mu$m) bands for over 2 billion sources.
 We do not use the $W3$ and $W4$ bands as these do not go as deep as we need.
-We perform a cross-match of the \Gaia quasar candidate sample to \unWISE sources within 1''\footnote{We use NOIRLab's cross-match service to perform this operation, available at \url{https://datalab.noirlab.edu/xmatch.php}.}, and obtain \val{N_gall_xunwise} matched sources.
+We perform a cross-match of the \Gaia quasar candidate sample to \unWISE sources within 1''\footnote{We use NOIRLab's cross-match service to perform this operation, available at \url{https://datalab.noirlab.edu/xmatch.php}.}.
 We also cross-match the \SDSS training and validation samples (\S\ref{sec:data_sdss_quasars}, \S\ref{sec:data_contaminants}) to \unWISE.
 
 When combined with optical photometry, \unWISE IR color information is very useful for identifying quasars and distinguishing them from contaminants.
@@ -168,7 +168,7 @@ This leaves \val{N_sgals_unwise} cross-matched \SDSS galaxies in our sample; \va
 
 For the star sample, we also use \SDSS DR18 sources, selecting objects with class label \texttt{STAR} in the \texttt{SpecObj} table.
 As for the quasars and galaxies, we cross-match these with \Gaia DR3 with a 1'' radius and remove sources with fewer than 5 observations in BP or RP, and remove sources duplicated in the other samples.
-This results in a stellar sample with \val{N_sstars_unwise} cross-matched \SDSS-\Gaia stars, with \val{N_sstars} of these in the superset.
+This results in a stellar sample with \val{N_stars_unwise} cross-matched \SDSS-\Gaia stars, with \val{N_sstars_sup} of these in the superset.
 
 For the decontamination procedure, we also compile a sample of sources in or near the LMC or SMC, as most of these will be stellar contaminants but have different properties than the \SDSS star sample.
 To do this, we select all sources in the \Gaia quasar candidates table that are within 3 degrees of the center of the LMC or 1.5 degrees from the center of the SMC.
@@ -430,10 +430,10 @@ In fact, there is now a slight underdensity of sources near the LMC; this makes 
 
 The dearth of quasars in the galactic plane is due largely to dust extinction and stellar crowding, as well as the fact that the \SDSS training set quasars (for both the original \Gaia DR3 quasar candidates sample and our decontamination procedure) are not representative of quasars in this dust-reddened region. 
 If we exclude the regions with very high extinction $A_v>\val{Avhi}$, the quasars nearly uniformly cover the remaining sky area which comprises \val{area_below_Avhi} ($f_\text{sky}=\val{fsky_below_Avhi}$).
-This results in an effective volume of \val{volume_effective_gcathi_below_Avhi} (\val{volume_effective_gcatlo_below_Avhi}) for the $G<\Ghi$ ($G<\Glo$) sample, which takes into account the number density distribution as a function of redshift.
-In comparison, \SDSS DR16Q---the largest existing spectroscopic quasar sample---has \val{N_sqall} sources with reliable redshifts, covers \val{area_sdss} ($f_\text{sky}=\val{fsky_sdss}$), and has an effective volume of \val{volume_effective_sdss}.
-The \catalog thus covers a significantly larger area, and correspondingly larger volume, than the \SDSS quasar sample by a factor of \val{factor_area_belowAvhi_sdss}.
-Despite its lower number density, the $G<\Ghi$ \cat still spans a somewhat larger effective volume than \SDSS by a factor of \val{factor_volume_effective_gcathi_sdss}.
+This results in an effective volume of \val{volume_effective_gcathi} (\val{volume_effective_gcatlo_below_Avhi}) for the $G<\Ghi$ ($G<\Glo$) sample, which takes into account the number density distribution as a function of redshift.
+% In comparison, \SDSS DR16Q---the largest existing spectroscopic quasar sample---has \val{N_sqall} sources with reliable redshifts, covers \val{area_sdss} ($f_\text{sky}=\val{fsky_sdss}$), and has an effective volume of \val{volume_effective_sdss}.
+% The \catalog thus covers a significantly larger area, and correspondingly larger volume, than the \SDSS quasar sample by a factor of \val{factor_area_belowAvhi_sdss}.
+% Despite its lower number density, the $G<\Ghi$ \cat still spans a somewhat larger effective volume than \SDSS by a factor of \val{factor_volume_effective_gcathi_sdss}.
 
 \begin{figure*}
     \centering
@@ -526,13 +526,14 @@ We show the \Gaia purer sample (Figure~\ref{fig:2d_gpurer_Ghi}); eBOSS, the curr
 The \Gaia purer sample is described in \S\ref{sec:data_gaia}; here we include only sources with QSOC redshift estimates ($\zgaia$).
 The eBOSS catalog is detailed in \cite{ross_completed_2020}; we have included both eBOSS and legacy SDSS quasars and applied the clustering cuts of requiring sectors to have $>0.5$ completeness and redshift success rate, and removed source with \texttt{ZWARNING}!=0.
 The WISE-PS1 sample was constructed by \cite{beck_wise-ps1-strm_2022}, based on the Source Types and Redshifts with Machine learning (STRM) algorithm by \cite{beck_ps1-strm_2020}.
-The quasar catalog with updated photometric redshifts is presented by \cite{kunsagi-mate_photometric_2022}; here we include only those quasars with redshifts labeled ''reliable'', which is $\val{p_reliable_wiseps}\%$ of the sample.
+The quasar catalog with updated photometric redshifts is presented by \cite{kunsagi-mate_photometric_2022}; here we include only those quasars with redshifts labeled ``reliable'', which is $\val{p_reliable_wiseps}\%$ of the sample.
 The Milliquas catalog was compiled by \cite{flesch_million_2021}; a significant portion of the sources are from \SDSS and \textsl{AllWISE}.
 For each of these samples, we have shown quasars brighter than a limiting magnitude of $G\sim\Ghi$; for the non-\Gaia catalogs we convert to $G$ from the survey's $r$-band magnitude using the conversion in equation (2) of \cite{proft_exploration_2015}, which is based on the \SDSS $r'$ band.
 While this should give a reasonable estimate for the \SDSS sample (using $r_\text{SDSS}$) and the WISE-PS1 sample (using $r_\text{PS1}$ which is very similar to $r_\text{SDSS}$), it may not be as reliable for Milliquas which catalogs ''red'' magnitudes from various sources, as well as for sources with $z>3$ which were not included in the \cite{proft_exploration_2015} fit.
 
 \begin{table*}
-    \caption{A comparison between \cat and other existing quasar catalogs. All catalogs have been limited to $G<\protect\Ghi$ or the rough equivalent converted from another band, and exclude areas with high dust extinction ($A_v > \protect\val{Avhi}$). We show the number of sources $N$, the fraction of sky area covered $f_\mathrm{sky}$, the mean number density per square degree $\bar{n}$, the spanning volume between $0.8<z<2.2$ $V_\mathrm{span}$, the effective volume $V_\mathrm{eff}$, and the median redshift $z_\mathrm{med}$.}
+    \centering
+    \caption{A comparison between \cat and other existing quasar catalogs. All catalogs have been limited to $G<\protect\Ghi$ or the rough equivalent converted from another band, and exclude areas with high dust extinction ($A_v > \protect\val{Avhi}$). We show the number of sources $N$, the fraction of sky area covered $f_\mathrm{sky}$, the mean number density per square degree $\bar{n}$, the spanning volume between $0.8<z<2.2$ $V_\mathrm{span}$, the effective volume $V_\mathrm{eff}$, the median redshift $z_\mathrm{med}$, and the fraction of objects with $|\delta z| \equiv |\dz| < 0.01$ and $<0.1$ (where applicable).}
     \centering
     \input{data/data_quaia/comparison_table.txt}
     \label{tab:comparison}
@@ -540,7 +541,7 @@ While this should give a reasonable estimate for the \SDSS sample (using $r_\tex
 
 A summary of the catalogs is shown in Table~\ref{tab:comparison}, for the $G<\sim$\Ghi subsamples.
 (We exclude Milliquas from this comparison as it is so heterogeneous.)
-For these quantifications we also include only areas that have $A_v < \val{Avhi}$, which is \val{area_gcathi} of the sky, as well as at least one quasar in a healpixel.
+For these quantifications we exclude areas that have $A_v > \val{Avhi}$, as well as healpixels with no quasars.
 For the sky fraction $f_\mathrm{sky}$, we see that \cat and \Gaia purer are limited only by the dusty regions, and cover over 30\% more area than WISE-PS1 (which is limited by Pan-STARRS), and nearly $6\times$ that of eBOSS.
 Compared to the \Gaia purer sample, the \catalog has a slightly smaller number of sources, but due to its redshift distribution gives a slightly higher effective volume.
 The on-sky number density is similar for all of the catalogs, with WISE-PS slightly higher as it has a similar number of objects to the \Gaia catalogs but over a smaller area.
@@ -554,10 +555,10 @@ We see that the effective volume of \cat is surpassed only slightly by WISE-PS1,
 
 The catalogs all have a similar median redshift, around $1.4 < z < 1.6$.
 % $\val{p_acc_zspz_dzhi_Glo}\%$
-However, they have significantly different redshift precision.
-As 
-
-The WISE-PS1 sources have photometric redshifts which are substantially worse than our \Gaia catalog: only XXX\% of the WISE-PS1 sources have $|\dz|<0.2$ (with respect to \SDSS), compared to XXX\% of \Gaia sources.
+However, they have significantly different redshift precision; in Table~\ref{tab:comparison} we show comparisons to spectroscopic redshifts for the catalogs to which this is applicable.
+We see that both of the \Gaia catalogs have a similar fraction of high-precision redshifts ($|\dz| < 0.01$), but \cat has a much higher fraction of redshifts that are not bad outliers ($|\dz| < 0.1$) compared to \Gaia purer.
+WISE-PS1 falls between the two in terms of bad outliers, but has an extremely low fraction of high-precision redshifts as it is a photometric survey.
+The eBOSS sample has spectroscopic redshifts, so these are almost all very high-precision; \cite{lyke_sloan_2020} calculated that less than 1\% of the SDSS DR16Q redshifts are outliers with $v < 3000\,\text{km s}^{-1}$ ($|\dz| > 0.01$); note that this is a slightly different sample than the eBOSS quasars, but we can expect it to be similar.
 
 We also note that the ongoing DESI survey \citep{Aghamousa2016} will observe a high density of quasars over a large sky area \citep{yeche_preliminary_2020}, which will be competitive with and complementary to this \Gaia--\unWISE catalog.
 
@@ -607,10 +608,11 @@ Our key contributions and the features of the catalog are as follows:
     %% ACE: add how much the purity improved here.
     \item The catalog extends to a limiting magnitude of $G<\Ghi$ and contains \val{N_gcathi} sources; we also release a brighter, cleaner sample limited to $G<\Glo$, which has \val{N_gcatlo} sources.
     \item \cat covers the entire sky, only limited by selection effects near the galactic plane; excluding highly dust-extincted regions ($A_v > \val{Avhi}$), this results in an area of \val{area_below_Avhi} ($f_\mathrm{sky}=\val{fsky_below_Avhi}$).
-    \item We have improved the \Gaia redshift estimates using a \knn model trained on these redshifts and \Gaia and \unWISE colors with \SDSS spectroscopic redshift labels, producing spectro-photometric redshifts. The median redshift of the $G<{Glo}$ catalog is $z_\mathrm{med}=\val{z_med_gcatlo}$, with $\val{p_acc_zspz_dzhi_Glo}\%$ ($\val{p_acc_zspz_dzlo_Glo}\%$) of redshifts within $|\dz|<\val{dzhi}$ (\val{dzlo}) of \SDSS redshifts. This is a reduction in the number of catastrophic outliers by \val{factor_reduction_outliers_dzhi_Glo} (\val{factor_reduction_outliers_dzmid_Glo}) compared to the \Gaia redshift estimates.
+    \item We have improved the \Gaia redshift estimates using a \knn model trained on these redshifts and \Gaia and \unWISE colors with \SDSS spectroscopic redshift labels, producing spectro-photometric redshifts. The median redshift of the $G<{\Glo}$ catalog is $z_\mathrm{med}=\val{z_med_gcatlo}$, with $\val{p_acc_zspz_dzhi_Glo}\%$ ($\val{p_acc_zspz_dzlo_Glo}\%$) of redshifts within $|\dz|<\val{dzhi}$ (\val{dzlo}) of \SDSS redshifts. This is a reduction in the number of catastrophic outliers by \val{factor_reduction_outliers_dzhi_Glo} (\val{factor_reduction_outliers_dzmid_Glo}) compared to the \Gaia redshift estimates.
+    \item We produced a data-driven model of the selection function which includes the systematic effects of dust, stars, and the \Gaia scanning law. We used this to generate random catalogs of Poisson-distributed points with the same selection effects as \cat.
 \end{itemize}
 
-The catalog will be publicly available, along with documentation.
+The catalog and related data products will be publicly available, along with documentation.
 The code used to generate this catalog is open-source and available at \url{https://github.com/kstoreyf/gaia-quasars-lss}.
 
 \textit{Software:} Astropy \citep{the_astropy_collaboration_astropy_2013, the_astropy_collaboration_astropy_2018, the_astropy_collaboration_astropy_2022}, numpy \citep{VanDerWalt2011}, IPython \citep{Perez2007}, scipy \citep{Virtanen2020}, matplotlib \citep{Hunter2007}, healpy \citep{gorski_healpix_2005, zonca_healpy_2019}, george \citep{Ambikasaran2016}

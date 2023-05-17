@@ -76,6 +76,12 @@
 \usepackage[export]{adjustbox}
 \usepackage{enumerate}
 \usepackage[shortlabels]{enumitem}
+
+\usepackage{epigraph}
+\setlength{\epigraphrule}{0in}
+\setlength{\epigraphwidth}{4in}
+\setlength{\afterepigraphskip}{8ex}
+
 \frenchspacing
 % not positive want these sloppys, but in quaia paper; TODO look into
 \sloppy\sloppypar
@@ -219,6 +225,11 @@
 
 %%%%% Chapter: QUaia %%%%%
 
+\usepackage{makecell}
+\renewcommand{\cellalign}{tl}
+\renewcommand{\theadalign}{tl}
+\renewcommand\cellgape{\Gape[0.1em]}
+\renewcommand\theadgape{\Gape[0.1em]}
 \usepackage{datatool}
 \DTLsetseparator{ = } %spaces on side matter!
 
