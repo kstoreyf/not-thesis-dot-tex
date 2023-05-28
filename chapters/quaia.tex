@@ -1,4 +1,4 @@
-This chapter is in preparation to be submitted to the astronomical literature, and will have author list Kate Storey-Fisher, David W. Hogg, Hans-Walter Rix, Anna-Christina Eilers, and Giulio Fabbian.
+This chapter is in preparation to be submitted to the astronomical literature, with working author list Kate Storey-Fisher, David W. Hogg, Hans-Walter Rix, Anna-Christina Eilers, and Giulio Fabbian.
 
 
 \graphicspath{{figures/figures_quaia/}}
@@ -34,7 +34,7 @@ Finally, the quasar distribution provides a test of the cosmological principle o
 
 Many surveys have observed and cataloged quasars, with several million currently identified across surveys.
 The latest Sloan Digital Sky Survey data release, DR16, includes a highly complete catalog of 750,414 quasars with spectroscopic redshifts \citep{lyke_sloan_2020}.
-Photometric surveys observe a much larger large number of quasars, at the expense of low redshift accuracy; nearly three million quasars with reliable photometric redshifts have been cataloged \citep{kunsagi-mate_photometric_2022}, including with WISE \citep{wright_wide-field_2010} which imaged the entire sky and PAN-STARRS \citep{chambers_pan-starrs1_2019} which observed three-quarters of the sky.
+Photometric surveys observe a much larger number of quasars, at the expense of low redshift accuracy; nearly three million quasars with reliable photometric redshifts have been cataloged \citep{kunsagi-mate_photometric_2022}, including with WISE \citep{wright_wide-field_2010} which imaged the entire sky and PAN-STARRS \citep{chambers_pan-starrs1_2019} which observed three-quarters of the sky.
 Upcoming surveys will observe even more quasars: the Dark Energy Spectroscopic Instrument (DESI, \citealt{Aghamousa2016}) expects to obtain spectra for 3 million quasars, and the Rubin Observatory's LSST will photometrically observe upwards of 10 million quasars \citep{ivezic_lsst_2016}.
 However, none of these quasar catalogs is both all-sky and contains precise redshift information.
 The recently released \Gaia DR3 quasar candidates \citep{gaia_collab_gaia_2022} constitute a new sample that fills this gap. 
@@ -350,7 +350,7 @@ As this only occurs for our $\zspz$ and not the $\zgaia$ estimates, we speculate
     \hspace{5ex}    
     \subfloat[\label{fig:systematics_m10}]{\includegraphics[width=0.45\textwidth]{systematics_map_m10.png}}
 
-    \caption{The systematics maps used in the selection function model: (a) dust extinction based on \cite{schlafly_measuring_2011}; (b) the stellar distribution based on $\sim$10.6 million randomly selected \Gaia sources with $18.5 < G < 20$; (c) stars from the above panel belonging to the LMC and SMC, with the background subtracted; and (d) the quantity $M_{10}$, the median magnitude of sources with at least 10 \Gaia transits, which encodes the scanning law and source crowding. Note that the color bar on the $M_{10}$ map is reversed, as high $M_{10}$ indicates a cleaner region, the inverse of the other maps.}
+    \caption{The systematics maps used in the selection function model: (a) dust extinction based on \cite{schlafly_measuring_2011}; (b) the stellar distribution based on $\sim$10.6 million randomly selected \Gaia sources with $18.5 < G < 20$; (c) stars from the above panel belonging to the LMC and SMC, with the background subtracted; and (d) the quantity $M_{10}$, the median magnitude of sources with $\leq 10$ \Gaia transits, which encodes the scanning law and source crowding. Note that the color bar on the $M_{10}$ map is reversed, as high $M_{10}$ indicates a cleaner region, the inverse of the other maps.}
     \label{fig:systematics}
 \end{figure*}
 
@@ -378,7 +378,7 @@ To do this we cut out a wide region around each MC (9 degrees in radius around t
 This is shown in Figure~\ref{fig:systematics_mcs}.
 
 For the \Gaia completeness, we use the quantity $M_{10}$ introduced by \cite{cantat-gaudin_empirical_2023}\footnote{This map can be accessed with the \texttt{gaiaunlimited} package, \url{https://gaiaunlimited.readthedocs.io}}.
-$M_{10}$ is the median magnitude in a given sky patch of the \Gaia sources with at least 10 transits across the \Gaia field of view; it incorporates the effects of both the scanning law and source crowding.
+$M_{10}$ is the median magnitude in a given sky patch of the \Gaia sources with $\leq 10$ transits across the \Gaia field of view; it incorporates the effects of both the scanning law and source crowding.
 The actual completeness map derived by \cite{cantat-gaudin_empirical_2023} depends on both $M_{10}$ and $G$-band magnitude; however, this completeness is still extremely close to 1 for nearly all of the sky for $G=\Glo$, the limiting magnitude of our clean quasar catalog, due to the differences in the selection function and magnitude dependence for stars compared to quasars.
 Thus we cannot use the completeness map directly, but we do still expect a dependence of the quasar selection function on the \Gaia scanning law, so use the $M_{10}$ map directly to capture this effect.
 We down-sampled the map to NSIDE=64; this is shown in Figure~\ref{fig:systematics_m10}.
@@ -608,7 +608,7 @@ Our key contributions and the features of the catalog are as follows:
     %% ACE: add how much the purity improved here.
     \item The catalog extends to a limiting magnitude of $G<\Ghi$ and contains \val{N_gcathi} sources; we also release a brighter, cleaner sample limited to $G<\Glo$, which has \val{N_gcatlo} sources.
     \item \cat covers the entire sky, only limited by selection effects near the galactic plane; excluding highly dust-extincted regions ($A_v > \val{Avhi}$), this results in an area of \val{area_below_Avhi} ($f_\mathrm{sky}=\val{fsky_below_Avhi}$).
-    \item We have improved the \Gaia redshift estimates using a \knn model trained on these redshifts and \Gaia and \unWISE colors with \SDSS spectroscopic redshift labels, producing spectro-photometric redshifts. The median redshift of the $G<{\Glo}$ catalog is $z_\mathrm{med}=\val{z_med_gcatlo}$, with $\val{p_acc_zspz_dzhi_Glo}\%$ ($\val{p_acc_zspz_dzlo_Glo}\%$) of redshifts within $|\dz|<\val{dzhi}$ (\val{dzlo}) of \SDSS redshifts. This is a reduction in the number of catastrophic outliers by \val{factor_reduction_outliers_dzhi_Glo} (\val{factor_reduction_outliers_dzmid_Glo}) compared to the \Gaia redshift estimates.
+    \item We have improved the \Gaia redshift estimates using a \knn model trained on these redshifts and \Gaia and \unWISE colors with \SDSS spectroscopic redshift labels, producing spectro-photometric redshifts. The median redshift of the $G<\Glo$ catalog is $z_\mathrm{med}=\val{z_med_gcatlo}$, with $\val{p_acc_zspz_dzhi_Glo}\%$ ($\val{p_acc_zspz_dzlo_Glo}\%$) of redshifts within $|\dz|<\val{dzhi}$ (\val{dzlo}) of \SDSS redshifts. This is a reduction in the number of catastrophic outliers by \val{factor_reduction_outliers_dzhi_Glo} (\val{factor_reduction_outliers_dzmid_Glo}) compared to the \Gaia redshift estimates.
     \item We produced a data-driven model of the selection function which includes the systematic effects of dust, stars, and the \Gaia scanning law. We used this to generate random catalogs of Poisson-distributed points with the same selection effects as \cat.
 \end{itemize}
 
@@ -619,7 +619,7 @@ The code used to generate this catalog is open-source and available at \url{http
 
 \section{Chapter Acknowledgements}
 
-The authors are grateful to the \Gaia collaboration members, in particular Coryn Bailer-Jones, Morgan Fouesneau, Tristan Cantat-Gaudin, and Arvind Hughes.
+The authors are grateful to the \Gaia collaboration members, in particular Coryn Bailer-Jones, Morgan Fouesneau, Anthony Brown, Ludovic Delchambre, Tristan Cantat-Gaudin, and Arvind Hughes.
 The authors also thank Giulio Fabbian, Nestor Arsenov, Andras Kovacs, Michael Blanton, An\v{z}e Slosar, David Alonso, Iain Duncan, Lyuba Slavcheva-Mihova, Alex Malz, Lehmann Garrison, and Mehdi Rezaie for helpful discussions.
 Additionally, the authors thank the attendees of the \Gaia F\^{e}te and the members of the Astronomical Data group at the Center for Computational Astrophysics for useful feedback.
 This work has made use of data from the European Space Agency (ESA) mission {\it Gaia} (\url{https://www.cosmos.esa.int/gaia}), processed by the {\it Gaia} Data Processing and Analysis Consortium (DPAC, \url{https://www.cosmos.esa.int/web/gaia/dpac/consortium}). 

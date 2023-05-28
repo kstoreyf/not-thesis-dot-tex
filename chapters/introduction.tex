@@ -78,7 +78,7 @@ This may propagate to the clustering of galaxies, dubbed \emph{galaxy assembly b
 An HOD model with environment-dependent assembly bias is used in the cosmological inference approach presented in Chapter~\ref{chp:aemulus}, in which the parameters of the HOD are marginalized over.
 
 On the other end of the spectrum, cosmological hydrodynamic simulations aim to model the relationship between dark matter and galaxies based on deeper physical underpinnings (e.g. \citealt{springel_gadget_2001, genel_introducing_2014,dave_simba_2019}).
-These co-evolve dark matter and baryons under gravity and hydrodynamics in cosmological volumes (typically $\simo 25 < L \simo 300$); given the large dynamic range of relevant physical scales, galaxies cannot be fully simulated but instead rely on ``subgrid models'' that are empirically calibrated.
+These co-evolve dark matter and baryons under gravity and hydrodynamics in cosmological volumes (typically $\simo 25 < L < \simo 300$); given the large dynamic range of relevant physical scales, galaxies cannot be fully simulated but instead rely on ``subgrid models'' that are empirically calibrated.
 With these models, simulations can include stellar winds, feedback from active galactic nuclei, gas cooling, and supernovae feedback, among other processes; a detailed review can be found in \cite{somerville_physical_2015}.
 These galactic processes can both impact the dark matter environment as well as display degeneracies with cosmological effects (see e.g. \citealt{villaescusa-navarro_camels_2021}), making robust modeling of them crucial to understanding galaxy clustering.
 In their current state, hydrodynamic simulations make too many assumptions to be applicable to cosmological inference, but they are useful in their own right to explore{\emdash}given the input assumptions{\emdash}how dark matter properties are related to galaxy properties.
@@ -96,7 +96,7 @@ The redshifts, measured by the shift of spectral lines from their rest-frame wav
 Early photographic observations of galaxies and  analyses of their angular distribution detected non-uniformity below a certain scale \citep{shapley_survey_1932,hubble_distribution_1934,seldner_new_1977,peebles_galaxy_2001}.
 These results were extended to three dimensions by early redshift surveys, including \cite{gregory_comaa1367_1978} (238 galaxies around the Coma cluster), the KOS survey (\citealt{kirshner_million_1981}, 133 galaxies), and the CfA survey (\citealt{davis_survey_1982}, $\simo$2400 galaxies).
 These confirmed the clustered distribution of galaxies, which can be identified visually even from these small samples. 
-Figure~\ref{fig:cfa_survey} shows a sample of galaxies from the CfA survey, about which the authors write that the regions ``exhibit clustering in frothy, almost filamentary, patterns of connectedness surrounding empty holes on the sky.''
+Figure~\ref{fig:cfa_survey} shows a sample of galaxies from the CfA survey, about which the authors remark that the regions ``exhibit clustering in frothy, almost filamentary, patterns of connectedness surrounding empty holes on the sky.''
 
 \begin{figure*}
     \centering
@@ -119,14 +119,14 @@ Combining the results of baryon acoustic oscillations and redshift-space distort
 
 Efforts are ongoing to map even more galaxies to increase the constraining power of large-scale structure.
 The Dark Energy Spectroscopic Instrument (DESI, \citealt{Aghamousa2016}) has already cataloged nearly ten million redshifts and will observe multiple times that over the rest of the mission.
-A slice through a sample of the galaxies DESI has already observed is shown in Figure~\ref{fig:desi_survey}; the filamentary structure hinted at in the CfA survey is now clear across the sky, filaments are even cataloged and studied as objects in their own right \citep{tempel_detecting_2014}.
+A slice through a sample of the galaxies DESI has already observed is shown in Figure~\ref{fig:desi_survey}; the filamentary structure hinted at in the CfA survey is now clear across the sky, and filaments are even cataloged and studied as objects in their own right (e.g. \citealt{tempel_detecting_2014}).
 Future surveys are planned to measure yet more galaxy redshifts, including the Subaru Prime Focus Spectrograph \citep{takada_extragalactic_2014}, Euclid \citep{Laureijs2011}, and the Nancy Grace Roman Space Telescope \citep{Green2012}.
 This galaxy clustering data is so high-precision that the bottleneck for cosmological constraints will lie largely in our modeling and analysis methodologies; one such improved approach, targeted at SDSS or DESI data, is presented in Chapter~\ref{chp:aemulus}.
 
 While galaxies are the dominant tracer observed for large-scale structure surveys given their multitude, other types of sources also provide valuable information.
 Quasars, which are extremely luminous emission from active galactic nuclei{\emdash}accreting supermassive black holes{\emdash}at the centers of galaxies, are even more highly biased tracers of matter than galaxies, with $b \sim 2.5$ at $z \sim 1.5$ \citep{laurent_clustering_2017-3}.
 Redshift surveys of quasars are the largest-volume maps of the universe we have, as we can observe quasars at immense distances thanks to their high luminosity.
-Millions of quasars have been observed, with hundreds of thousands having spectroscopic redshifts, and more are being cataloged by current mission.
+Millions of quasars have been observed, with hundreds of thousands having spectroscopic redshifts, and more are being cataloged by current missions.
 One such mission, \emph{Gaia}, and the opportunities it presents for large-scale structure science with quasars is discussed further in Chapter~\ref{chp:quaia}.
 
 
@@ -156,8 +156,8 @@ In Chapter~\ref{chp:cfe} these are discussed in much more detail, and a generali
 
 There is also significant cosmological information beyond the two-point function.
 A slew of statistics aim to capture this information, including the three-point statistic (the bispectrum, in Fourier space), void statistics (e.g. \citealt{sheth_hierarchy_2004}), and environment-based statistics (e.g. \citealt{Sheth2004,tinker_void_2007}).
-These can be more difficult to measure and model than the \cf, but are critical for breaking certain degeneracies (e.g. \citep{WhitePadmanabhan2009}).
-Recently full field-level inference has shown promise, including EFTofLSS \citep{baumann_cosmological_2012}.
+These can be more difficult to measure and model than the \cf, but are critical for breaking certain degeneracies (e.g. \cite{WhitePadmanabhan2009}).
+Recently full field-level inference has shown promise, such as EFTofLSS \citep{baumann_cosmological_2012}.
 
 The measured statistics can then be compared to a model prediction to estimate the model parameters that most closely describe the data.
 Some of these statistics can be modeled analytically, using perturbation theory; this is the standard for many major analyses (e.g. \citealt{tegmark_cosmological_2006}) 

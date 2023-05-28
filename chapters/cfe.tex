@@ -208,7 +208,7 @@ The \cf estimate is simply the sum of the basis functions weighted by these ampl
 It can be evaluated at any pair separation, as the basis functions are continuous, producing a continuous correlation function. 
 This process is shown schematically in Figure~\ref{fig:schematic}, with a choice of cubic spline basis functions (for more details on the spline see Section~\ref{sec:spline}).}
 
-\begin{figure}[t!]
+\begin{figure}%[t!]
     \centering
     \includegraphics[width=0.6\textwidth]{schematic_spline}
     \caption{\new{A schematic illustrating how \est works. The top panel shows a slice of a dataset; each point represents a galaxy. One pair $\GG{n n'}$ is highlighted, with separation $r_{n n'}$ (grey line). The middle panel shows how \est performs the projection of the pair onto a chosen basis. Here we use cubic spline basis functions $f_k$ (see Section~\ref{sec:spline}; colored lines). The contribution of the pair to each basis function is given by the value of the function at separation $r_{n n'}$ (grey line); this quantity is $f_k(r_{n n'})$ (colored diamonds). The bottom panel shows the basis functions weighted by the final amplitudes $a_k$, given by the combination of contributions by all pairs. The final \cf estimate $\xi(r)$ (thick black line) is the sum of these, as given by \eqt{eq:xi_proj}.}}
@@ -390,7 +390,7 @@ The results will hold for catalogs with realistic survey windows and random--ran
 
 \subsection{Comparison of Standard Tophat Basis Functions}
 
-\begin{figure}[ht]
+\begin{figure}%%[ht]
     \centering
     \includegraphics[width=0.8\textwidth]{xicomparison_2e-4_tophat8_theory8}
     \caption{A comparison between \est with a tophat basis (thin blue lines) and the standard estimator (grey squares). The top panel shows the basis functions used for the tophat estimator. The middle panel shows the mean of the estimated correlation functions for 1000 mock catalogs, compared to the true input \cf (thin black line); the shaded region and error bars are the standard deviation of the \cf estimate. The lower panel shows the absolute error between the estimate and true \cf. \Est with a tophat basis is exactly equivalent to the standard estimator, but in a continuous form, emphasizing the fact that binning results in a poor representation of the true \cf.}
@@ -441,7 +441,7 @@ This comparison demonstrates that there exist other sets of basis functions that
 The choice of a high-order spline may be useful for cases in which one wants a mostly localized yet representative estimate of the \cf, or smooth derivatives.
 Generally, the choice of basis functions should be tailored to the scientific goal; in the next section we explore the case of a BAO analysis.
 
-\begin{figure}[ht]
+\begin{figure}%%[ht]
     \centering
         \includegraphics[width=0.8\textwidth]{xicomparison_2e-4_tophat8_spline}
         \caption{\new{A demonstration of} \est with cubic-spline basis functions (thick red). \new{We compare the cubic-spline estimate to the standard binned Landy--Szalay estimate (grey squares), and to the continuous-function estimate with a tophat function (thin blue).} The top panel shows the basis functions used for each measurement. The middle panel shows the mean of the estimated correlation functions for each of the 1000 mock catalogs compared to the true input \cf (thin black); the shaded region \new{and error bars} are the standard deviation. The lower panel shows the absolute error between the estimate and true \cf; \new{we do not show the tophat error for clarity}. It is clear that the spline basis function results in a correlation function that is a better representation of the true \cf in its shape and smoothness.}
@@ -491,7 +491,7 @@ In this case, the free parameters are $B^2$, $C$, $a_1$, $a_2$, and $a_3$.
 Note that in theory the choice of $k_i$ values shouldn't matter as the estimator is affine invariant (see Appendix~\ref{sec:affine}), but in practice reasonable choices are important for stability.
 The adopted $k_i$ values are noted in Appendix~\ref{sec:baoiter}.
 
-\begin{figure}[t]
+\begin{figure}%[t]
     \centering
     \includegraphics[width=0.8\textwidth]{bao_bases}
     \caption{The set of basis functions used to fit for the BAO scale using our estimator. The $\xi^\mathrm{mod}(\alpha\,r)$ term (darkest green) is the correlation function computed using fiducial model, with some scale dilation $\alpha$. The derivative term (second-to-darkest green) is the derivative of this model with respect to $\alpha$, which allows for the direct estimation of this parameter. The other three terms (lighter greens) are nuisance parameters to fit the broadband shape.}
@@ -511,7 +511,7 @@ As we know the cosmology used for our mock catalogs, we can compute the true val
 (Here our choice of fiducial model happened to be close to the true model, so our $\alpha_{\text{true}}$ is very close to 1; this is typical, as our cosmological model is fairly well-constrained.)
 With this fiducial model, we can construct the basis functions for our estimator; these are shown (with $\alpha=1$ and arbitrary scaling) in Figure~\ref{fig:bao_bases}.
 
-\begin{figure}[t]
+\begin{figure}%[t]
 \centering
     \includegraphics[width=0.8\textwidth]{xicomparison_2e-4_tophat8_baoiter}
     \caption{Estimation of the correlation function using \est with basis functions based on the BAO fitting function (thick green; same as in Figure~\ref{fig:bao_bases}, with arbitrary scaling). \new{We compare this to the standard binned Landy--Szalay estimator (grey squares), and to} \est with a tophat function (thin blue). \new{The panels are the same as in Figure~\ref{fig:spline}.}}
