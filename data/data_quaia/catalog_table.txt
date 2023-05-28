@@ -1,6 +1,6 @@
-\begin{tabular}{|l|l|l|l|l|}
+\begin{tabular}{|l|l|l|>{\raggedright}p{5.5cm}|l|}
 \hline
-column name & symbol & units & description & example entry value \\
+column name & symbol & units & description & example entry \\
 \hline
 \texttt{source\_id} &  &  & \emph{Gaia} DR3 source identifier & 6459630980096 \\
 \texttt{unwise\_objid} &  &  & unWISE DR1 source identifier & 0453p000o0014479 \\
