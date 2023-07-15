@@ -1,4 +1,4 @@
-\begin{tabular}{|l|l|l|l|l|}
+\begin{tabular}{|l|l|l|p{10em}|l|}
 \hline
 column name & symbol & units & description & example entry value \\
 \hline

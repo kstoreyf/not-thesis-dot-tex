@@ -276,6 +276,9 @@
 %%%% Table of Contents %%%%%%%%%%%%
 \tableofcontents
 
+\cftsetindents{figure}{0em}{3.4em}
+\cftsetindents{table}{0em}{3.4em}
+%\renewcommand{\@tocrmarg}{-8em} 
 
 %%%%% List of Figures %%%%%%%%%%%%%
 %% Comment out the following two lines if your thesis does not
@@ -307,12 +310,14 @@
 % Body of Thesis
 % ----------------------------------------
 
+
 % Start chapters at 0 (Introduction is chapter 0)
 \setcounter{chapter}{-1}
 
 \chapter{Introduction}
 % this makes abstracts section 0 (need before each chapter)
 \setcounter{section}{-1}
+\numberwithin{figure}{chapter}
 \label{chp:introduction}
 \input{chapters/introduction.tex}
 
