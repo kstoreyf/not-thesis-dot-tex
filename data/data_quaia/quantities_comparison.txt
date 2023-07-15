@@ -1,6 +1,6 @@
 p_reliable_wiseps = 59
 Avhi = 0.5
-N_gcathi = 1,209,839
+N_gcathi = 1,209,833
 area_gcathi = 29153.70 deg$^2$
 fsky_gcathi = 0.71
 nbar_gcathi = 41.50 deg$^-2$
@@ -12,7 +12,7 @@ fsky_gcatlo = 0.71
 nbar_gcatlo = 24.19 deg$^-2$
 volume_effective_gcatlo = 2.90 $(h^{-1}\,Gpc)^3$
 volume_spanning_gcatlo = 138.46 $(h^{-1}\,Gpc)^3$
-N_gpurer = 1,261,890
+N_gpurer = 1,261,884
 area_gpurer = 29149.51 deg$^2$
 fsky_gpurer = 0.71
 nbar_gpurer = 43.29 deg$^-2$

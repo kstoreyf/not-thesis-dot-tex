@@ -1,9 +1,9 @@
-\begin{tabular}{|l|l|l|l|l|l|l|l|l|}
+\begin{tabular}{|l|l|l|p{2.5em}|p{4.5em}|p{4.5em}|l|p{6em}|p{6em}|}
 \hline
- & $N$ & $f_\text{sky}$ & \makecell{$\bar{n},$\\$\text{deg}^{-2}$} & \makecell{$V_\text{span},$\\$(h^{-1}\,\text{Gpc})^3$} & \makecell{$V_\text{eff},$\\$(h^{-1}\,\text{Gpc})^3$} & $z_\text{med}$ & \makecell{$f(|\delta z|$\\$<0.01)$} & \makecell{$f(|\delta z|$\\$<0.1)$} \\
+ & $N$ & $f_\text{sky}$ & $\bar{n}, \newline \text{deg}^{-2}$ & $V_\text{span}, \newline (h^{-1}\,\text{Gpc})^3$ & $V_\text{eff}, \newline (h^{-1}\,\text{Gpc})^3$ & $z_\text{med}$ & $f(|\delta z| \newline <0.01)$ & $f(|\delta z| \newline <0.1)$ \\
 \hline
-\textbf{QUaia} & \textbf{1,209,839} & \textbf{0.71} & \textbf{41.50} & \textbf{138.46} & \textbf{7.01} & \textbf{1.47} & \textbf{0.61} & \textbf{0.83} \\
-\emph{Gaia} Purer & 1,261,890 & 0.71 & 43.29 & 138.44 & 6.43 & 1.61 & 0.62 & 0.70 \\
+\textbf{Quaia} & \textbf{1,209,833} & \textbf{0.71} & \textbf{41.50} & \textbf{138.46} & \textbf{7.01} & \textbf{1.47} & \textbf{0.61} & \textbf{0.83} \\
+\emph{Gaia} Purer & 1,261,884 & 0.71 & 43.29 & 138.44 & 6.43 & 1.61 & 0.62 & 0.70 \\
 WISE-PS1 & 1,106,010 & 0.54 & 49.81 & 105.45 & 7.21 & 1.43 & 0.12 & 0.76 \\
 eBOSS & 190,194 & 0.14 & 34.03 & 26.55 & 1.01 & 1.49 &  &  \\
 \hline

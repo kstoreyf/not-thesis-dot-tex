@@ -1,11 +1,11 @@
-\begin{tabular}{|l|l|l|>{\raggedright}p{5.5cm}|l|}
+\begin{tabular}{|l|l|l|l|l|}
 \hline
-column name & symbol & units & description & example entry \\
+column name & symbol & units & description & example entry value \\
 \hline
 \texttt{source\_id} &  &  & \emph{Gaia} DR3 source identifier & 6459630980096 \\
 \texttt{unwise\_objid} &  &  & unWISE DR1 source identifier & 0453p000o0014479 \\
-\texttt{redshift\_spz} & $z_\mathrm{SPZ}$ &  & spectro-photometric redshift estimate & 0.416867 \\
-\texttt{redshift\_spz\_err} & $\sigma_{z\mathrm{SPZ}}$ &  & uncertainty on spectro-photometric redshift estimate & 0.062063 \\
+\texttt{redshift\_quaia} & $z_\mathrm{Quaia}$ &  & spectrophotometric redshift estimate & 0.416867 \\
+\texttt{redshift\_quaia\_err} &  &  & $1\sigma$ uncertainty on spectrophotometric redshift estimate & 0.062063 \\
 \texttt{ra} &  & deg & right ascension & 44.910498 \\
 \texttt{dec} &  & deg & declination & 0.189649 \\
 \texttt{l} &  & deg & galactic longitude & 176.659434 \\

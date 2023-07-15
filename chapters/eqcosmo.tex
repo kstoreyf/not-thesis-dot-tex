@@ -217,7 +217,7 @@ Our goal is to characterize DM halos in a way that captures detailed phase-space
 We specifically consider rotation, translation, velocity boosts, rotation, and permutation (of the particles).
 For each \dark halo, we use something akin to a multipole expansion to compress the particle positions and velocities of each halo into a set of ``geometric features'' that describe the phase-space structure of the halo, which are scalars, vectors, and tensors; this is discussed in \S\ref{sec:geometric_features}.
 We then construct scalar contractions of these geometric features; these ``scalar features'' are invariant to transformations of the particles. 
-This step is informed by Einstein summation notation \citep{einstein_grundlage_1916}, which only allows invariant scalars to be produced; the details of our scalar feature construction is discussed in \S\ref{sec:scalar_features}.
+This step is informed by Einstein summation notation \citep{einstein}, which only allows invariant scalars to be produced; the details of our scalar feature construction is discussed in \S\ref{sec:scalar_features}.
 Though in practice we limit the scalars we produce to certain orders and radial bins, in principle if we took the limit of infinite orders and extremely fine binning, the scalars would effectively describe the particular distribution in position and velocity space up to the symmetry transformations; the limits we impose are well-behaved approximations on this.
 We can finally use these scalar features as the inputs for our prediction task; in our case we use a Gradient Boosted Tree model (\S\ref{sec:prediction_model}), though we note that the scalars could be used with any other model choice.
 
@@ -631,7 +631,7 @@ Our main contributions and findings are as follows:
 
 
 
-\section{Chapter Acknowledgements}
+\section{Chapter acknowledgments}
 The authors would like to acknowledge very helpful discussions with Ben Blum-Smith, Teresa Huang, Weichi Yao, Gabriella Contardo, Scott Tremaine, Rachel Somerville, Derek Lim, Leonardo Cotta, Kaze Wong, and Benjamin Wandelt.
 The authors also thank useful feedback by participants of the Flatiron CCA Astrodata Group, Galaxy Formation Group, and Cosmology X Data Science Group.
 This research was performed in part at the Coworking Retreat on Equivariant Machine Learning held at the Johns Hopkins University in March 2023.
