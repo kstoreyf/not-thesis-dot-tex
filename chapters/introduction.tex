@@ -5,7 +5,7 @@
 
 The universe is impressively well-described by a relatively simple cosmological model.
 This model, known as $\Lambda$CDM, posits that the vast majority of the matter in the universe is composed of cold dark matter (CDM), which interacts with normal matter via (primarily, if not only) gravity, and that the accelerating expansion of the universe caused by dark energy can be described by a cosmological constant $\Lambda$.
-$\Lambda$CDM can be parameterized by just a handful of quantities, including the matter energy density $\om$, the baryon energy density $\Omega_{b}$, the amplitude of matter fluctuations on a scale of 8 $\hMpc$ $\sig$, the dimensionless Hubble constant $h$, the spectral index of the primordial power spectrum $n_{s}$, and the number of relativistic species $N_{\mathrm{eff}}$. 
+$\Lambda$CDM can be parameterized by just a handful of quantities, including the matter energy density $\om$, the density parameter of the cosmological constant $\Omega_\Lambda$, the baryon energy density $\Omega_{b}$, the amplitude of matter fluctuations on a scale of 8 $\hMpc$ $\sig$, the Hubble constant $H_0$ (or the dimensionless version $h$), the spectral index of the primordial power spectrum $n_{s}$, and the number of relativistic species $N_{\mathrm{eff}}$. 
 
 In the standard picture of cosmology, the very early universe underwent a period of \emph{inflation} which expanded its scale by a factor of $\simo e^{60}$.
 This stretched quantum fluctuations to macroscopic scales, with small matter overdensities growing under gravity to form the large-scale structure (LSS) of the universe we observe today.
@@ -93,7 +93,7 @@ One such effort is explored in Chapter~\ref{chp:eqcosmo}, using the IllustrisTNG
 Over past several decades, we have built up immense 3-dimensional maps of the universe through observations of millions of galaxies.
 These involve initial targeting using wide-field imaging, followed by spectroscopic observations to measure galaxy \emph{redshifts}.
 The redshifts, measured by the shift of spectral lines from their rest-frame wavelength, indicate the velocity at which a galaxy is moving away from us and thus (assuming the velocity is dominated by the Hubble flow) its distance.
-Early photographic observations of galaxies and  analyses of their angular distribution detected non-uniformity below a certain scale \citep{shapley_survey_1932,hubble_distribution_1934,seldner_new_1977,peebles_galaxy_2001}.
+Early photographic observations of galaxies and  analyses of their angular distribution detected non-uniformity below a certain scale \citep{shapley_survey_1932,hubble_distribution_1934,seldner_new_1977,PeeblesHauser1974,peebles_galaxy_2001}.
 These results were extended to three dimensions by early redshift surveys, including \cite{gregory_comaa1367_1978} (238 galaxies around the Coma cluster), the KOS survey (\citealt{kirshner_million_1981}, 133 galaxies), and the CfA survey (\citealt{davis_survey_1982}, $\simo$2400 galaxies).
 These confirmed the clustered distribution of galaxies, which can be identified visually even from these small samples. 
 Figure~\ref{fig:cfa_survey} shows a sample of galaxies from the CfA survey, about which the authors remark that the regions ``exhibit clustering in frothy, almost filamentary, patterns of connectedness surrounding empty holes on the sky.''
@@ -106,14 +106,14 @@ Figure~\ref{fig:cfa_survey} shows a sample of galaxies from the CfA survey, abou
 \end{figure*}
 
 Modern redshift surveys have now observed orders of magnitude more galaxies and used their distributions to obtain some of the most stringent constraints on cosmological parameters.
-The 2dF Galaxy Redshift survey \citep{Colless2001} observed $\simo$250,000, add the Sloan Digital Sky Survey (SDSS, \citealt{York2000}) observed nearly one million galaxy redshifts.
+The 2dF Galaxy Redshift survey \citep{Colless2001} observed $\simo$250,000, and the Sloan Digital Sky Survey (SDSS, \citealt{York2000}) observed nearly one million galaxy redshifts.
 Galaxy power spectrum analyses of these surveys achieved measurements of the matter density ${\om}$ with a precision of $\simo$10\% \citep{cole_2df_2005, tegmark_cosmological_2006}.
-Combining the results of baryon acoustic oscillations and redshift-space distortion analyses, SDSS has measured the parameter $\sig$ to $\simo$3.5\%; a joint analysis with other cosmological measurements, including the cosmic microwave background, supernovae, and weak lensing, results in $\simo$1\% precision.
+The completed SDSS survey, combining the results of baryon acoustic oscillations and redshift-space distortion analyses and performing a joint analysis with other cosmological measurements, results in $\simo$1\% precision measurements on the $\Lambda$CDM parameters $\Omega_\Lambda$, $H_0$, and $\sig$.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.52\textwidth]{desi_survey.jpg}
-    \caption{A sample of galaxies from the DESI survey, around 40 years after the CfA survey of Figure~\ref{fig:desi_survey}. Around 400,000 galaxies are shown, out to $z \sim 0.9$ (3 $\hGpc$). DESI will observe nearly an order of magnitude more redshifts than this over the course of the survey. \emph{D. Schlegel/Berkeley Lab using data from DESI. Acknowledgment: M. Zamani (NSF's NOIRLab).}}
+    \caption{A sample of galaxies from the DESI survey, around 40 years after the CfA survey of Figure~\ref{fig:desi_survey}. Around 400,000 galaxies are shown, out to $z \sim 0.9$ (3 $\hGpc$). DESI will observe nearly two orders of magnitude more redshifts than this over the course of the survey. \emph{D. Schlegel/Berkeley Lab using data from DESI. Acknowledgment: M. Zamani (NSF's NOIRLab).}}
     \label{fig:desi_survey}
 \end{figure}
 
@@ -124,8 +124,8 @@ Future surveys are planned to measure yet more galaxy redshifts, including the S
 This galaxy clustering data is so high-precision that the bottleneck for cosmological constraints will lie largely in our modeling and analysis methodologies; one such improved approach, targeted at SDSS or DESI data, is presented in Chapter~\ref{chp:aemulus}.
 
 While galaxies are the dominant tracer observed for large-scale structure surveys given their multitude, other types of sources also provide valuable information.
-Quasars, which are extremely luminous emission from active galactic nuclei{\emdash}accreting supermassive black holes{\emdash}at the centers of galaxies, are even more highly biased tracers of matter than galaxies, with $b \sim 2.5$ at $z \sim 1.5$ \citep{laurent_clustering_2017-3}.
-Redshift surveys of quasars are the largest-volume maps of the universe we have, as we can observe quasars at immense distances thanks to their high luminosity.
+Quasars, which represent extremely luminous emission from active galactic nuclei{\emdash}accreting supermassive black holes{\emdash}at the centers of galaxies, are even more highly biased tracers of matter than galaxies, with $b \sim 2.5$ at $z \sim 1.5$ \citep{laurent_clustering_2017-3}.
+Redshift surveys of quasars are the largest-volume maps of the universe we have, because we can observe quasars at immense distances thanks to their high luminosity.
 Millions of quasars have been observed, with hundreds of thousands having spectroscopic redshifts, and more are being cataloged by current missions.
 One such mission, \emph{Gaia}, and the opportunities it presents for large-scale structure science with quasars is discussed further in Chapter~\ref{chp:quaia}.
 
@@ -140,7 +140,7 @@ One such mission, \emph{Gaia}, and the opportunities it presents for large-scale
     \label{fig:cosmo_inf}
 \end{figure*}
 
-The distribution of galaxies is extremely high-dimensional and complex, such that the actual positions of individual galaxies are impossible to model directly.
+The number of galaxies is so large and their distribution so complex that the actual positions of individual galaxies are impossible to model directly.
 Luckily, these are largely irrelevant to the underlying cosmology that we care about; rather, the cosmological model makes strong predictions about the \emph{statistical} properties of the large-scale structure.
 By computing the statistics of the galaxy distribution, we can compare our observations to models and infer the cosmological and astrophysical model parameters, as well as learn where our models are insufficient to describe the data.
 
@@ -156,8 +156,8 @@ In Chapter~\ref{chp:cfe} these are discussed in much more detail, and a generali
 
 There is also significant cosmological information beyond the two-point function.
 A slew of statistics aim to capture this information, including the three-point statistic (the bispectrum, in Fourier space), void statistics (e.g. \citealt{sheth_hierarchy_2004}), and environment-based statistics (e.g. \citealt{Sheth2004,tinker_void_2007}).
-These can be more difficult to measure and model than the \cf, but are critical for breaking certain degeneracies (e.g. \cite{WhitePadmanabhan2009}).
-Recently full field-level inference has shown promise, such as EFTofLSS \citep{baumann_cosmological_2012}.
+These can be more difficult to measure and model than the \cf, but are critical for breaking certain degeneracies (e.g. \citealt{WhitePadmanabhan2009}).
+Recently full field-level inference has shown promise, such as the Effective Field Theory of Large-Scale Structure (EFTofLSS, \citealt{baumann_cosmological_2012}).
 
 The measured statistics can then be compared to a model prediction to estimate the model parameters that most closely describe the data.
 Some of these statistics can be modeled analytically, using perturbation theory; this is the standard for many major analyses (e.g. \citealt{tegmark_cosmological_2006}) 

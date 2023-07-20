@@ -233,7 +233,7 @@ We thus define a projection tensor $\TT{RR}$ based on the autocorrelation of the
     \label{eq:Trr}
     \TT{RR} \equiv \frac{1}{\NN{RR}} \adjustlimits \sum_{m} \sum_{m'<m} \ff(\GG{m m'}) \cdot \ff\T(\GG{m m'}) ~,
 \end{equation}
-\new{where the exact formulation is motivated in Section~\ref{sec:leastsq} and satisfies the required affine invariance of the estimator as shown in Appendix~\ref{sec:affine}.}
+\new{where the exact formulation is motivated in Section~\ref{sec:leastsq} and satisfies the required affine invariance of the estimator as shown in \S~\ref{sec:affine}.}
 
 We can now define \est as
 \begin{equation}
@@ -269,7 +269,7 @@ The $\TT{RR}$ tensor becomes diagonal as the bins are orthogonal, with its diago
 In the standard framework, it is impossible to work in this limit because of the resulting extreme variance properties, but our approach resolves this by returning to the space of finite basis functions.
 \Est effectively computes \LS in bins of infinitesimal width, and then rotates and stretches these bins into the space of a chosen set of basis functions.
 The binned pair counts can then be re-summed into the form of the basis functions.
-The estimator can perform such a rotation as it has the property of affine invariance, meaning it is invariant to rotations or stretches of the basis functions; we show this in Appendix~\ref{sec:affine}.
+The estimator can perform such a rotation as it has the property of affine invariance, meaning it is invariant to rotations or stretches of the basis functions; we show this in \S~\ref{sec:affine}.
 Thus, \est measures the projection of the data onto continuous basis functions by effectively working in the limit of infinitesimal bins and performing a rotation into the function space.} 
 
 \Est can be straightforwardly generalized to cross-correlations between two datasets.
@@ -289,7 +289,7 @@ and we use this to compute the estimator as in \eqt{eq:xi_proj}.
 
 Finally, we can write down the form of \est when we are working with a periodic box and the survey window is effectively infinite.
 In this case, we can analytically compute the $\vv{DR}$, $\vv{RR}$, and $\TT{RR}$ terms.
-The derivation and formulation of these terms are shown in Appendix~\ref{sec:analytic}.
+The derivation and formulation of these terms are shown in \S~\ref{sec:analytic}.
 
 We discuss the implementation of \est in Section~\ref{sec:comp}.
 
@@ -385,7 +385,7 @@ We generate lognormal mock catalogs \citep{ColesJones1991} using the \texttt{log
 We use an input power spectrum with the Planck cosmology, the same parameters used for the MultiDark--PATCHY simulations \citep{Kitaura2016} made for the Baryon Oscillation Spectroscopic Survey (BOSS, \citealt{Dawson2013}).
 This assumes a cold dark matter model with $\Omega_m = 0.307115$, $\Omega_b = 0.048206$, $\sigma_8 = 0.8288$, $n_s = 0.9611$, and $h = 0.6777$.
 Our fiducial test set is 1000 realizations of periodic cubes with size (750 \hmpc)$^3$ and a galaxy number density of $2 \times 10^{-4}$ $h^{3}\,$Mpc$^{-3}$.
-We choose to perform these tests on periodic boxes so that we may compute the random--random term analytically (see Appendix~\ref{sec:analytic}), significantly cutting down on computation time.
+We choose to perform these tests on periodic boxes so that we may compute the random--random term analytically (see \S~\ref{sec:analytic}), significantly cutting down on computation time.
 The results will hold for catalogs with realistic survey windows and random--random terms computed directly with \est.
 
 \subsection{Comparison of Standard Tophat Basis Functions}
@@ -488,8 +488,8 @@ Our fitting function is then
 \end{equation}
 where $C$ is an additional coefficient that describes the contribution of the derivative term, and $k_0$, $k_1$, $k_2$, and $k_3$ are constants that determine the initial magnitude of the basis functions.
 In this case, the free parameters are $B^2$, $C$, $a_1$, $a_2$, and $a_3$.
-Note that in theory the choice of $k_i$ values shouldn't matter as the estimator is affine invariant (see Appendix~\ref{sec:affine}), but in practice reasonable choices are important for stability.
-The adopted $k_i$ values are noted in Appendix~\ref{sec:baoiter}.
+Note that in theory the choice of $k_i$ values shouldn't matter as the estimator is affine invariant (see \S~\ref{sec:affine}), but in practice reasonable choices are important for stability.
+The adopted $k_i$ values are noted in \S~\ref{sec:baoiter}.
 
 \begin{figure}%[t]
     \centering
@@ -502,7 +502,7 @@ To use the estimator for a BAO measurement, we input these five terms as the fiv
 The estimator outputs an amplitude vector $\bld{\hat a}$ as described in Section~\ref{sec:est}, which describes the contribution of each basis function{\emdash}precisely the values of the free parameters, scaled by $k_i$.
 From the value of $C$, we can determine our estimate of the scale dilation parameter, $\hat{\alpha}$, as $\hat{\alpha} = \alpha_\mathrm{guess} + C\,k_0$, based on the definition of finite derivatives. 
 With this formulation, a value of $C=0$ indicates that the current $\alpha_\mathrm{guess}$ gives the best fit to the data (given the chosen cosmological model), while nonzero values give the magnitude and direction of the necessary change in the scale dilation parameter to optimally fit the data.
-In practice, we apply an iterative procedure to converge at our best estimate $\hat{\alpha}$; this procedure and other implementation details are described in Appendix~\ref{sec:baoiter}.
+In practice, we apply an iterative procedure to converge at our best estimate $\hat{\alpha}$; this procedure and other implementation details are described in \S~\ref{sec:baoiter}.
 
 We demonstrate this method using our set of lognormal mock catalogs.
 We construct a recovery test following that in \cite{Hinton2019}.

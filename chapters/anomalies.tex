@@ -10,7 +10,7 @@ The WGAN learns to generate realistic HSC-like galaxies that follow the distribu
 We find that the discriminator is more attuned to potentially interesting anomalies compared to the generator, \new{and compared to a simpler autoencoder-based anomaly detection approach}, so we use the discriminator-selected images to construct a high-anomaly sample of $\sim$13,000 objects.
 We propose a new approach to further characterize these anomalous images: we use a convolutional autoencoder to reduce the dimensionality of the residual differences between the real and WGAN-reconstructed images and perform UMAP clustering on these.
 We report detected anomalies of interest including galaxy mergers, tidal features, and extreme star-forming galaxies.
-\new{A follow-up spectroscopic analysis of one of these anomalies is detailed in the Appendix; we find that it is an unusual system most likely to be a metal-poor dwarf galaxy with an extremely blue, higher-metallicity HII region.}
+\new{A follow-up spectroscopic analysis of one of these anomalies is detailed in \S~\ref{sec:bluedot}; we find that it is an unusual system most likely to be a metal-poor dwarf galaxy with an extremely blue, higher-metallicity HII region.}
 We have released a catalog with the WGAN anomaly scores; the code and catalog are available at \url{https://github.com/kstoreyf/anomalies-GAN-HSC}, and our interactive visualization tool for exploring the clustered data is at \url{https://weirdgalaxi.es}.
 
 
@@ -74,7 +74,7 @@ In Section~\ref{sec:data_anomalies}, we detail the galaxy image data set used in
 We describe our WGAN model, approach to anomaly score assignment, technique for characterization, \new{and CAE model} in Section~\ref{sec:model}.
 In Section~\ref{sec:results_anomalies} we discuss our results and show anomalous galaxies identified with our framework.
 We present a summary and our conclusions in Section~\ref{sec:conclusions}.
-\new{A follow-up spectroscopic analysis of one of our GAN-detected anomalies is described in Appendix~\ref{sec:bluedot}.}
+\new{A follow-up spectroscopic analysis of one of our GAN-detected anomalies is described in \S~\ref{sec:bluedot}.}
 
 \section{Data}
 \label{sec:data_anomalies}
@@ -610,7 +610,7 @@ This confirms that the WGAN discriminator is well suited to finding interesting 
 While it is likely that those samples would have contained some number of interesting anomalies that this discriminator sample does not, we showed in Figure~\ref{fig:score_effect} that more would be lost than gained in those cases.}
 
 We performed follow-up spectroscopic observations of several of these objects to determine if they are indeed scientifically interesting.
-\new{Our findings on one of these objects is presented in Appendix~\ref{sec:bluedot}.}
+\new{Our findings on one of these objects is presented in \S~\ref{sec:bluedot}.}
 
 
 
@@ -633,7 +633,7 @@ One category of objects we found were images that contained bright blue compact 
 We performed follow-up observations of three of these, and obtained a good spectrum for one, with HSC ID 43158859342174406.
 Here we present our analysis of this object as a demonstration of the scientific potential of our anomaly detection method.
 
-The object has coordinates RA=09:59:34.060, dec=+01:37:07.84; we refer to it as HSC J095934+013707 (it is also in the COSMOS catalog, labelled as COSMOS 244571).
+The object has coordinates RA=09:59:34.060, Dec=+01:37:07.84; we refer to it as HSC J095934+013707 (it is also in the COSMOS catalog, labelled as COSMOS 244571).
 The association between the blue compact source and the diffuse emission is unclear from visual inspection; they may be two associated galaxies, or a single galaxy with a bright feature, or unrelated overlapping objects.
 The object is in the COSMOS catalog and is computed to have a mass of $10^{7.9} M_\odot$, based on 30-band SED fitting, and a redshift $z=0.0320$. 
 

@@ -51,8 +51,7 @@ It is not currently known how much additional information exists at these small 
 Extracting this information requires accurately modeling the nonlinear dynamics of dark matter down to these scales.
 Cosmological $N$-body simulation have been remarkably successful at this (e.g. \citealt{Klypin2011}); however, they are very expensive to run, and including hydrodynamics is intractable for complete cosmological inference purposes.
 
-In order to use $N$-body simulations for cosmological analysis, we require a galaxy bias model to populate the dark matter distribution with galaxies.
-\citealt{Seljak2000, BerlindWeinberg2002, CooraySheth2002, Zheng2005}), which probabilistically describes the occupation number of galaxies in dark matter halos as a function halo mass.
+In order to use $N$-body simulations for cosmological analysis, we require a galaxy bias model to populate the dark matter distribution with galaxies \citep{Seljak2000, BerlindWeinberg2002, CooraySheth2002, Zheng2005}, which probabilistically describes the occupation number of galaxies in dark matter halos as a function halo mass.
 The simple HOD model reconstructs galaxy clustering to a reasonable degree of accuracy; however, it has been shown that occupation has a small but non-negligible dependence on secondary halo properties, known as galaxy assembly bias (see e.g. \citealt{Wechsler2006, Croton2007, Zentner2014, WechslerTinker2018}).
 Modeling assembly bias is critical for obtaining the most accurate cosmological constraints, as well as understanding the galaxy--halo connection.
 
@@ -90,7 +89,7 @@ Simulation-based emulators have been used to improve precision on cosmological p
 
 This work is part of the \aemulus Project, which uses a suite of high-resolution $N$-body simulations expressly designed for emulation at small scales to improve cosmological constraints.
 The previous papers in the project introduce the simulation suite \citep{DeRose2018} and construct emulators of the halo mass function \citep{McClintock2018}, the galaxy correlation function \citep{Zhai2019}, and halo bias \citep{McClintock2019}.
-The \aemulus emulator has been used to constrain the growth rate of structure in the BOSS-LOWZ sample \citep{Lange2022} and the eBOSS LRG sample \citep{Chapman2021}, both obtaining nearly a factor of two increase in precision compared to standard measurements at linear scales.
+The \aemulus emulator has been used to constrain the growth rate of structure in the BOSS-LOWZ sample \citep{Lange2022} and the eBOSS LRG sample \citep{Chapman2021}, both obtaining nearly a factor of two increase in precision on $\fsig$ compared to standard measurements at linear scales.
 Most recently, the \aemulus project constructed two-point function emulators that include models of assembly bias and deviations from general relativity (GR) to provide improved precision on the growth rate of structure parameter from the BOSS survey \citep{Zhai2022}.
 
 In this paper, we extend the work of \aemulus III \citep{Zhai2019} to include emulation of two beyond-standard observables:
@@ -114,7 +113,7 @@ In this section we detail the \aemulus $N$-body simulations that are used as the
 
 We use the \aemulus simulations, a suite of 75 high-resolution $N$-body simulations \citep{DeRose2018}.
 They have a box size $L = 1.05$ $\hGpc$ with $1400^3$ dark matter particles, and a mass resolution of $\simo3.5\times10^{10}h\inv\text{M}_{\odot}$ (depending on the cosmology).
-The training set consists of 40 different $w$CDM cosmologies, selected using a Latin hypercube to optimally span the parameter space.
+The training set consists of 40 different $w$CDM cosmologies, selected using a Latin hypercube to span the parameter space.
 The test set is comprised of 7 different cosmologies, with 5 realizations with different initial conditions for each cosmology, totaling 35 test boxes.
 We use the redshift $z=0.55$ snapshot for this work.
 We use the training set to train our emulator, and the test set to verify its performance as well as to estimate the sample variance.
@@ -156,7 +155,7 @@ We also include a concentration parameter relating satellite and halo concentrat
 We define the concentration ratio $c_\mathrm{vir}$ as the ratio between the concentration of satellites and DM halos, $c_\mathrm{vir} = c_\mathrm{sat}/c_\mathrm{halo}$.
 
 We extend this standard HOD model to take into account the dependence on properties other than just the host halo mass; this secondary dependence is known as assembly bias.
-Here we use the 3-parameter assembly bias model of \cite{WalshTinker2019}, which includes a dependence on the local dark matter density around a halo, as we might expect the external environment of halos to play a role in galaxy formation.
+Here we use the 3-parameter assembly bias model of \cite{WalshTinker2019}, which includes a dependence on the local dark matter density around a halo, because we might expect the external environment of halos to play a role in galaxy formation.
 Specifically, we define $\delta$ as the relative density in a sphere of radius 10 $\hMpc$ around a halo center.
 The assembly bias model adjusts the minimum halo mass needed to host a central galaxy, $M_\mathrm{min}$, to a threshold $M_\mathrm{min}'$ based on the local density.
 It is defined as
@@ -174,7 +173,7 @@ We then input redshift-space distortions by projecting the real-space positions 
 \begin{equation}
     x_\mathrm{s} = x_\mathrm{r} + (1+z)\frac{v}{H(z)} ~,
 \end{equation}
-where $z$ is the redshift of the simulation, $v$ is the velocity of the galaxy, and $H(z)$ is the Hubble parameter at that redshift for the given cosmology.
+where $z$ is the redshift of the simulation, $v$ is the velocity of the galaxy along axis $x_\mathrm{r}$, and $H(z)$ is the Hubble parameter at that redshift for the given cosmology.
 
 We populate each of the 40 training boxes with 100 unique HOD models, and the test boxes with another independent set of 100 HOD models (for the test set we use the same 100 models to populate each of the 35 boxes, while for the training set every model is different).
 This results in a training set of 4000 catalogs and a test set of 3500 catalogs for the emulator. 
@@ -211,22 +210,24 @@ In practice, we work in redshift-space with vector distance $\bm{\mathrm{s}}$, d
 We measure the two-dimensional correlation function $\xi_\mathrm{Z}(r_\mathrm{p}, \pi)$ on a grid, where the subscript Z denotes redshift-space, $\pi$ is the transverse separation, and $r_\mathrm{p}$ is the line-of-sight separation, defined as
 \begin{equation}
 	\pi = \frac{\mathbf{s}\cdot\mathbf{l}}{|\mathbf{l}|}, 
-	\quad r_{p}=\mathbf{s}\cdot\mathbf{s}-\pi^2 ~.
+	\quad r_{p}^2 =\mathbf{s}\cdot\mathbf{s}-\pi^2 ~.
 \end{equation}
 Then, the projected correlation function is
 \begin{equation}
 	\wprp = 2 \int_{0}^{\infty} d\pi \, \xi_\mathrm{Z}(r_\mathrm{p}, \pi) ~.
 \end{equation}
 In practice, we cut off the integral at a scale of $\pi_\mathrm{max} = 40 \, \hMpc$.
-This choice of a somewhat low $\pi_\mathrm{max}$ does not eliminate RSDs in the two-halo term, but this preserves some cosmological information, and in any case is consistent in the constructed emulator so will not lead to a bias in parameter recovery.
+This choice of a somewhat low $\pi_\mathrm{max}$ leaves $\wprp$ sensitive to RSDs in the two-halo term, but this preserves some cosmological information, and in any case is consistent in the constructed emulator so will not lead to a bias in parameter recovery.
 
 We must use an estimator to measure the correlation function in data.
-As we are working with periodic simulation boxes in this analysis, there is no complex window function to introduce biases, so we can use the natural estimator \citep{PeeblesHauser1974},
+We use the natural estimator \citep{PeeblesHauser1974},
 \begin{equation}
 	\xi(r_\mathrm{p}, \pi) = \frac{DD}{RR} - 1,
 \end{equation}
 where DD is the number of data--data pairs in an $(r_\mathrm{p}, \pi)$ bin, and RR is the number of random--random pairs in a uniform random catalog of the same size as the data, each normalized by the total number of galaxy pairs in the respective catalog pair.
-Given our periodic boxes, we can analytically compute the RR term, so we only have to numerically compute the DD term.
+Because we are working with periodic simulation boxes in this analysis, we can analytically compute the random--random (RR) term and only have to numerically compute the DD term.
+We note that the DR term cannot be analytically computed, so to avoid needing a random catalog we do not use a lower--variance estimator such as the standard \cite{LandySzalay1993} estimator.
+As there no complex window function to introduce biases or additional noise, and we are doing inference using simulations rather than model comparison, the natural estimator should be sufficient.
 
 We measure $\wprp$ in 9 logarithmically spaced bins between $r_p = 0.1-50 \, \hMpc$.
 We use the software package \texttt{corrfunc} \citep{SinhaGarrison2019, Sinha2020} to compute this observable.
@@ -240,7 +241,7 @@ We also measure the multipoles of the redshift-space correlation, now defining t
 \end{equation}
 where $L_{\ell}$ is the Legendre polynomial of order $\ell$ (and $\ell$ indexes the multipole).
 Most of the information is contained in the few lowest-order multipoles, so for this analysis we use only the monopole $\cfm$ and the quadrupole $\cfq$.
-We use the \cite{LandySzalay1993} estimator as in the previous section to measure the correlation functions in practice.
+We use the \cite{PeeblesHauser1974} estimator as in the previous section to measure the correlation functions in practice.
 
 For $\cfm$ and $\cfq$, we use the same 9 bins as we did for $\wprp$, between $s = 0.1-50 \, \hMpc$, and we use 15 $\mu$ bins.
 We use \texttt{corrfunc} \citep{SinhaGarrison2019, Sinha2020} and \texttt{halotools} \citep{Hearin2017} to compute these statistics.
@@ -259,11 +260,11 @@ We can write $\upf$ as
 where $i$ indexes the $N$ spheres, $n_i(s)$ is the number density of galaxies in sphere $i$ with radius $s$, $\mathbb{1}()$ is an indicator function that is 1 if its argument is true and 0 otherwise, and $n_\mathrm{thresh}$ is the threshold number density. 
 We choose $N=10^6$ and $n_\mathrm{thresh} = 0.2 \bar{n}$, where $\bar{n}$ is the mean number density of the mock; this is the same value chosen by \cite{HoyleVogeley2004}, which is slightly denser than the mean underdensity of large voids in the 2dF Galaxy Redshift Survey \citep{Colless2003}.
 
-The $\upf$ does not vary significantly at small scales across different cosmology and HOD models (see the sample variance at small scales in Figure~\ref{fig:emu_accuracy}), so these scales are not as useful for parameter inference.
+The $\upf$ does not vary significantly at small scales ($s \lesssim 5 \hMpc$) across different cosmology and HOD models (see the sample variance at small scales in Figure~\ref{fig:emu_accuracy}), so these scales are not as useful for parameter inference.
 Thus we use nine linearly spaced radii between $s = 5-45 \, \hMpc$.
 To compute the statistic, we modify a standard $k$-d tree code\footnote{\url{https://github.com/jtsiomb/kdtree}} to work on a periodic box.\footnote{\url{https://github.com/kstoreyf/clust}} 
 
-\subsection{The marked correlation function, \texorpdfstring{$\mcf$}{M(s}}
+\subsection{The marked correlation function, \texorpdfstring{$\mcf$}{M(s)}}
 \label{sec:mcf}
 
 The other beyond-standard statistic we investigate is the marked correlation function, $\mcf$ \citep{Sheth2004}.
@@ -299,7 +300,7 @@ We finally perform the inference using our emulator in combination with Markov C
 \label{sec:gp}
 
 We use a Gaussian process to emulate the function relating the input cosmological, HOD, and assembly bias parameters to the observables.
-A Gaussian process is a collection of random variables for which any finite sample is Gaussian distributed.
+A Gaussian process is a collection of random variables for which any finite subsample is Gaussian distributed.
 It can be described as a multivariate normal distribution generalized to infinite dimensions.
 Here we follow the notation of \cite{RasmussenWilliams2006}; a full discussion of GPs can be found in that text.
 
@@ -335,10 +336,9 @@ where the mean $\bar{\bm{f}}_*$ is defined as
     \bar{\bm{f}}_* = K(X_*, X) [K(X,X) + \sigma_n^2\,I]\inv \, \bm{y} 
 \end{equation}
 and the covariance  $\mathrm{cov}(\bm{f}_*)$ as
-\begin{multline}
-    \mathrm{cov}(\bm{f}) = K(X_*, X_*) \\ 
-    - K(X_*, X)[K(X,X) + \sigma_n^2\,I]\inv K(X,X_*) ~.
-\end{multline}
+\begin{equation}
+    \mathrm{cov}(\bm{f}) = K(X_*, X_*) - K(X_*, X)[K(X,X) + \sigma_n^2\,I]\inv K(X,X_*) ~.
+\end{equation}
 
 Next, we must choose our kernel function, which describes the expected properties of the function we are trying to learn.
 We assume the kernel to have only a dependence on the distance between the inputs in parameter space, $r = |\bm{x} - \bm{x'}|$. 
@@ -445,7 +445,7 @@ The diagonal elements of the correlation matrix must be equal to 1, as each elem
 We then apply a basic Gaussian kernel with width one, to smooth the matrix.
 Finally we replace back the diagonal elements.
 The smoothed total covariance matrix, $\cov{perf,smooth}$, is shown in Figure~\ref{fig:cov_smooth_emuperf}.
-A comparison between using the smoothed and original covariance matrices for parameter inference is shown in Appendix~\ref{appendix:cov}.
+A comparison between using the smoothed and original covariance matrices for parameter inference is shown in \S~\ref{appendix:cov}.
 
 
 \subsection{Inference with Emulator+MCMC}
@@ -457,7 +457,7 @@ Nested sampling is a method for both obtaining posterior values from a likelihoo
 While we don't directly make use of the evidence in this work, dynamic nested sampling is faster and more robust than other standard MCMC approaches.
 
 For the HOD and assembly bias parameters, as well as $\gf$, we use a uniform prior with a range given in Table 3 of \cite{Zhai2022}, with an additional constraint on $\msat$ to be above $10^{11.5} \: M_\odot$.
-For the cosmological parameters, we use a multi-dimensional Gaussian prior defined by the mean and covariance of the cosmology training set parameter space (see Figure 3 in \cite{DeRose2018}).
+For the cosmological parameters, we use a multi-dimensional Gaussian prior defined by the mean and covariance of the cosmology training set parameter space (see Figure 3 in \citealt{DeRose2018}).
 We also try a flat prior and a high-dimensional ellipsoid, and find no change in the results; we choose to use the multi-dimensional Gaussian to improve stability and speed of the MCMC runs.
 
 We use a likelihood $\like$ of
@@ -832,7 +832,7 @@ We will explore some of these in future work.
 
 One of the primary goals of the \aemulus project is to extract information from small-scale clustering, which is difficult to model theoretically and expensive to simulate fully.
 Here, we have shown that there is significant information at small scales for nearly all of the statistics we analyze.
-For the constraint on $\gfs$, we find that scales from $0.1 - 4 \, \hMpc$ contribute half of the information content, and that there is additional information all the way down to $0.1 \, \hMpc$
+For the constraint on $\gfs$, we find that scales from $0.1 - 4 \, \hMpc$ contribute half of the information content, and that there is additional information all the way down to $0.1 \, \hMpc$.
 This confirms a similar result by \cite{Zhai2019}, which uses $\wprp$, $\cfm$, and $\cfq$, and includes the halo velocity field scaling parameter $\gf$. 
 Some recent analyses have not found as much additional information at these small scales.
 \cite{Lange2022} concludes that for their low-redshift sample, which is closer in number density to the one analyzed here, scales between $1-2 \hMpc$ increase the constraining power on $\fsig$ by a small amount, and scales below $\simo1 \hMpc$ not at all.

@@ -71,7 +71,7 @@ CNNs have been extended to incorporate rotational symmetries \citep{cohen2019gau
 Most relevant to our focus on simulated dark matter halos, neural networks that operate on point clouds have been developed that enforce rotation, translation, and permutation equivariance using a variety of approaches.
 These include irreducible representations \citep{thomas2018tensor}, self-attention mechanisms \citep{fuchs2020se}, and convolutions \citep{kondor2018covariant,zhang2019rotation}, as well as extensions of graph neural networks \citep{Satorras2021}.
 
-Approaches to learning the galaxy--halo connection that are based on a set of halo properties are often naturally obey the relevant symmetries; for instance, mass and concentration are invariant to rotations, translations, and permutations of the DM halo particles.
+Approaches to learning the galaxy--halo connection that are based on a set of halo properties often naturally obey the relevant symmetries; for instance, mass and concentration are invariant to rotations, translations, and permutations of the DM halo particles.
 However, these are limited to a very small set of hand-picked invariant features.
 On the other hand, ML models operating directly on the dark matter density field capture detailed information, but do not typically respect all of these symmetries.
 Recent work has applied explicitly equivariant neural network architectures and approaches to structure formation and the galaxy--halo connection in cosmological simulations.
@@ -92,13 +92,13 @@ To obtain a uniform set of features across halos while preserving detailed struc
 We construct these to be dimensionless so they are direct measures of halo shape.
 This provides a characterization of DM halos that encodes interpretable, quasi-resolution-invariant high-order phase-space structure while preserving physical symmetries.
 To learn the mapping from DM halos to baryonic properties, we construct a set of matched DM halos in the DM-only simulation to central galaxies in the TNG hydrodynamical simulation.
-We use XGBoost \citep{chen_xgboost_2016}, a gradient boosted tree ensemble model, with the scalars as inputs to predict galaxy properties, and compare this scalars approach to benchmark feature sets. 
+We use XGBoost \citep{chen_xgboost_2016}, a gradient boosted tree ensemble model, with the scalars as inputs to predict galaxy properties, and compare this scalars approach to other ``benchmark'' feature sets. 
 We also demonstrate that these features allow for accurate predictions of the mass assembly history of the DM halos.
 
 In this work, we use the following notation: 
 Scalars are denoted by lowercase variables, vectors by lowercase bold variables, and tensors by uppercase variables.
 
-This paper is outlined as follows.
+This chapter is outlined as follows.
 In \S\ref{sec:sim_sample}, we introduce the simulation used and our halo and galaxy sample selection. 
 We discuss our approach to constructing invariant scalars from dark matter halo particle distributions in \S\ref{sec:scalars_approach}.
 In \S\ref{sec:features_model}, we detail the fiducial scalar feature set and other benchmark feature sets we use as inputs, and describe the prediction model.
@@ -199,7 +199,7 @@ The distributions of these properties as a function of \dark halo mass are shown
 
 We estimate the uncertainties on these baryonic properties based on the effects of small initial perturbations in cosmological simulations and how these propogate to differences in baryonic properties over time.
 We quantify this using the simulations of \cite{Genel2019}, which are pairs of IllustrisTNG with small random initial particle displacements.
-The $z=0$ galaxies are matched across the pairs, and the pairwise differences (divided by $\sqrt{2}$; see \citealt{Genel2019}) between their properties can be computed; the standard deviations of these pairwise differences represent a lower limit on the retrievable information on the properties.
+The $z=0$ galaxies are matched across the pairs, and the pairwise differences (divided by $\sqrt{2}$; see \citealt{Genel2019}) between their properties can be computed; the standard deviations of these pairwise differences represent an lower limit on the retrievable precision on the properties.
 We refer to this as the chaotic limit, and use it as a comparison for our baryonic property predictions.
 Specifically, we use the $\epsilon=1$ resolution level simulations which is similar to but slightly worse than the resolution of TNG100-1, so the limit is slightly optimistic (the true lower limit is actually lower than the limit shown).
 
@@ -217,16 +217,16 @@ Our goal is to characterize DM halos in a way that captures detailed phase-space
 We specifically consider rotation, translation, velocity boosts, rotation, and permutation (of the particles).
 For each \dark halo, we use something akin to a multipole expansion to compress the particle positions and velocities of each halo into a set of ``geometric features'' that describe the phase-space structure of the halo, which are scalars, vectors, and tensors; this is discussed in \S\ref{sec:geometric_features}.
 We then construct scalar contractions of these geometric features; these ``scalar features'' are invariant to transformations of the particles. 
-This step is informed by Einstein summation notation \citep{einstein}, which only allows invariant scalars to be produced; the details of our scalar feature construction is discussed in \S\ref{sec:scalar_features}.
+This step is informed by Einstein summation notation \citep{einstein}, which is a formalism that can be used to enumerate possible scalars; the details of our scalar feature construction is discussed in \S\ref{sec:scalar_features}.
 Though in practice we limit the scalars we produce to certain orders and radial bins, in principle if we took the limit of infinite orders and extremely fine binning, the scalars would effectively describe the particular distribution in position and velocity space up to the symmetry transformations; the limits we impose are well-behaved approximations on this.
 We can finally use these scalar features as the inputs for our prediction task; in our case we use a Gradient Boosted Tree model (\S\ref{sec:prediction_model}), though we note that the scalars could be used with any other model choice.
 
 In contrast to this approach, many standard approaches use a small set of hand-constructed properties of the halos, such as the mass, concentration, and spin.
 While these do often obey physical symmetries, this is not enforced; further, the properties are hand-picked and can be non-trivial to compute, and they do not necessarily capture the complexity of the phase-space structure of the halos.
 We use these ``standard features'' as a benchmark, detailed in \S\ref{sec:features}.
-Other approaches work on the full particle distribution, or the smoothed density field; while this captures the detailed halo structure, it does not obey many of the physical symmetries (depending on implementation), and can be very expensive.
+Other approaches work on the full particle distribution, or the smoothed density field; while this captures the detailed halo structure, it does not necessarily obey many of the physical symmetries (depending on implementation), and can be very expensive.
 The scalars approach captures the benefits of both of these standard approaches: it allows for a flexible, lightweight set of halo features that respects symmetries and provides a more complete representation of DM structure.
-We also expect the enforced equivariance to make the approach more generalizable, for instance to different resolutions or simulation codes.
+We also expect the enforced invariance to make the approach more generalizable, for instance to different resolutions or simulation codes.
 
 
 \subsection{Geometric features}
@@ -327,7 +327,7 @@ To construct these combinations, we produce all allowed \emph{contractions} of t
 For instance, one can multiply a pair of scalars; take the inner product of a pair of vectors; take contractions of a pair of tensors; and take the trace or eigenvalues of a tensor.
 In fact, when considering up to rank-2 tensors and scalars up to second degree in mass, as we do here, these are all of the possible ways of combining geometric features.
 (If we considered higher mass degrees, we could construct features such as $\x \, \Cxx \, \x\T$.)
-One natural way to enumerate these scalars is using Einstein summation notation, as it only allows invariant scalars to be produced (see Appendix~F of \citealt{Villar2021a} for a detailed discussion).
+One natural way to enumerate these scalars is using Einstein summation notation (see Appendix~F of \citealt{Villar2021a} for a detailed discussion).
 In short, to construct a scalar there must be no hanging indices, so we know that all indices used in the summation must be repeated.
 
 We make some specific choices regarding the computed scalars.
@@ -389,7 +389,7 @@ We use the one-dimensional velocity dispersion $\sigma_{v}$, computed from the h
 We also include the spin $\lambda$, computed as $\lambda = \sqrt{\lambda_x^2 + \lambda_y^2 + \lambda_z^2}$, where the spins along each axis are from the TNG field \field{SubhaloSpin} for the central \dark subhalo, which are the mass-weighted sum of the coordinate along each axis times the relative velocity of all particles.
 We additionally include $\Mfof$, $\Rtwoh$, and $\Vfof$ in this set.
 Other works include other features such as environmental properties of the local density around the halo, and formation history properties such as the age, formation time, or number of mergers of the halo.
-As we only consider $z=0$ features and particles in the halo FoF for our invariant scalars approach in this work, we do not include these environmental and formation properties for a more direct comparison (though this is for simplification purposes and a full analysis for practical use could and should use this information for all feature sets).
+Because we only consider $z=0$ features and particles in the halo FoF for our invariant scalars approach in this work, we do not include these environmental and formation properties for a more direct comparison (though this is for simplification purposes and a full analysis for practical use could and should use this information for all feature sets).
 
 We finally consider a set of features constructed from the \emph{components} of the geometric features.
 That is, we unroll each geometric feature into its components in $x$, $y$, and $z$, giving 1 quantity for scalars, 3 for vectors, and 9 for tensors, and use these as the feature set. 
@@ -432,7 +432,7 @@ This achieved reasonable precision for stellar mass predictions, but was infeasi
 \begin{figure}
     \centering
     \includegraphics[width=0.7\columnwidth]{pred_mstellar.png}
-    \caption{Predictions for the galaxy stellar mass $\mstellar$ using our invariant scalar features. The panels show the predicted stellar-to-halo mass relation, the predicted stellar mass compared to the true stellar mass, and the residuals of the stellar mass prediction compared to truth as a function of halo mass as well as stellar mass. The grey lines show zero error. The color bar shows the number density of galaxies in units $(\hMpc)^{-3} \text{dex}^{-2}$, which takes into account the size of the box, the fraction of objects in the test sample, and the 2D histogram bin widths. We achieve accurate and precise predictions of the galaxy stellar mass with our invariant features.}
+    \caption{Predictions for the galaxy stellar mass $\mstellar$ on the test set using our invariant scalar features. The panels show the predicted stellar-to-halo mass relation, the predicted stellar mass compared to the true stellar mass, and the residuals of the stellar mass prediction compared to truth as a function of halo mass as well as stellar mass. The grey lines show zero error. The color bar shows the number density of galaxies in units $(\hMpc)^{-3} \text{dex}^{-2}$, which takes into account the size of the box, the fraction of objects in the test sample, and the 2D histogram bin widths. We achieve accurate and precise predictions of the galaxy stellar mass with our invariant features.}
     \label{fig:mstellar}
 \end{figure}
 
@@ -452,7 +452,7 @@ A practical tool could remedy this by using a wider training set than testing se
 \begin{figure}
     \centering
     \includegraphics[width=0.7\columnwidth]{feature_comparison_mstellar.png}
-    \caption{Predictions for the galaxy stellar mass based on different input feature sets: the invariant scalar features (our fiducial set); the components of the geometric features; a set of standard halo features; and only $\Mfof$, $\Rtwoh$, and $\Vfof$. These are detailed in \S\ref{sec:features}. The upper left panel is the same as the upper right panel in Figure~\ref{fig:mstellar}; the color bar is the same as in that figure as well. The invariant scalars approach outperforms the standard features in the stellar mass prediction, and significantly outperforms using only the mass and related scaling quantities. It very slightly outperforms the geometric feature set, which is not invariant to rotations.}
+    \caption{Predictions for the galaxy stellar mass $\mstellar$ on the test set based on different input feature sets: the invariant scalar features (our fiducial set); the components of the geometric features; a set of standard halo features; and only $\Mfof$, $\Rtwoh$, and $\Vfof$. These are detailed in \S\ref{sec:features}. The upper left panel is the same as the upper right panel in Figure~\ref{fig:mstellar}; the color bar is the same as in that figure as well. The invariant scalars approach outperforms the standard features in the stellar mass prediction, and significantly outperforms using only the mass and related scaling quantities. It very slightly outperforms the geometric feature set, which is not invariant to rotations.}
     \label{fig:mstellar_compare}
 \end{figure}
 
@@ -496,7 +496,7 @@ This is shown as a function of halo mass in the grey shaded region in the final 
 We see that for some properties in some regimes, we are indeed at or near the chaotic limit, where we expect the rest of the information is destroyed by the chaotic effects of evolution.
 This is the case for the $\ssfr$ and $\rstellar$ at low halo masses, for $\gminusi$ color at all masses, and $\mbhpermstellar$ at intermediate masses.
 For these cases, we are able to reproduce the relatively complex shape of the property distribution as a function of halo mass: for instance for the $\ssfr$ we accurately predict the sharp transition from large scatter at very low halo mass to low scatter at intermediate halo mass, and for $\gminusi$ color we predict the non-monotonic shape of the distribution vs. halo mass, including the very red colors of the high-mass galaxy population.
-In some bins we are achieving results below the chaotic limit; this may be because this is a somewhat optimistic limit as it is computed from a slightly higher resolution simulation, and also possibly a result of small number statistics (generally for the butterfly simulations, and especially for the high mass bins in both).
+In some bins we are achieving results better than the chaotic limit; this may be because this is a somewhat optimistic limit as it is computed from a slightly higher resolution simulation, and also possibly a result of small number statistics (generally for the butterfly simulations, and especially for the high mass bins in both).
 
 There are some populations that our predictions fail to reproduce, somewhat separate from the low-scatter issue.
 For instance, we do not predict the very low $\rstellar$ ``fin'' at low halo masses, leading to consistent over-predictions in that bin.
@@ -517,7 +517,7 @@ Similarly to the stellar mass case, we do not see a clear difference between pre
     %\centering
     %\hspace{5em}
     \includegraphics[width=0.77\columnwidth,right]{pred_amfracs.png}
-    \caption{The predicted mass assembly history of a DM halo based on our invariant scalars approach, parameterized by the scale factor $a$ at which the halo's most massive progenitor accreted a given fraction of its mass, $M/M_{a=1}$. The top panel shows the histories of a selection of halos with different masses (closed circles), and the predicted scale factor at each mass fraction (lines of same color). The middle panel shows the absolute residuals between the two, and the bottom shows the inner 68th percentile of the predictions for the entire test set. We compare this prediction error to the overall sample variance of the assembly histories, as well as to predictions with the other feature sets.}
+    \caption{The predicted mass assembly history of a DM halo based on our invariant scalars approach, parameterized by the scale factor $a$ at which the halo's most massive progenitor accreted a given fraction of its mass, $M/M_{a=1}$. The top panel shows the histories of a selection of halos from the test set with different masses (closed circles), and the predicted scale factor at each mass fraction (lines of same color). The middle panel shows the absolute residuals between the two, and the bottom shows the inner 68th percentile of the predictions for the entire test set. We compare this prediction error to the overall sample variance of the assembly histories, as well as to predictions with the other feature sets.}
     \label{fig:mah}
 \end{figure}
 
@@ -525,7 +525,7 @@ Similarly to the stellar mass case, we do not see a clear difference between pre
 \begin{figure*}
     \centering
     \includegraphics[width=\textwidth]{pred_amfracs_multi.png}
-    \caption{The error on our predictions of the mass assembly history (scale factor at which a fraction of the mass of the most massive progenitor was accreted) at given values of the mass fraction: $M/M_{a=1} = 0.8, 0.6, 0.4$. Results are shown as the inner 68th percentile region as a function of the present-day halo mass, for different feature sets used as prediction model inputs. Our scalars approach achieves improved predictions of the mass fraction compared to standard halo features; the improvement is very significant at larger mass fractions, and decreases at lower mass fractions.}
+    \caption{The error on our predictions of the mass assembly history (scale factor at which a fraction of the mass of the most massive progenitor was accreted) on test set halos at given values of the mass fraction: $M/M_{a=1} = 0.8, 0.6, 0.4$. Results are shown as the inner 68th percentile region as a function of the present-day halo mass, for different feature sets used as prediction model inputs. Our scalars approach achieves improved predictions of the mass fraction compared to standard halo features; the improvement is very significant at larger mass fractions, and decreases at lower mass fractions.}
     \label{fig:pred_amfracs}
 \end{figure*}
 
@@ -536,7 +536,7 @@ This is useful for understanding where the information is coming from for our ba
 We aim to predict the mass assembly history of each DM halo in the \dark simulation, parameterized by the fraction of its present-day mass accreted by its most massive progenitor $M_\mathrm{vir}(a)$/$M_\mathrm{vir}(a=1)$ at a given scale factor $a$, as detailed in \S\ref{sec:mah}.
 The results are shown in Figure~\ref{fig:mah}.
 The top panel shows the assembly histories, with the true (interpolated) values shown by the filled circles and the predicted histories by the lines of the same color, for a sample of halos with different masses.
-We see that while there is significant error in the predictions, we are able to predict the general trend with mass seen, in which more massive halos have accreted a larger fraction of their mass at a given time compared to less massive halos.
+We see that while there is significant error in the predictions, we are able to predict the general trend with mass seen, in which more massive halos have accreted a smaller fraction of their mass at a given time compared to less massive halos.
 The approach is also able to capture when the trend is not followed, such as the two most massive halos shown here, suggesting it is capturing additional information over halo mass that is relevant to the assembly history.
 The middle panel shows the residual between the true and predicted values for the same sample shown in the top panel.
 In the bottom panel, we show the inner 68th percentile of the residuals $\sigma_{68}$ for the entire test set, compared to the sample variance computed as the inner 68th percentile of the differences from the mean.
@@ -546,10 +546,10 @@ But even at very low mass fractions, we see that we are able to predict the scal
 
 We also show the overall predictions for the other benchmark feature sets in the bottom panel.
 We see that using only the mass, radius, and velocity features, the predictions of the mass assembly history are only marginally better than sample variance.
-This is somewhat surprising given the clear trend with halo mass; we speculate that as the error metrics (for both the predictions and the sample variance) are dominated by low-mass halos, it is not the clearest metric for comparison.
+This is somewhat surprising given the clear trend with halo mass; we speculate that because the error metrics (for both the predictions and the sample variance) are dominated by low-mass halos, it is not the clearest metric for comparison.
 We also find that the variance within bins of halo mass is nearly as large as the overall sample variance, possibly making the mass trend difficult for the model to capture.
 The standard halo features perform similarly to the scalars at low mass fractions, capturing significant information over sample variance, but above a mass fraction of $M/M_{a=1} \approx 0.5$, the scalar features outperform them.
-This suggests that the scalars capture more detailed information related to recent halo mass accretion that can be described by the simpler standard features.
+This suggests that the scalars capture more detailed information related to recent halo mass accretion than can be described by the simpler standard features.
 The geometric features perform similarly to the scalar features, suggesting that enforcing rotation invariance is not a dominant factor in the predictions, as in the baryonic property case; again, this may be because this is a simple enough symmetry that the neural network is able to handle it internally, but further investigation is merited.
 
 We show another view of these assembly history results in Figure~\ref{fig:pred_amfracs}.
