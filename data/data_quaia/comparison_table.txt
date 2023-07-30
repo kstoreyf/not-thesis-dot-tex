@@ -1,4 +1,5 @@
-\begin{tabular}{|l|l|l|p{2.5em}|p{4.5em}|p{4.5em}|l|p{6em}|p{6em}|}
+\begin{tabular}{|l|l|l|p{2.5em}|p{4.25em}|p{4.25em}|l|p{3em}|p{3em}|}
+%\begin{tabular}{|l|l|l|p{2.5em}|p{4.5em}|p{4.5em}|l|p{6em}|p{6em}|}
 \hline
  & $N$ & $f_\text{sky}$ & $\bar{n}, \newline \text{deg}^{-2}$ & $V_\text{span}, \newline (h^{-1}\,\text{Gpc})^3$ & $V_\text{eff}, \newline (h^{-1}\,\text{Gpc})^3$ & $z_\text{med}$ & $f(|\delta z| \newline <0.01)$ & $f(|\delta z| \newline <0.1)$ \\
 \hline
